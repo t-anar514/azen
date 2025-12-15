@@ -1,9 +1,10 @@
 "use client"
 
-import React, { useState } from "react"
+import React from "react"
 import { motion } from "framer-motion"
 import { Volume2, Check } from "lucide-react"
 import { Phrase } from "@/data/japanese-course"
+import { useTTS } from "@/hooks/use-tts"
 
 interface PhraseCardProps {
   phrase: Phrase
@@ -12,12 +13,25 @@ interface PhraseCardProps {
 }
 
 export function PhraseCard({ phrase, onToggleLearned, isLearned }: PhraseCardProps) {
-  const [isPlaying, setIsPlaying] = useState(false)
-
+  const { speak, isSpeaking } = useTTS()
+  // Local state to track if *this* specific card is the one playing, 
+  // since useTTS is global/hook level but doesn't tell us WHICH text is playing easily without more logic.
+  // actually, since we instantiate useTTS per component, isSpeaking is unique to this instance if we don't share context.
+  // Wait, speech synthesis is global. "isSpeaking" from the hook relies on window.speechSynthesis.speaking which is global.
+  // So if I play one card, ALL cards might show "playing" if I'm not careful.
+  
+  // Revised approach: The hook provided uses utterance.onstart/onend.
+  // This instance of the hook creates a unique utterance. 
+  // However, window.speechSynthesis is a singleton.
+  // But the event listeners are attached to the *utterance* instance.
+  // So 'isSpeaking' in the hook should correctly track only the utterance created by *that* hook instance.
+  
+  // Let's verify hook logic... 
+  // YES: utterance.onstart sets state. This state is local to the hook instance.
+  // So it should work fine per card!
+  
   const handlePlay = () => {
-    setIsPlaying(true)
-    console.log(`Playing audio for: ${phrase.japanese}`)
-    setTimeout(() => setIsPlaying(false), 2000) // Simulate playback
+    speak(phrase.japanese)
   }
 
   return (
@@ -40,12 +54,12 @@ export function PhraseCard({ phrase, onToggleLearned, isLearned }: PhraseCardPro
           onClick={handlePlay}
           className={`
             p-3 rounded-full transition-all relative
-            ${isPlaying ? "bg-[#227c70] text-white" : "bg-gray-100 text-gray-600 hover:bg-[#227c70] hover:text-white"}
+            ${isSpeaking ? "bg-[#227c70] text-white" : "bg-gray-100 text-gray-600 hover:bg-[#227c70] hover:text-white"}
           `}
           aria-label="Play audio"
         >
           <Volume2 className="w-5 h-5" />
-          {isPlaying && (
+          {isSpeaking && (
             <span className="absolute inset-0 rounded-full border-2 border-[#227c70] animate-ping opacity-75" />
           )}
         </button>

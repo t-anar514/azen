@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import { motion } from "framer-motion"
 import { Volume2 } from "lucide-react"
+import { useTTS } from "@/hooks/use-tts"
 
 const vowels = [
   { char: "あ", romaji: "A", color: "bg-red-500" },
@@ -14,9 +15,10 @@ const vowels = [
 
 export function SonicHero() {
   const [activeVowel, setActiveVowel] = useState<string | null>(null)
+  const { speak } = useTTS()
 
-  const playSound = (romaji: string) => {
-    console.log(`Playing audio: ${romaji}`)
+  const playSound = (romaji: string, char: string) => {
+    speak(char)
     setActiveVowel(romaji)
     setTimeout(() => setActiveVowel(null), 1000)
   }
@@ -38,7 +40,7 @@ export function SonicHero() {
             key={vowel.romaji}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => playSound(vowel.romaji)}
+            onClick={() => playSound(vowel.romaji, vowel.char)}
             className={`
               relative w-24 h-32 md:w-32 md:h-40 rounded-xl cursor-pointer 
               bg-white shadow-sm border-2 transition-all duration-300 flex flex-col items-center justify-center
