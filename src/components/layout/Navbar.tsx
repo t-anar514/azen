@@ -62,6 +62,9 @@ export function Navbar() {
           <Link href="/essentials" className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1">
             Essentials
           </Link>
+          <Link href="/learn" className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1">
+            Japanese Essentials
+          </Link>
         </nav>
 
         {/* Omnibar (Search) */}
