@@ -1,0 +1,26 @@
+[
+    {
+        "id": "d1",
+        "name": "Senso-ji Temple",
+        "location": "Tokyo",
+        "type": "Temple",
+        "zenFactor": "Low (High Crowd)",
+        "description": "Tokyo's oldest temple, best visited very early morning."
+    },
+    {
+        "id": "d2",
+        "name": "Pontocho Alley",
+        "location": "Kyoto",
+        "type": "Dining",
+        "zenFactor": "High (Evening)",
+        "description": "Atmospheric dining alley, great for spotting Geisha."
+    },
+    {
+        "id": "d3",
+        "name": "Fushimi Inari Shrine",
+        "location": "Kyoto",
+        "type": "Shrine",
+        "zenFactor": "Medium",
+        "description": "Iconic torii gates. Hike to the top for solitude."
+    }
+]

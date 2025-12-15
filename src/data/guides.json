@@ -1,0 +1,50 @@
+[
+    {
+        "id": "g1",
+        "name": "Yuki Tanaka",
+        "location": "Osaka",
+        "tags": [
+            "Foodie",
+            "Nightlife",
+            "Local Gems"
+        ],
+        "rating": 4.9,
+        "reviewCount": 128,
+        "price": 3500,
+        "bio": "I know the secret jazz bars in Shinjuku and the best Takoyaki stalls that don't have a line.",
+        "isVerified": true,
+        "image": "/images/guides/yuki.jpg"
+    },
+    {
+        "id": "g2",
+        "name": "Kenji Sato",
+        "location": "Kyoto",
+        "tags": [
+            "History Buff",
+            "Temples",
+            "Photography"
+        ],
+        "rating": 5.0,
+        "reviewCount": 84,
+        "price": 4200,
+        "bio": "Historian by day, guide by night. I'll show you the Kyoto that tourists miss.",
+        "isVerified": true,
+        "image": "/images/guides/kenji.jpg"
+    },
+    {
+        "id": "g3",
+        "name": "Sarah Miller",
+        "location": "Tokyo",
+        "tags": [
+            "Anime/Manga",
+            "Tech",
+            "Pop Culture"
+        ],
+        "rating": 4.8,
+        "reviewCount": 210,
+        "price": 3000,
+        "bio": "From Akihabara to Nakano Broadway, I'm your otaku guide to Tokyo's geek culture.",
+        "isVerified": true,
+        "image": "/images/guides/sarah.jpg"
+    }
+]

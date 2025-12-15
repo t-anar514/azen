@@ -1,0 +1,23 @@
+[
+    {
+        "id": "h1",
+        "title": "JR Pass vs. Single Tickets",
+        "category": "Money Saving",
+        "description": "The JR Pass price increased in 2023. Unless you are traveling long distances daily, single tickets or regional passes are often cheaper.",
+        "trapAlternative": null
+    },
+    {
+        "id": "h2",
+        "title": "Robot Restaurant",
+        "category": "Tourist Trap",
+        "description": "Often cited as overpriced and lacking authentic culture.",
+        "trapAlternative": "Visit a local Kabuki show or a themed cafe in Akihabara."
+    },
+    {
+        "id": "h3",
+        "title": "Convenience Store Etiquette",
+        "category": "Etiquette",
+        "description": "Don't eat while walking. Use the recycling bins correctly. Staff are helpful but busy.",
+        "trapAlternative": null
+    }
+]
