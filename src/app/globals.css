@@ -58,35 +58,31 @@
   --card: #ffffff;
   /* Surface/Card Background */
   --card-foreground: #1c315e;
-  /* Deep Navy */
 
   --popover: #ffffff;
   --popover-foreground: #1c315e;
 
-  --primary: #227c70;
-  /* Teal Green - Primary Action */
-  --primary-foreground: #ffffff;
+  --primary: #1c315e;
+  /* Deep Blue - Primary */
+  --primary-foreground: #e6e2c3;
 
   --secondary: #88a47c;
-  /* Sage Green - Secondary Accents */
+  /* Sage Green - Secondary */
   --secondary-foreground: #ffffff;
 
   --muted: #f2f0e4;
-  /* Lighter Cream / Surface */
   --muted-foreground: #64748B;
 
-  --accent: #88a47c;
-  /* Using Sage Green as Accent too, or could be a variation */
+  --accent: #227c70;
+  /* Teal - Accent */
   --accent-foreground: #ffffff;
 
   --destructive: #EF4444;
   --destructive-foreground: #ffffff;
 
   --border: #88a47c;
-  /* Using Secondary as border for now, or could be lighter */
   --input: #E2E8F0;
-  --ring: #227c70;
-  /* Primary color for focus rings */
+  --ring: #1c315e;
 
   --chart-1: #227c70;
   --chart-2: #88a47c;
