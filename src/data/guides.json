@@ -13,7 +13,8 @@
         "price": 3500,
         "bio": "I know the secret jazz bars in Shinjuku and the best Takoyaki stalls that don't have a line.",
         "isVerified": true,
-        "image": "/images/guides/yuki.jpg"
+        "image": "/images/guides/yuki.jpg",
+        "videoUrl": "https://res.cloudinary.com/dq9bxqoq5/video/upload/v1766048181/Movie_Nov_7_2025_nir3oe.mp4"
     },
     {
         "id": "g2",
@@ -29,7 +30,8 @@
         "price": 4200,
         "bio": "Historian by day, guide by night. I'll show you the Kyoto that tourists miss.",
         "isVerified": true,
-        "image": "/images/guides/kenji.jpg"
+        "image": "/images/guides/kenji.jpg",
+        "videoUrl": "https://assets.mixkit.co/videos/preview/mixkit-curvy-road-in-a-forest-4099-large.mp4"
     },
     {
         "id": "g3",
@@ -45,6 +47,7 @@
         "price": 3000,
         "bio": "From Akihabara to Nakano Broadway, I'm your otaku guide to Tokyo's geek culture.",
         "isVerified": true,
-        "image": "/images/guides/sarah.jpg"
+        "image": "/images/guides/sarah.jpg",
+        "videoUrl": "https://assets.mixkit.co/videos/preview/mixkit-night-city-with-traffic-4095-large.mp4"
     }
 ]

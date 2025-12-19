@@ -40,10 +40,10 @@ export function Navbar() {
           : "bg-transparent"
       )}
     >
-      <div className="container flex h-16 items-center justify-between">
+      <div className="container flex h-28 items-center justify-evenly">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
-          <div className="relative h-12 w-32 overflow-hidden">
+          <div className="relative h-28 w-40 overflow-hidden">
              <Image src="/logo.png" alt="Azen Logo" fill className="object-cover" />
           </div>
         </Link>
@@ -63,7 +63,7 @@ export function Navbar() {
             Essentials
           </Link>
           <Link href="/learn" className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1">
-            Japanese Essentials
+            Basic Japanese
           </Link>
         </nav>
 
@@ -80,7 +80,7 @@ export function Navbar() {
         {/* User Actions & Mobile Menu */}
         <div className="flex items-center gap-2">
            {/* My Azen Dropdown */}
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full">
                 <User className="h-5 w-5" />
@@ -95,7 +95,7 @@ export function Navbar() {
               <DropdownMenuSeparator />
               <DropdownMenuItem>Log in</DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
 
           {/* Mobile Menu */}
           <Sheet>

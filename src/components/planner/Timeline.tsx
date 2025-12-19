@@ -38,9 +38,23 @@ const INITIAL_ITEMS: ItemType[] = [
   { id: "3", title: "Visit Senso-ji", time: "04:00 PM", type: "spot", location: "Asakusa Temple", cost: 0 },
 ]
 
-export function Timeline({ onCostChange }: { onCostChange: (cost: number) => void }) {
-  const [items, setItems] = useState<ItemType[]>(INITIAL_ITEMS)
-  
+interface TimelineProps {
+  items: ItemType[]
+  onAdd: () => void
+  onUpdate: (id: string, updates: Partial<ItemType>) => void
+  onDelete: (id: string) => void
+  onMove: (activeId: string, overId: string) => void
+  onHover: (id: string | null) => void
+}
+
+export function Timeline({ 
+    items, 
+    onAdd, 
+    onUpdate, 
+    onDelete, 
+    onMove,
+    onHover 
+}: TimelineProps) {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -48,47 +62,12 @@ export function Timeline({ onCostChange }: { onCostChange: (cost: number) => voi
     })
   )
 
-  const calculateTotal = (updatedItems: ItemType[]) => {
-    onCostChange(updatedItems.reduce((sum, item) => sum + item.cost, 0))
-  }
-
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event
 
     if (over && active.id !== over.id) {
-      setItems((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id)
-        const newIndex = items.findIndex((item) => item.id === over.id)
-        const updatedItems = arrayMove(items, oldIndex, newIndex)
-        return updatedItems
-      })
+        onMove(active.id as string, over.id as string)
     }
-  }
-
-  const addItem = () => {
-    const newItem: ItemType = {
-        id: `item-${Date.now()}`,
-        title: "New Activity",
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        type: "spot",
-        location: "Select Location",
-        cost: 0
-    }
-    const updatedItems = [...items, newItem]
-    setItems(updatedItems)
-    calculateTotal(updatedItems)
-  }
-
-  const updateItem = (id: string, updates: Partial<ItemType>) => {
-    const updatedItems = items.map(item => item.id === id ? { ...item, ...updates } : item)
-    setItems(updatedItems)
-    calculateTotal(updatedItems)
-  }
-
-  const deleteItem = (id: string) => {
-    const updatedItems = items.filter(item => item.id !== id)
-    setItems(updatedItems)
-    calculateTotal(updatedItems)
   }
 
   return (
@@ -96,7 +75,7 @@ export function Timeline({ onCostChange }: { onCostChange: (cost: number) => voi
         <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-black font-mono tracking-tight uppercase italic text-primary">Day 1: Tokyo Arrival</h2>
             <Button 
-                onClick={addItem} 
+                onClick={onAdd} 
                 size="sm" 
                 className="bg-accent hover:bg-accent/90 text-white rounded-full px-4"
             >
@@ -118,8 +97,10 @@ export function Timeline({ onCostChange }: { onCostChange: (cost: number) => voi
               <TimelineItem 
                 key={item.id} 
                 {...item} 
-                onUpdate={(updates) => updateItem(item.id, updates)}
-                onDelete={() => deleteItem(item.id)}
+                onUpdate={(updates) => onUpdate(item.id, updates)}
+                onDelete={() => onDelete(item.id)}
+                onHover={() => onHover(item.id)}
+                onLeave={() => onHover(null)}
               />
             ))}
           </div>

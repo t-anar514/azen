@@ -24,9 +24,11 @@ import { ItemType, ActivityType } from "./Timeline"
 interface TimelineItemProps extends ItemType {
   onUpdate: (updates: Partial<ItemType>) => void
   onDelete: () => void
+  onHover: () => void
+  onLeave: () => void
 }
 
-export function TimelineItem({ id, title, time, type, location, cost, onUpdate, onDelete }: TimelineItemProps) {
+export function TimelineItem({ id, title, time, type, location, cost, onUpdate, onDelete, onHover, onLeave }: TimelineItemProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editTitle, setEditTitle] = useState(title)
   const [editLocation, setEditLocation] = useState(location)
@@ -155,7 +157,13 @@ export function TimelineItem({ id, title, time, type, location, cost, onUpdate, 
   }
 
   return (
-    <div ref={setNodeRef} style={style} className="mb-4 group relative">
+    <div 
+        ref={setNodeRef} 
+        style={style} 
+        className="mb-4 group relative"
+        onMouseEnter={onHover}
+        onMouseLeave={onLeave}
+    >
       <Card 
         className={`p-4 flex gap-4 items-center bg-card transition-all border-l-4 border-l-primary/10 hover:border-l-accent hover:shadow-lg ${isDragging ? 'opacity-50' : ''}`}
       >

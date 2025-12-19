@@ -24,10 +24,13 @@ interface GuideProps {
     bio: string
     isVerified: boolean
     image: string
+    videoUrl?: string
   }
 }
 
 export function GuideCard({ guide }: GuideProps) {
+  const isYouTube = guide.videoUrl?.includes("youtube.com") || guide.videoUrl?.includes("youtu.be")
+
   return (
     <Card className="overflow-hidden flex flex-col md:flex-row p-4 gap-4">
       {/* Visuals */}
@@ -44,9 +47,28 @@ export function GuideCard({ guide }: GuideProps) {
                     <PlayCircle className="w-12 h-12 text-white" />
                 </div>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden bg-black text-white">
-                 <div className="aspect-video flex items-center justify-center">
-                    <p>Playing intro video for {guide.name}...</p>
+            <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden bg-black text-white border-none">
+                 <div className="aspect-video w-full flex items-center justify-center bg-black">
+                    {guide.videoUrl ? (
+                        isYouTube ? (
+                            <iframe 
+                                title={`${guide.name} intro`}
+                                src={guide.videoUrl.replace("watch?v=", "embed/")}
+                                className="w-full h-full border-none"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                            />
+                        ) : (
+                            <video 
+                                src={guide.videoUrl} 
+                                controls 
+                                autoPlay 
+                                className="w-full h-full object-contain"
+                            />
+                        )
+                    ) : (
+                        <p>No introduction video available for {guide.name}.</p>
+                    )}
                  </div>
             </DialogContent>
          </Dialog>
