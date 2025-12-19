@@ -18,7 +18,8 @@ import {
 } from "@dnd-kit/sortable"
 import { TimelineItem } from "./TimelineItem"
 import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Plus, Pencil, Check, X } from "lucide-react"
 
 // Type definition matching TimelineItem props
 export type ActivityType = "flight" | "spot" | "food" | "hotel" | "shopping" | "transport";
@@ -26,19 +27,18 @@ export type ActivityType = "flight" | "spot" | "food" | "hotel" | "shopping" | "
 export type ItemType = {
   id: string
   title: string
-  time: string
+  date: string // ISO date string YYYY-MM-DD
   type: ActivityType
   location: string
   cost: number
+  lat?: number
+  lng?: number
+  sortOrder?: number
 }
 
-const INITIAL_ITEMS: ItemType[] = [
-  { id: "1", title: "Arrival at Narita", time: "10:00 AM", type: "flight", location: "Narita Airport", cost: 0 },
-  { id: "2", title: "Check-in at Ryokan", time: "02:00 PM", type: "hotel", location: "Asakusa View Hotel", cost: 25000 },
-  { id: "3", title: "Visit Senso-ji", time: "04:00 PM", type: "spot", location: "Asakusa Temple", cost: 0 },
-]
-
 interface TimelineProps {
+  title: string
+  onTitleChange: (newTitle: string) => void
   items: ItemType[]
   onAdd: () => void
   onUpdate: (id: string, updates: Partial<ItemType>) => void
@@ -48,6 +48,8 @@ interface TimelineProps {
 }
 
 export function Timeline({ 
+    title,
+    onTitleChange,
     items, 
     onAdd, 
     onUpdate, 
@@ -55,6 +57,9 @@ export function Timeline({
     onMove,
     onHover 
 }: TimelineProps) {
+  const [isEditingTitle, setIsEditingTitle] = useState(false)
+  const [tempTitle, setTempTitle] = useState(title)
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -70,17 +75,55 @@ export function Timeline({
     }
   }
 
+  const handleTitleSubmit = () => {
+    onTitleChange(tempTitle)
+    setIsEditingTitle(false)
+  }
+
+  const handleTitleCancel = () => {
+    setTempTitle(title)
+    setIsEditingTitle(false)
+  }
+
   return (
     <div className="p-4 md:p-6 pb-24">
-        <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-black font-mono tracking-tight uppercase italic text-primary">Day 1: Tokyo Arrival</h2>
-            <Button 
-                onClick={onAdd} 
-                size="sm" 
-                className="bg-accent hover:bg-accent/90 text-white rounded-full px-4"
-            >
-                <Plus className="h-4 w-4 mr-2" /> Add Activity
-            </Button>
+        <div className="flex justify-between items-center mb-6 gap-4">
+            <div className="flex-1 min-w-0">
+                {isEditingTitle ? (
+                    <div className="flex items-center gap-2">
+                        <Input 
+                            value={tempTitle}
+                            onChange={(e) => setTempTitle(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') handleTitleSubmit()
+                                if (e.key === 'Escape') handleTitleCancel()
+                            }}
+                            className="text-2xl font-black font-mono tracking-tight uppercase italic text-primary h-auto py-1 px-2 border-accent"
+                            autoFocus
+                        />
+                        <Button size="icon" variant="ghost" className="h-8 w-8 text-accent shrink-0" onClick={handleTitleSubmit}>
+                            <Check className="h-4 w-4" />
+                        </Button>
+                        <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground shrink-0" onClick={handleTitleCancel}>
+                            <X className="h-4 w-4" />
+                        </Button>
+                    </div>
+                ) : (
+                    <div className="flex items-center gap-3 group cursor-pointer" onClick={() => setIsEditingTitle(true)}>
+                        <h2 className="text-2xl font-black font-mono tracking-tight uppercase italic text-primary truncate">{title}</h2>
+                        <Pencil className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                    </div>
+                )}
+            </div>
+            <div className="flex shrink-0">
+                <Button 
+                    onClick={onAdd} 
+                    size="sm" 
+                    className="bg-accent hover:bg-accent/90 text-white rounded-full px-4"
+                >
+                    <Plus className="h-4 w-4 mr-2" /> Add Activity
+                </Button>
+            </div>
         </div>
 
       <DndContext
@@ -106,17 +149,6 @@ export function Timeline({
           </div>
         </SortableContext>
       </DndContext>
-      
-      {/* Zen Buffer Alert */}
-      <div className="mt-8 p-6 bg-[#88a47c]/10 border-2 border-dashed border-[#88a47c]/30 rounded-2xl flex gap-4 text-sm text-[#1c315e]">
-          <div className="p-2 bg-[#88a47c] rounded-lg text-white shrink-0">
-             <Plus className="rotate-45 h-5 w-5" />
-          </div>
-          <div>
-              <p className="font-black uppercase tracking-widest text-xs mb-1">Azen Zen Buffer</p>
-              <p className="font-medium text-lg leading-snug">Senso-ji gets crowded after 10 AM. We added a 30m buffer for transit.</p>
-          </div>
-      </div>
     </div>
   )
 }

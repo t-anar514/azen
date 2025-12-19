@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { Card } from "@/components/ui/card"
@@ -17,7 +17,8 @@ import {
   Check, 
   X, 
   Trash2,
-  Clock
+  Clock,
+  Calendar
 } from "lucide-react"
 import { ItemType, ActivityType } from "./Timeline"
 
@@ -28,12 +29,34 @@ interface TimelineItemProps extends ItemType {
   onLeave: () => void
 }
 
-export function TimelineItem({ id, title, time, type, location, cost, onUpdate, onDelete, onHover, onLeave }: TimelineItemProps) {
+export function TimelineItem({ id, title, date, type, location, cost, lat, lng, onUpdate, onDelete, onHover, onLeave }: TimelineItemProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editTitle, setEditTitle] = useState(title)
   const [editLocation, setEditLocation] = useState(location)
   const [editCost, setEditCost] = useState(cost)
   const [editType, setEditType] = useState<ActivityType>(type)
+  const [editDate, setEditDate] = useState(date)
+  const [editLat, setEditLat] = useState(lat)
+  const [editLng, setEditLng] = useState(lng)
+  
+  const [searchResults, setSearchResults] = useState<any[]>([])
+  const [showResults, setShowResults] = useState(false)
+
+  // Use Photon API for free, open-source geocoding (no API key required)
+  const searchLocation = async (query: string) => {
+    if (query.length < 2) {
+      setSearchResults([])
+      return
+    }
+    try {
+      const response = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=5`)
+      const data = await response.json()
+      setSearchResults(data.features || [])
+      setShowResults(true)
+    } catch (error) {
+      console.error("Search failed:", error)
+    }
+  }
 
   const {
     attributes,
@@ -53,6 +76,7 @@ export function TimelineItem({ id, title, time, type, location, cost, onUpdate, 
 
   const activityIcons: { type: ActivityType; icon: any; color: string; label: string }[] = [
     { type: "flight", icon: Plane, color: "text-blue-500", label: "Flight" },
+    
     { type: "spot", icon: MapPin, color: "text-red-500", label: "Shrine/Spot" },
     { type: "food", icon: Utensils, color: "text-orange-500", label: "Food" },
     { type: "hotel", icon: Coffee, color: "text-purple-500", label: "Hotel" },
@@ -68,7 +92,10 @@ export function TimelineItem({ id, title, time, type, location, cost, onUpdate, 
       title: editTitle,
       location: editLocation,
       cost: editCost,
-      type: editType
+      type: editType,
+      date: editDate,
+      lat: editLat,
+      lng: editLng
     })
     setIsEditing(false)
   }
@@ -78,6 +105,9 @@ export function TimelineItem({ id, title, time, type, location, cost, onUpdate, 
     setEditLocation(location)
     setEditCost(cost)
     setEditType(type)
+    setEditDate(date)
+    setEditLat(lat)
+    setEditLng(lng)
     setIsEditing(false)
   }
 
@@ -119,6 +149,18 @@ export function TimelineItem({ id, title, time, type, location, cost, onUpdate, 
               })}
             </div>
 
+            <div className="grid gap-3 pb-2">
+              <div className="relative">
+                <Input 
+                  type="date"
+                  value={editDate} 
+                  onChange={(e) => setEditDate(e.target.value)} 
+                  className="pl-10"
+                />
+                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+              </div>
+            </div>
+
             <div className="grid gap-3">
               <Input 
                 value={editTitle} 
@@ -126,11 +168,47 @@ export function TimelineItem({ id, title, time, type, location, cost, onUpdate, 
                 placeholder="Activity Title"
                 className="font-bold text-lg"
               />
-              <Input 
-                value={editLocation} 
-                onChange={(e) => setEditLocation(e.target.value)} 
-                placeholder="Location"
-              />
+              <div className="relative">
+                <Input 
+                  value={editLocation} 
+                  onChange={(e) => {
+                    setEditLocation(e.target.value)
+                    searchLocation(e.target.value)
+                  }} 
+                  onBlur={() => setTimeout(() => setShowResults(false), 200)}
+                  onFocus={() => editLocation.length >= 2 && setShowResults(true)}
+                  placeholder="Search Location (e.g. Shinjuku)..."
+                  className="pr-10"
+                />
+                <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                
+                {showResults && searchResults.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-card border-2 border-accent rounded-xl shadow-2xl z-[100] overflow-hidden max-h-[250px] overflow-y-auto">
+                    {searchResults.map((feature, index) => {
+                       const { name, city, country } = feature.properties
+                       const label = [name, city, country].filter(Boolean).join(", ")
+                       return (
+                         <button
+                           key={index}
+                           className="w-full text-left p-3 hover:bg-accent/10 transition-colors border-b last:border-b-0 flex items-start gap-3"
+                           onClick={() => {
+                             setEditLocation(name || label)
+                             setEditLat(feature.geometry.coordinates[1])
+                             setEditLng(feature.geometry.coordinates[0])
+                             setShowResults(false)
+                           }}
+                         >
+                           <MapPin className="w-4 h-4 mt-0.5 text-accent shrink-0" />
+                           <div className="min-w-0">
+                             <div className="font-bold text-sm truncate">{name || label}</div>
+                             <div className="text-[10px] text-muted-foreground truncate">{label}</div>
+                           </div>
+                         </button>
+                       )
+                    })}
+                  </div>
+                )}
+              </div>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-muted-foreground">¥</span>
                 <Input 
@@ -179,9 +257,11 @@ export function TimelineItem({ id, title, time, type, location, cost, onUpdate, 
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-0.5">
                  <h4 className="font-bold text-lg truncate text-primary">{title}</h4>
-                 <div className="flex items-center text-[10px] font-mono text-muted-foreground bg-secondary/10 px-2 py-0.5 rounded-full">
-                    <Clock className="h-3 w-3 mr-1" />
-                    {time}
+                 <div className="flex flex-wrap gap-2 text-[10px] font-mono text-muted-foreground">
+                    <div className="flex items-center bg-secondary/10 px-2 py-0.5 rounded-full">
+                       <Calendar className="h-3 w-3 mr-1" />
+                       {new Date(date).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                    </div>
                  </div>
               </div>
               <p className="text-sm text-muted-foreground truncate">{location}</p>
@@ -199,7 +279,7 @@ export function TimelineItem({ id, title, time, type, location, cost, onUpdate, 
                 onClick={() => setIsEditing(true)}
                 variant="ghost" 
                 size="icon" 
-                className="h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all shadow-sm"
+                className="h-8 w-8 rounded-full opacity-100 md:opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all shadow-sm shrink-0"
             >
                 <Pencil className="h-4 w-4 font-bold" />
             </Button>

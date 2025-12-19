@@ -7,13 +7,14 @@ import { CostFooter } from "@/components/planner/CostFooter"
 import { arrayMove } from "@dnd-kit/sortable"
 
 const INITIAL_ITEMS: ItemType[] = [
-  { id: "1", title: "Arrival at Narita", time: "10:00 AM", type: "flight", location: "Narita Airport", cost: 0 },
-  { id: "2", title: "Check-in at Ryokan", time: "02:00 PM", type: "hotel", location: "Asakusa View Hotel", cost: 25000 },
-  { id: "3", title: "Visit Senso-ji", time: "04:00 PM", type: "spot", location: "Asakusa Temple", cost: 0 },
+  { id: "1", title: "Arrival at Narita", date: "2025-12-19", type: "flight", location: "Narita Airport", cost: 0, lat: 35.7720, lng: 140.3929 },
+  { id: "2", title: "Check-in at Ryokan", date: "2025-12-19", type: "hotel", location: "Asakusa View Hotel", cost: 25000, lat: 35.7145, lng: 139.7925 },
+  { id: "3", title: "Visit Senso-ji", date: "2025-12-19", type: "spot", location: "Asakusa Temple", cost: 0, lat: 35.7148, lng: 139.7967 },
 ]
 
 export default function PlannerPage() {
   const [items, setItems] = useState<ItemType[]>(INITIAL_ITEMS)
+  const [itineraryTitle, setItineraryTitle] = useState("Itinerary Timeline")
   const [totalCost, setTotalCost] = useState(25000)
   const [hoveredId, setHoveredId] = useState<string | null>(null)
 
@@ -21,16 +22,48 @@ export default function PlannerPage() {
     setTotalCost(updatedItems.reduce((sum, item) => sum + item.cost, 0))
   }, [])
 
+  // Load from localStorage on mount
+  useEffect(() => {
+    const savedItems = localStorage.getItem("azen_itinerary_items")
+    const savedTitle = localStorage.getItem("azen_itinerary_title")
+    
+    if (savedItems) {
+      try {
+        const parsedItems = JSON.parse(savedItems)
+        setItems(parsedItems)
+        calculateTotal(parsedItems)
+      } catch (e) {
+        console.error("Failed to parse saved items", e)
+      }
+    }
+    
+    if (savedTitle) {
+      setItineraryTitle(savedTitle)
+    }
+  }, [calculateTotal])
+
+  const saveItinerary = () => {
+    localStorage.setItem("azen_itinerary_items", JSON.stringify(items))
+    localStorage.setItem("azen_itinerary_title", itineraryTitle)
+    console.log("Itinerary saved to your browser!")
+  }
+
   const handleUpdateItems = useCallback((newItems: ItemType[]) => {
-      setItems(newItems)
-      calculateTotal(newItems)
+      // Sort primarily by date, but keep relative order for items with the same date
+      const sortedItems = [...newItems].sort((a, b) => {
+        if (a.date !== b.date) return a.date.localeCompare(b.date)
+        return 0 // Keep original relative order if dates are same
+      })
+
+      setItems(sortedItems)
+      calculateTotal(sortedItems)
   }, [calculateTotal])
 
   const addItem = () => {
     const newItem: ItemType = {
         id: `item-${Date.now()}`,
         title: "New Activity",
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        date: new Date().toISOString().split('T')[0],
         type: "spot",
         location: "Select Location",
         cost: 0
@@ -50,10 +83,15 @@ export default function PlannerPage() {
   }
 
   const moveItem = (activeId: string, overId: string) => {
-    const oldIndex = items.findIndex((item) => item.id === activeId)
-    const newIndex = items.findIndex((item) => item.id === overId)
-    const updatedItems = arrayMove(items, oldIndex, newIndex)
-    setItems(updatedItems)
+    const activeItem = items.find(i => i.id === activeId)
+    const overItem = items.find(i => i.id === overId)
+
+    if (activeItem && overItem && activeItem.date === overItem.date) {
+      const oldIndex = items.findIndex((item) => item.id === activeId)
+      const newIndex = items.findIndex((item) => item.id === overId)
+      const updatedItems = arrayMove(items, oldIndex, newIndex)
+      setItems(updatedItems)
+    }
   }
 
   return (
@@ -62,6 +100,8 @@ export default function PlannerPage() {
             {/* Left: Timeline (Scrollable) */}
             <div className="w-full md:w-1/2 lg:w-5/12 overflow-y-auto bg-muted/10 h-full scrollbar-hide">
                 <Timeline 
+                    title={itineraryTitle}
+                    onTitleChange={setItineraryTitle}
                     items={items}
                     onAdd={addItem}
                     onUpdate={updateItem}
@@ -77,7 +117,7 @@ export default function PlannerPage() {
             </div>
         </div>
         
-        <CostFooter total={totalCost} />
+        <CostFooter total={totalCost} onSave={saveItinerary} />
     </div>
   )
 }

@@ -1,14 +1,14 @@
 [
     {
         "id": "g1",
-        "name": "Yuki Tanaka",
-        "location": "Osaka",
+        "name": "Anar Tamir",
+        "location": "Kyoto",
         "tags": [
             "Foodie",
             "Nightlife",
             "Local Gems"
         ],
-        "rating": 4.9,
+        "rating": 5.0,
         "reviewCount": 128,
         "price": 3500,
         "bio": "I know the secret jazz bars in Shinjuku and the best Takoyaki stalls that don't have a line.",
