@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { MessageSquare, User, Store } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 type Message = {
   id: string
@@ -12,6 +13,7 @@ type Message = {
 }
 
 export function KonbiniSimulator() {
+  const t = useTranslations("Learn.simulator")
   const [messages, setMessages] = useState<Message[]>([])
   const [step, setStep] = useState(0)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -28,19 +30,19 @@ export function KonbiniSimulator() {
         id: '1', 
         role: 'clerk', 
         text: 'いらっしゃいませ！ (Irasshaimase!)', 
-        translation: 'Welcome!' 
+        translation: t('conversations.welcome') 
       }
     ])
     setStep(1)
   }
 
-  const handleUserAction = (action: string, responseJapanese: string, responseTranslation: string) => {
+  const handleUserAction = (action: string, responseJapanese: string, responseTranslationKey: string) => {
     // User response
     const userMsg: Message = {
       id: Date.now().toString(),
       role: 'user',
       text: responseJapanese,
-      translation: responseTranslation
+      translation: t(`conversations.${responseTranslationKey}`)
     }
     setMessages(prev => [...prev, userMsg])
     
@@ -53,7 +55,7 @@ export function KonbiniSimulator() {
                 id: Date.now().toString() + 'c',
                 role: 'clerk',
                 text: '袋はいりますか？ (Fukuro wa irimasu ka?)',
-                translation: 'Do you need a bag?'
+                translation: t('conversations.needBag')
             }
             setStep(2)
         } else if (step === 2) {
@@ -61,7 +63,7 @@ export function KonbiniSimulator() {
                 id: Date.now().toString() + 'c',
                 role: 'clerk',
                 text: 'ありがとうございます。またお越しください！',
-                translation: 'Thank you very much. Please come again!'
+                translation: t('conversations.thankYou')
             }
             setStep(3) // End
         }
@@ -75,8 +77,8 @@ export function KonbiniSimulator() {
   return (
     <div className="py-16 max-w-4xl mx-auto px-4">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-[#1c315e] mb-2">The Konbini Simulator</h2>
-        <p className="text-gray-600">Practice your survival skills in a convenience store scenario.</p>
+        <h2 className="text-3xl font-bold text-[#1c315e] mb-2">{t("title")}</h2>
+        <p className="text-gray-600">{t("subtitle")}</p>
       </div>
 
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
@@ -92,7 +94,7 @@ export function KonbiniSimulator() {
                         onClick={startSimulation}
                         className="bg-[#227c70] text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-[#1c315e] transition-colors"
                     >
-                        Enter Konbini
+                        {t("enter")}
                     </button>
                 </div>
             )}
@@ -111,7 +113,7 @@ export function KonbiniSimulator() {
                         `}>
                             <div className="flex items-center gap-2 mb-1 opacity-75 text-xs font-bold uppercase tracking-wider">
                                 {msg.role === 'clerk' ? <Store className="w-3 h-3" /> : <User className="w-3 h-3" />}
-                                {msg.role === 'clerk' ? 'Clerk' : 'You'}
+                                {msg.role === 'clerk' ? t('roles.clerk') : t('roles.user')}
                             </div>
                             <p className="text-lg font-bold">{msg.text}</p>
                             {msg.translation && (
@@ -129,26 +131,26 @@ export function KonbiniSimulator() {
         <div className="p-4 bg-gray-100 border-t border-gray-200 min-h-[100px] flex items-center justify-center">
              {step === 1 && (
                  <button
-                    onClick={() => handleUserAction('nod', '(Silently nods)', 'Action')}
+                    onClick={() => handleUserAction('nod', '(Silently nods)', 'nod')}
                     className="bg-white border-2 border-[#1c315e] text-[#1c315e] px-6 py-3 rounded-xl font-bold hover:bg-[#1c315e] hover:text-white transition-colors"
                  >
-                    😐 Nod Silently
+                    {t("actions.nod")}
                  </button>
              )}
 
              {step === 2 && (
                  <div className="flex gap-4 flex-wrap justify-center">
                      <button
-                        onClick={() => handleUserAction('yes', 'はい、お願いします (Hai, onegaishimasu)', 'Yes, please')}
+                        onClick={() => handleUserAction('yes', 'はい、お願いします (Hai, onegaishimasu)', 'yes')}
                         className="bg-[#227c70] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#1a5f56] transition-colors"
                      >
-                        🛍️ Yes, please
+                        {t("actions.yes")}
                      </button>
                       <button
-                        onClick={() => handleUserAction('no', 'いいえ、大丈夫です (Iie, daijoubu desu)', 'No, thank you')}
+                        onClick={() => handleUserAction('no', 'いいえ、大丈夫です (Iie, daijoubu desu)', 'no')}
                         className="bg-white border-2 border-red-400 text-red-500 px-6 py-3 rounded-xl font-bold hover:bg-red-50 transition-colors"
                      >
-                        ✋ No thanks
+                        {t("actions.no")}
                      </button>
                  </div>
              )}
@@ -156,12 +158,12 @@ export function KonbiniSimulator() {
              {step === 3 && (
                  <div className="text-gray-500 font-medium flex items-center gap-2">
                      <MessageSquare className="w-4 h-4" />
-                     Mission Complete! Refresh to restart.
+                     {t("missionComplete")}
                  </div>
              )}
              
              {step === 0 && messages.length > 0 && (
-                 <p className="text-gray-400 text-sm">Waiting for response...</p>
+                 <p className="text-gray-400 text-sm">{t("waiting")}</p>
              )}
         </div>
       </div>

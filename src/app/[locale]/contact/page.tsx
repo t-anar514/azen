@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import React, { useState } from "react"
 import { Send, Mail, MapPin, Clock, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -9,6 +10,7 @@ import Map, { Marker, NavigationControl } from "react-map-gl/maplibre"
 import "maplibre-gl/dist/maplibre-gl.css"
 
 export default function ContactPage() {
+  const t = useTranslations("Contact")
   const [submitted, setSubmitted] = useState(false)
   const [formData, setFormData] = useState({ name: "", email: "", message: "" })
 
@@ -30,15 +32,15 @@ export default function ContactPage() {
           <div className="w-20 h-20 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 className="h-10 w-10 text-accent animate-bounce" />
           </div>
-          <h2 className="text-3xl font-playfair font-black text-primary mb-4">Arigato Gozaimasu!</h2>
+          <h2 className="text-3xl font-playfair font-black text-primary mb-4">{t("success.title")}</h2>
           <p className="text-primary/70 mb-8 leading-relaxed">
-            Your message has reached our Kyoto office. A member of our concierge team will get back to you within 24 hours.
+            {t("success.message")}
           </p>
           <Button 
             onClick={() => setSubmitted(false)}
             className="w-full bg-primary text-white rounded-full h-12 font-bold uppercase tracking-widest"
           >
-            Send Another Message
+            {t("success.button")}
           </Button>
         </div>
       </div>
@@ -50,8 +52,8 @@ export default function ContactPage() {
       {/* Header */}
       <section className="bg-primary pt-24 pb-16 px-4">
         <div className="container mx-auto max-w-4xl text-center">
-            <h1 className="text-5xl md:text-6xl font-playfair font-black text-secondary mb-4 italic">Let&apos;s Chat</h1>
-            <p className="text-white/60 font-sans uppercase tracking-[0.3em] text-xs">Azen Travel Concierge</p>
+            <h1 className="text-5xl md:text-6xl font-playfair font-black text-secondary mb-4 italic">{t("title")}</h1>
+            <p className="text-white/60 font-sans uppercase tracking-[0.3em] text-xs">{t("subtitle")}</p>
         </div>
       </section>
 
@@ -65,9 +67,9 @@ export default function ContactPage() {
                   <Mail className="h-6 w-6" />
                 </div>
                 <div>
-                   <h3 className="font-bold text-primary mb-1">Drop Us a Line</h3>
+                   <h3 className="font-bold text-primary mb-1">{t("info.email.title")}</h3>
                    <p className="text-primary/60 text-sm mb-2 font-mono">support@azen.travel</p>
-                   <p className="text-xs text-accent font-bold">Expect a reply within 24 hours</p>
+                   <p className="text-xs text-accent font-bold">{t("info.email.reply")}</p>
                 </div>
             </div>
 
@@ -76,9 +78,9 @@ export default function ContactPage() {
                   <MapPin className="h-6 w-6" />
                 </div>
                 <div>
-                   <h3 className="font-bold text-primary mb-1">Our Kyoto Base</h3>
-                   <p className="text-primary/60 text-sm mb-1">Nakagyo Ward, Kyoto</p>
-                   <p className="text-xs text-primary/40 uppercase tracking-widest">Kyoto 604-0000, Japan</p>
+                   <h3 className="font-bold text-primary mb-1">{t("info.address.title")}</h3>
+                   <p className="text-primary/60 text-sm mb-1">{t("info.address.city")}</p>
+                   <p className="text-xs text-primary/40 uppercase tracking-widest">{t("info.address.country")}</p>
                 </div>
             </div>
 
@@ -101,18 +103,18 @@ export default function ContactPage() {
                   </Marker>
                 </Map>
                 <div className="absolute bottom-4 left-4 p-3 bg-white/90 backdrop-blur text-primary text-[10px] font-black uppercase tracking-widest rounded-xl shadow-xl z-10 border border-primary/10">
-                    Base of Operations <span className="text-secondary ml-2 font-mono">Kyoto</span>
+                    {t("info.map")} <span className="text-secondary ml-2 font-mono">Kyoto</span>
                 </div>
             </div>
           </div>
 
           {/* Contact Form */}
           <div className="bg-card p-8 md:p-12 rounded-[2.5rem] shadow-2xl border border-secondary/10">
-             <h2 className="text-3xl font-playfair font-black text-primary mb-8">Drop us a message</h2>
+             <h2 className="text-3xl font-playfair font-black text-primary mb-8">{t("form.title")}</h2>
              <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                    <div className="space-y-2">
-                      <label className="text-[10px] uppercase tracking-widest font-black text-primary/40 ml-1">Your Name</label>
+                      <label className="text-[10px] uppercase tracking-widest font-black text-primary/40 ml-1">{t("form.name")}</label>
                       <Input 
                         required
                         value={formData.name}
@@ -122,7 +124,7 @@ export default function ContactPage() {
                       />
                    </div>
                    <div className="space-y-2">
-                      <label className="text-[10px] uppercase tracking-widest font-black text-primary/40 ml-1">Email Address</label>
+                      <label className="text-[10px] uppercase tracking-widest font-black text-primary/40 ml-1">{t("form.email")}</label>
                       <Input 
                         required
                         type="email"
@@ -135,12 +137,12 @@ export default function ContactPage() {
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-widest font-black text-primary/40 ml-1">Your Message</label>
+                  <label className="text-[10px] uppercase tracking-widest font-black text-primary/40 ml-1">{t("form.message")}</label>
                   <Textarea 
                     required
                     value={formData.message}
                     onChange={e => setFormData({...formData, message: e.target.value})}
-                    placeholder="Tell us about your Japan travel dreams..." 
+                    placeholder={t("form.messagePlaceholder")} 
                     className="rounded-[2rem] border-secondary/20 min-h-[180px] p-6 focus:ring-accent resize-none"
                   />
                 </div>
@@ -149,14 +151,14 @@ export default function ContactPage() {
                    <div className="h-6 w-12 bg-white rounded border border-secondary/20 flex items-center justify-center opacity-50 font-mono">
                       CAPTCHA
                    </div>
-                   <span>System is protected by cloud security. Humans only please.</span>
+                   <span>{t("form.captcha")}</span>
                 </div>
 
                 <Button 
                   type="submit"
                   className="w-full bg-accent hover:bg-accent/90 text-white rounded-full h-16 font-black uppercase tracking-[0.2em] transform transition active:scale-95 shadow-xl shadow-accent/20 flex gap-3"
                 >
-                   <Send className="h-5 w-5" /> Send Message
+                   <Send className="h-5 w-5" /> {t("form.submit")}
                 </Button>
              </form>
           </div>

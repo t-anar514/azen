@@ -2,7 +2,6 @@ export interface HackStep {
   step: number;
   title: string;
   text: string;
-  img: string;
 }
 
 export interface Hack {
@@ -19,121 +18,83 @@ export interface Hack {
 
 export const HACKS: Hack[] = [
   {
+    id: "suica-setup",
+    title: "Mobile Suica Mastery",
+    category: "Transport",
+    summary: "Skip queues and handle payments with your phone.",
+    coverImage: "https://newsdig.ismcdn.jp/mwimgs/6/f/-/img_6f00f9238ad2d367346f77a7a5945270157032.jpg",
+    steps: [
+      { step: 1, title: "Open Apple Wallet", text: "Tap the '+' icon to start." },
+      { step: 2, title: "Select Transit Card", text: "Search for Suica or PASMO." },
+      { step: 3, title: "Load Funds", text: "Use Mastercard/Amex for initial balance." },
+      { step: 4, title: "Enable Express Mode", text: "No FaceID needed for tapping." },
+      { step: 5, title: "Tap to Go", text: "Hover near the blue IC reader." }
+    ],
+    proTip: "If your foreign card fails, charge with cash at 7-Eleven ATMs.",
+    relatedIds: ["luggage-forwarding", "konbini-mastery"]
+  },
+  {
     id: "luggage-forwarding",
     title: "Hands-Free Travel (Takkyubin)",
     category: "Logistics",
-    summary: "Ship your suitcases from the airport to your hotel for under $20 and travel light.",
-    coverImage: "https://images.unsplash.com/photo-1563911302283-d2bc129e7570?auto=format&fit=crop&q=80&w=2070",
+    summary: "Send bags between hotels so you can travel light.",
+    coverImage: "https://www.kuronekoyamato.co.jp/ytc/en/send/services/same-day-delivery/img/index_h01.png",
     steps: [
-      { 
-        step: 1, 
-        title: "Find the Counter",
-        text: "Look for the GPA, Yamato (Kuroneko), or Hands-Free Travel counter at the airport arrival hall.", 
-        img: "https://images.unsplash.com/photo-1542296332-2e4473faf563?auto=format&fit=crop&q=80&w=2070" 
-      },
-      { 
-        step: 2, 
-        title: "Fill the Waybill",
-        text: "Fill out the blue waybill with your destination hotel's address and phone number. Keep the tracking slip.", 
-        img: "https://images.unsplash.com/photo-1512418490979-9179599339e0?auto=format&fit=crop&q=80&w=2070" 
-      }
+      { step: 1, title: "Pack Early", text: "Prepare the night before checkout." },
+      { step: 2, title: "Visit Front Desk", text: "Ask for a Green Waybill (Prepaid)." },
+      { step: 3, title: "Fill Details", text: "Fill 'To' address and delivery date." },
+      { step: 4, title: "Pay & Handover", text: "Fee is usually ¥2,000–¥3,000." },
+      { step: 5, title: "Receive", text: "Bags wait in your next hotel room." }
     ],
-    proTip: "Most hotels can also ship your bags back to the airport when you leave! Just ask at the front desk 24 hours before your flight.",
-    relatedIds: ["suica-wallet", "pocket-wifi"]
+    proTip: "Airport Deadline: Send 2-3 days before your flight departure.",
+    relatedIds: ["suica-setup", "shinkansen-baggage"]
   },
   {
-    id: "suica-wallet",
-    title: "The IC Card Shortcut",
-    category: "Transport",
-    summary: "Add a Suica or Pasmo to your Apple/Google Wallet for seamless transit without physical tickets.",
-    coverImage: "https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?auto=format&fit=crop&q=80&w=2006",
-    steps: [
-      { 
-        step: 1, 
-        title: "Open Wallet App",
-        text: "Open the Apple Wallet or Google Pay app on your device and tap the '+' button.", 
-        img: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&q=80&w=2074" 
-      },
-      { 
-        step: 2, 
-        title: "Select Transit Card",
-        text: "Choose 'Transit Card' and search for 'Suica' or 'Pasmo'. You can create a new card instantly.", 
-        img: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&q=80&w=2070" 
-      }
-    ],
-    proTip: "You don't even need to wake your phone or use FaceID/TouchID if you set it as your 'Express Transit' card.",
-    relatedIds: ["luggage-forwarding", "trash-strategy"]
-  },
-  {
-    id: "konbini-services",
+    id: "konbini-mastery",
     title: "Mastering the Konbini",
     category: "Food",
-    summary: "Use 'Loppi' machines for museum tickets, print documents, or ship packages from any convenience store.",
-    coverImage: "https://images.unsplash.com/photo-1580655653885-65763b2597ad?auto=format&fit=crop&q=80&w=2070",
+    summary: "Konbini are 24/7 hubs for food, cash, and services.",
+    coverImage: "https://learnjapanese123.com/wp-content/uploads/2019/07/conbini-tips-blog-thumbnail.jpg",
     steps: [
-      { 
-        step: 1, 
-        title: "Identify the Machine",
-        text: "Locate the red 'Loppi' machine (Lawson/FamilyMart) or the multi-function copier (7-Eleven).", 
-        img: "https://images.unsplash.com/photo-1604719312563-8912e9223c6a?auto=format&fit=crop&q=80&w=1974" 
-      },
-      { 
-        step: 2, 
-        title: "Ticket Selection",
-        text: "Select 'Tickets' from the menu. Most machines have an English button for easier navigation.", 
-        img: "https://images.unsplash.com/photo-1533923156502-be31530547c4?auto=format&fit=crop&q=80&w=1974" 
-      }
+      { step: 1, title: "ATMs", text: "Use 7-Eleven for international cards." },
+      { step: 2, title: "Food Heating", text: "Clerk will offer to heat your bento." },
+      { step: 3, title: "Trash Separation", text: "Sort bottles from burnables." },
+      { step: 4, title: "Ticket Machines", text: "Use copy machines for events/Disney." },
+      { step: 5, title: "Age Verification", text: "Tap 'Yes' on screen for alcohol." }
     ],
-    proTip: "Ghibli Museum tickets often sell out months in advance. The Loppi machine is your best bet for last-minute cancellations.",
-    relatedIds: ["trash-strategy", "luggage-forwarding"]
+    proTip: "Show QR codes to staff if machine menus are too complex.",
+    relatedIds: ["trash-tactics", "suica-setup"]
   },
   {
-    id: "trash-strategy",
-    title: "The 'Trash' Strategy",
+    id: "shinkansen-baggage",
+    title: "Bullet Train Baggage",
+    category: "Transport",
+    summary: "SmartEx booking and oversized baggage rules.",
+    coverImage: "https://images.travelandleisureasia.com/wp-content/uploads/sites/5/2024/01/24163511/shinkansens-japan.jpeg",
+    steps: [
+      { step: 1, title: "Download SmartEx", text: "Official app for Shinkansen booking." },
+      { step: 2, title: "Measure Luggage", text: "160cm-250cm total is 'Oversized'." },
+      { step: 3, title: "Book Seat Area", text: "Select last row with storage." },
+      { step: 4, title: "Tap Through", text: "Link ticket to your phone/IC card." },
+      { step: 5, title: "Stow Correctly", text: "Place bag in reserved space." }
+    ],
+    proTip: "Unauthorized oversized bags incur ¥1,000 fine and moving cars.",
+    relatedIds: ["luggage-forwarding", "suica-setup"]
+  },
+  {
+    id: "trash-tactics",
+    title: "Urban Trash Tactics",
     category: "Etiquette",
-    summary: "Navigate Japan with zero public trash cans by knowing exactly where to look.",
-    coverImage: "https://images.unsplash.com/photo-1526951456023-1d041300977d?auto=format&fit=crop&q=80&w=2070",
+    summary: "Public bins are rare. Know how to manage your waste.",
+    coverImage: "https://rimage.gnst.jp/livejapan.com/public/article/detail/a/00/02/a0002380/img/basic/a0002380_main.jpg",
     steps: [
-      { 
-        step: 1, 
-        title: "Vending Machines",
-        text: "Look for small recycling bins next to every vending machine. They usually take bottles and cans only.", 
-        img: "https://images.unsplash.com/photo-1533446416143-690a98f795db?auto=format&fit=crop&q=80&w=1974" 
-      },
-      { 
-        step: 2, 
-        title: "Konbini Bins",
-        text: "Convenience stores always have trash bins near the entrance or inside. Use them after you finish your snack.", 
-        img: "https://images.unsplash.com/photo-1604719312563-8912e9223c6a?auto=format&fit=crop&q=80&w=1974" 
-      }
+      { step: 1, title: "Carry a Bag", text: "Keep a small plastic bag for personal trash." },
+      { step: 2, title: "Eat at Source", text: "Return wrappers to the food vendor." },
+      { step: 3, title: "Vending Machine Bins", text: "For bottles/cans ONLY. Don't stuff paper." },
+      { step: 4, title: "Spot Real Bins", text: "Found at Konbini and train platforms." },
+      { step: 5, title: "Hotel Drop-off", text: "Clear your daily bag back at the hotel." }
     ],
-    proTip: "Carry a small 'trash bag' (a plastic bag from a konbini) in your backpack to store garbage until you reach your hotel.",
-    relatedIds: ["suica-wallet", "konbini-services"]
-  },
-  {
-    id: "h1",
-    title: "JR Pass vs. Single Tickets",
-    category: "Money",
-    summary: "The JR Pass price increased in 2023. Unless you are traveling long distances daily, single tickets or regional passes are often cheaper.",
-    coverImage: "https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&q=80&w=2070",
-    steps: [
-      { step: 1, title: "Check Routes", text: "Calculate your planned shinkansen trips.", img: "https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&q=80&w=2070" }
-    ],
-    proTip: "Use a JR Pass calculator online before you buy.",
-    relatedIds: ["suica-wallet"],
-    trapAlternative: null
-  },
-  {
-    id: "h2",
-    title: "Robot Restaurant",
-    category: "Tourist Trap",
-    summary: "Often cited as overpriced and lacking authentic culture.",
-    coverImage: "https://images.unsplash.com/photo-1555681962-37bd1179727a?auto=format&fit=crop&q=80&w=2070",
-    steps: [
-      { step: 1, title: "Alternative Options", text: "Consider traditional performances instead.", img: "https://images.unsplash.com/photo-1555681962-37bd1179727a?auto=format&fit=crop&q=80&w=2070" }
-    ],
-    proTip: "Authentic culture is often found in small neighborhood shrines.",
-    relatedIds: ["konbini-services"],
-    trapAlternative: "Visit a local Kabuki show or a themed cafe in Akihabara."
+    proTip: "Round holes in bins are for recyclables only; don't block them.",
+    relatedIds: ["konbini-mastery", "suica-setup"]
   }
 ];

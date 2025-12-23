@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { Star, CheckCircle2, PlayCircle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -29,6 +30,8 @@ interface GuideProps {
 }
 
 export function GuideCard({ guide }: GuideProps) {
+  const t = useTranslations("Guides.card")
+  const tData = useTranslations("Data.Guides")
   const isYouTube = guide.videoUrl?.includes("youtube.com") || guide.videoUrl?.includes("youtu.be")
 
   return (
@@ -67,7 +70,7 @@ export function GuideCard({ guide }: GuideProps) {
                             />
                         )
                     ) : (
-                        <p>No introduction video available for {guide.name}.</p>
+                        <p>{t("noVideo", { name: guide.name })}</p>
                     )}
                  </div>
             </DialogContent>
@@ -92,16 +95,18 @@ export function GuideCard({ guide }: GuideProps) {
                 </div>
                 <div className="text-right">
                     <div className="text-lg font-bold">¥{guide.price}</div>
-                    <div className="text-xs text-muted-foreground">/hour</div>
+                    <div className="text-xs text-muted-foreground">/{t("hour")}</div>
                 </div>
             </div>
 
-            <p className="mt-2 text-muted-foreground text-sm line-clamp-2 italic">&quot;{guide.bio}&quot;</p>
+            <p className="mt-2 text-muted-foreground text-sm line-clamp-2 italic">
+              &quot;{tData(`${guide.id}.bio`)}&quot;
+            </p>
             
             <div className="flex flex-wrap gap-2 mt-3">
                 {guide.tags.map((tag) => (
                     <Badge key={tag} variant="secondary" className="text-xs">
-                        {tag}
+                        {tData(`${guide.id}.tags.${tag}`)}
                     </Badge>
                 ))}
             </div>
@@ -110,9 +115,9 @@ export function GuideCard({ guide }: GuideProps) {
         <div className="mt-4 flex gap-3">
              <BookingModal 
                 guideName={guide.name} 
-                trigger={<Button className="flex-1">Book Now</Button>}
+                trigger={<Button className="flex-1">{t("bookNow")}</Button>}
              />
-             <Button variant="outline" className="flex-1">Message</Button>
+             <Button variant="outline" className="flex-1">{t("message")}</Button>
         </div>
       </div>
     </Card>

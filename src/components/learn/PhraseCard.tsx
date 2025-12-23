@@ -5,31 +5,20 @@ import { motion } from "framer-motion"
 import { Volume2, Check } from "lucide-react"
 import { Phrase } from "@/data/japanese-course"
 import { useTTS } from "@/hooks/use-tts"
+import { useTranslations } from "next-intl"
 
 interface PhraseCardProps {
   phrase: Phrase
+  collectionId: string
   onToggleLearned: (isLearned: boolean) => void
   isLearned: boolean
 }
 
-export function PhraseCard({ phrase, onToggleLearned, isLearned }: PhraseCardProps) {
+export function PhraseCard({ phrase, collectionId, onToggleLearned, isLearned }: PhraseCardProps) {
+  const t = useTranslations(`Learn.phrasebook.collections.${collectionId}.phrases.${phrase.id}`);
+  const tCommon = useTranslations("Learn.phrasebook");
   const { speak, isSpeaking } = useTTS()
-  // Local state to track if *this* specific card is the one playing, 
-  // since useTTS is global/hook level but doesn't tell us WHICH text is playing easily without more logic.
-  // actually, since we instantiate useTTS per component, isSpeaking is unique to this instance if we don't share context.
-  // Wait, speech synthesis is global. "isSpeaking" from the hook relies on window.speechSynthesis.speaking which is global.
-  // So if I play one card, ALL cards might show "playing" if I'm not careful.
-  
-  // Revised approach: The hook provided uses utterance.onstart/onend.
-  // This instance of the hook creates a unique utterance. 
-  // However, window.speechSynthesis is a singleton.
-  // But the event listeners are attached to the *utterance* instance.
-  // So 'isSpeaking' in the hook should correctly track only the utterance created by *that* hook instance.
-  
-  // Let's verify hook logic... 
-  // YES: utterance.onstart sets state. This state is local to the hook instance.
-  // So it should work fine per card!
-  
+
   const handlePlay = () => {
     speak(phrase.japanese)
   }
@@ -66,12 +55,12 @@ export function PhraseCard({ phrase, onToggleLearned, isLearned }: PhraseCardPro
       </div>
 
       <div className="flex-1">
-        <p className="text-lg text-gray-800 font-medium mb-2">{phrase.english}</p>
+        <p className="text-lg text-gray-800 font-medium mb-2">{t("english")}</p>
         
         {phrase.context && (
           <div className="inline-flex items-center gap-2 bg-[#88a47c] text-white text-xs font-bold px-3 py-1 rounded-full">
             <span>Zen Tip</span>
-            <span className="font-normal opacity-90 border-l border-white/30 pl-2 ml-1">{phrase.context}</span>
+            <span className="font-normal opacity-90 border-l border-white/30 pl-2 ml-1">{t("context")}</span>
           </div>
         )}
       </div>
@@ -88,10 +77,11 @@ export function PhraseCard({ phrase, onToggleLearned, isLearned }: PhraseCardPro
               <Check className="w-4 h-4" />
             </div>
             <span className={`text-sm font-medium transition-colors ${isLearned ? "text-[#227c70]" : "text-gray-500 group-hover:text-[#227c70]"}`}>
-              {isLearned ? "Learned" : "Mark as learned"}
+              {isLearned ? tCommon("learnedState.learned") : tCommon("learnedState.markAsLearned")}
             </span>
           </label>
        </div>
     </motion.div>
   )
 }
+

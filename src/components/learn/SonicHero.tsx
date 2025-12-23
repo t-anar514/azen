@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { motion } from "framer-motion"
 import { Volume2 } from "lucide-react"
 import { useTTS } from "@/hooks/use-tts"
+import { useTranslations } from "next-intl"
 
 const vowels = [
   { char: "あ", romaji: "A", color: "bg-red-500" },
@@ -14,6 +15,7 @@ const vowels = [
 ]
 
 export function SonicHero() {
+  const t = useTranslations("Learn.hero");
   const [activeVowel, setActiveVowel] = useState<string | null>(null)
   const { speak } = useTTS()
 
@@ -30,9 +32,9 @@ export function SonicHero() {
         animate={{ opacity: 1, y: 0 }}
         className="text-4xl md:text-6xl font-bold text-[#1c315e] mb-2"
       >
-        Master the Sounds of Japan.
+        {t("title")}
       </motion.h1>
-      <p className="text-lg text-gray-600 mb-12">The Soundscape</p>
+      <p className="text-lg text-gray-600 mb-12">{t("subtitle")}</p>
 
       <div className="flex flex-wrap justify-center gap-4 md:gap-8 px-4">
         {vowels.map((vowel) => (
@@ -65,3 +67,4 @@ export function SonicHero() {
     </section>
   )
 }
+

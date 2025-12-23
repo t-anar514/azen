@@ -5,18 +5,29 @@ import { Timeline, ItemType } from "@/components/planner/Timeline"
 import { InteractiveMap } from "@/components/planner/InteractiveMap"
 import { CostFooter } from "@/components/planner/CostFooter"
 import { arrayMove } from "@dnd-kit/sortable"
-
-const INITIAL_ITEMS: ItemType[] = [
-  { id: "1", title: "Arrival at Narita", date: "2025-12-19", type: "flight", location: "Narita Airport", cost: 0, lat: 35.7720, lng: 140.3929 },
-  { id: "2", title: "Check-in at Ryokan", date: "2025-12-19", type: "hotel", location: "Asakusa View Hotel", cost: 25000, lat: 35.7145, lng: 139.7925 },
-  { id: "3", title: "Visit Senso-ji", date: "2025-12-19", type: "spot", location: "Asakusa Temple", cost: 0, lat: 35.7148, lng: 139.7967 },
-]
+import { useTranslations } from "next-intl"
 
 export default function PlannerPage() {
-  const [items, setItems] = useState<ItemType[]>(INITIAL_ITEMS)
-  const [itineraryTitle, setItineraryTitle] = useState("Itinerary Timeline")
+  const t = useTranslations("Planner")
+  
+  const [items, setItems] = useState<ItemType[]>([])
+  const [itineraryTitle, setItineraryTitle] = useState("")
   const [totalCost, setTotalCost] = useState(25000)
   const [hoveredId, setHoveredId] = useState<string | null>(null)
+  
+  // Initialize with localized data only on first render if no storage
+  useEffect(() => {
+    setItineraryTitle(t("defaultTitle"))
+    
+    // We only set initial items if we haven't loaded anything yet
+    // This effect acts as initialization logic
+    const initialItems: ItemType[] = [
+      { id: "1", title: t("item.initialItems.arrival"), date: "2025-12-19", type: "flight", location: t("item.initialItemsLocations.arrival"), cost: 0, lat: 35.7720, lng: 140.3929 },
+      { id: "2", title: t("item.initialItems.checkIn"), date: "2025-12-19", type: "hotel", location: t("item.initialItemsLocations.checkIn"), cost: 25000, lat: 35.7145, lng: 139.7925 },
+      { id: "3", title: t("item.initialItems.sensoji"), date: "2025-12-19", type: "spot", location: t("item.initialItemsLocations.sensoji"), cost: 0, lat: 35.7148, lng: 139.7967 },
+    ]
+    setItems(initialItems)
+  }, [t])
 
   const calculateTotal = useCallback((updatedItems: ItemType[]) => {
     setTotalCost(updatedItems.reduce((sum, item) => sum + item.cost, 0))
@@ -45,7 +56,7 @@ export default function PlannerPage() {
   const saveItinerary = () => {
     localStorage.setItem("azen_itinerary_items", JSON.stringify(items))
     localStorage.setItem("azen_itinerary_title", itineraryTitle)
-    console.log("Itinerary saved to your browser!")
+    console.log(t("saved"))
   }
 
   const handleUpdateItems = useCallback((newItems: ItemType[]) => {
@@ -62,10 +73,10 @@ export default function PlannerPage() {
   const addItem = () => {
     const newItem: ItemType = {
         id: `item-${Date.now()}`,
-        title: "New Activity",
+        title: t("newActivity"),
         date: new Date().toISOString().split('T')[0],
         type: "spot",
-        location: "Select Location",
+        location: t("selectLocation"),
         cost: 0
     }
     const updatedItems = [...items, newItem]

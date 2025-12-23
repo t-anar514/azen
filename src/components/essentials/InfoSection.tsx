@@ -8,9 +8,10 @@ interface InfoSectionProps {
   imageUrl: string;
   imageAlt: string;
   reverse?: boolean;
+  children?: React.ReactNode;
 }
 
-export const InfoSection = ({ title, text, imageUrl, imageAlt, reverse = false }: InfoSectionProps) => {
+export const InfoSection = ({ title, text, imageUrl, imageAlt, reverse = false, children }: InfoSectionProps) => {
   return (
     <div className={`flex flex-col ${reverse ? 'md:flex-row-reverse' : 'md:flex-row'} gap-8 items-center py-8`}>
       <div className="flex-1 space-y-4">
@@ -18,6 +19,7 @@ export const InfoSection = ({ title, text, imageUrl, imageAlt, reverse = false }
         <p className="text-foreground/80 leading-relaxed text-lg">
           {text}
         </p>
+        {children}
       </div>
       <div className="flex-1 w-full">
         <motion.div 

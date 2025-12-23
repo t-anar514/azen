@@ -1,32 +1,35 @@
-import Link from "next/link"
+import { Link } from "@/i18n/routing"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Map } from "lucide-react"
 
 export function Hero() {
+  const t = useTranslations("Hero")
+
   return (
     <section className="relative flex flex-col items-center justify-center py-20 md:py-32 text-center bg-gradient-to-b from-primary/5 to-transparent overflow-hidden">
       <div className="container relative z-10 px-4 md:px-6">
         <div className="inline-block rounded-full bg-secondary/10 px-3 py-1 text-sm text-secondary font-medium mb-6 animate-fade-in-up">
-          New: AI-Powered Itinerary Builder
+          {t("badge")}
         </div>
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-primary mb-8 animate-fade-in-up delay-100 font-serif">
-          Don&apos;t Just Visit Japan. <br/>
+          {t("title")} <br/>
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary italic pr-2">
-            Understand It.
+            {t("subtitle")}
           </span>
         </h1>
         <p className="max-w-[700px] mx-auto text-lg md:text-xl text-muted-foreground mb-8 animate-fade-in-up delay-200">
-          Avoid tourist traps. Discover hidden gems. Travel like a local with Azen&apos;s curated guides and smart itinerary planner.
+          {t("description")}
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up delay-300">
           <Button asChild size="lg" className="rounded-full h-12 px-8 text-lg">
             <Link href="/guides">
-              Find a Local Guide <ArrowRight className="ml-2 h-4 w-4" />
+              {t("findGuide")} <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
           <Button asChild variant="outline" size="lg" className="rounded-full h-12 px-8 text-lg">
             <Link href="/planner">
-              <Map className="mr-2 h-4 w-4" /> Start Planning Free
+              <Map className="mr-2 h-4 w-4" /> {t("startPlanning")}
             </Link>
           </Button>
         </div>

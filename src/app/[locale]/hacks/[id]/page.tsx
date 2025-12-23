@@ -8,10 +8,12 @@ import { StepGuide } from "@/components/hacks/StepGuide";
 import { ProTip } from "@/components/hacks/ProTip";
 import { RelatedHacks } from "@/components/hacks/RelatedHacks";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 export default function HackDetailPage() {
   const params = useParams();
   const hack = HACKS.find((h) => h.id === params.id);
+  const tData = useTranslations("Data.Hacks");
 
   if (!hack) {
     notFound();
@@ -22,22 +24,22 @@ export default function HackDetailPage() {
   return (
     <div className="min-h-screen bg-background">
       <HackHero
-        title={hack.title}
+        title={tData(`${hack.id}.title`)}
         category={hack.category}
         coverImage={hack.coverImage}
       />
 
       <div className="max-w-4xl mx-auto px-4 py-12 md:py-20 space-y-20">
         <section>
-          <QuickFix summary={hack.summary} />
+          <QuickFix summary={tData(`${hack.id}.summary`)} />
         </section>
 
         <section>
-          <StepGuide steps={hack.steps} />
+          <StepGuide steps={hack.steps} hackId={hack.id} />
         </section>
 
         <section>
-          <ProTip text={hack.proTip} />
+          <ProTip text={tData(`${hack.id}.proTip`)} />
         </section>
 
         <section className="pt-10 border-t border-secondary/10">

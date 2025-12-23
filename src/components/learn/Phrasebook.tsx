@@ -5,8 +5,10 @@ import { motion, AnimatePresence } from "framer-motion"
 import { phraseCollections } from "@/data/japanese-course"
 import { PhraseCard } from "./PhraseCard"
 import { Sparkles, Trophy } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 export function Phrasebook() {
+  const t = useTranslations("Learn.phrasebook");
   const [activeTab, setActiveTab] = useState(0)
   const [learnedPhrases, setLearnedPhrases] = useState<Record<string, boolean>>({})
 
@@ -44,14 +46,14 @@ export function Phrasebook() {
         <div>
           <h2 className="text-3xl font-bold text-[#1c315e] flex items-center gap-2">
             <Sparkles className="text-[#227c70]" />
-            Phrasebook Collections
+            {t("title")}
           </h2>
-          <p className="text-gray-600 mt-1">Curated survival packs for your journey.</p>
+          <p className="text-gray-600 mt-1">{t("subtitle")}</p>
         </div>
         
         <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm border border-[#88a47c]/30">
           <Trophy className="w-5 h-5 text-yellow-500" />
-          <span className="font-bold text-[#1c315e]">{learnedCount} / {totalPhrases} Learned</span>
+          <span className="font-bold text-[#1c315e]">{t("learned", { learned: learnedCount, total: totalPhrases })}</span>
         </div>
       </div>
 
@@ -59,7 +61,7 @@ export function Phrasebook() {
       <div className="flex overflow-x-auto pb-4 mb-6 scrollbar-hide gap-2 md:gap-4 sticky top-20 z-30 bg-[#e6e2c3] py-2 -mx-4 px-4 md:static md:bg-transparent">
         {phraseCollections.map((collection, idx) => (
           <button
-            key={collection.title}
+            key={collection.id}
             onClick={() => setActiveTab(idx)}
             className={`
               whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-bold transition-all
@@ -68,7 +70,7 @@ export function Phrasebook() {
                 : "bg-white text-gray-600 hover:bg-white/80 hover:text-[#1c315e]"}
             `}
           >
-            {collection.title}
+            {t(`collections.${collection.id}.title`)}
           </button>
         ))}
       </div>
@@ -84,8 +86,8 @@ export function Phrasebook() {
               transition={{ duration: 0.3 }}
             >
               <div className="mb-6">
-                <h3 className="text-xl font-bold text-[#1c315e]">{currentCollection.title}</h3>
-                <p className="text-gray-600">{currentCollection.description}</p>
+                <h3 className="text-xl font-bold text-[#1c315e]">{t(`collections.${currentCollection.id}.title`)}</h3>
+                <p className="text-gray-600">{t(`collections.${currentCollection.id}.description`)}</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -95,6 +97,7 @@ export function Phrasebook() {
                     <PhraseCard 
                       key={phraseKey} 
                       phrase={phrase}
+                      collectionId={currentCollection.id}
                       isLearned={!!learnedPhrases[phraseKey]}
                       onToggleLearned={(val) => toggleLearned(phraseKey, val)}
                     />

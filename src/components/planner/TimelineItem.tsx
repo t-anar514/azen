@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl"
 import { useState, useRef, useEffect } from "react"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
@@ -30,6 +31,7 @@ interface TimelineItemProps extends ItemType {
 }
 
 export function TimelineItem({ id, title, date, type, location, cost, lat, lng, onUpdate, onDelete, onHover, onLeave }: TimelineItemProps) {
+  const t = useTranslations("Planner.item")
   const [isEditing, setIsEditing] = useState(false)
   const [editTitle, setEditTitle] = useState(title)
   const [editLocation, setEditLocation] = useState(location)
@@ -75,13 +77,12 @@ export function TimelineItem({ id, title, date, type, location, cost, lat, lng, 
   }
 
   const activityIcons: { type: ActivityType; icon: any; color: string; label: string }[] = [
-    { type: "flight", icon: Plane, color: "text-blue-500", label: "Flight" },
-    
-    { type: "spot", icon: MapPin, color: "text-red-500", label: "Shrine/Spot" },
-    { type: "food", icon: Utensils, color: "text-orange-500", label: "Food" },
-    { type: "hotel", icon: Coffee, color: "text-purple-500", label: "Hotel" },
-    { type: "shopping", icon: ShoppingBag, color: "text-pink-500", label: "Shopping" },
-    { type: "transport", icon: Train, color: "text-teal-500", label: "Transport" },
+    { type: "flight", icon: Plane, color: "text-blue-500", label: t("types.flight") },
+    { type: "spot", icon: MapPin, color: "text-red-500", label: t("types.spot") },
+    { type: "food", icon: Utensils, color: "text-orange-500", label: t("types.food") },
+    { type: "hotel", icon: Coffee, color: "text-purple-500", label: t("types.hotel") },
+    { type: "shopping", icon: ShoppingBag, color: "text-pink-500", label: t("types.shopping") },
+    { type: "transport", icon: Train, color: "text-teal-500", label: t("types.transport") },
   ]
 
   const currentIconData = activityIcons.find(a => a.type === (isEditing ? editType : type))
@@ -116,7 +117,7 @@ export function TimelineItem({ id, title, date, type, location, cost, lat, lng, 
       <div ref={setNodeRef} style={style} className="mb-4">
         <Card className="p-6 space-y-6 border-2 border-accent shadow-xl bg-card">
           <div className="flex justify-between items-center bg-muted/50 -m-6 mb-6 p-4 rounded-t-lg">
-            <h5 className="font-black uppercase tracking-widest text-xs text-primary/60">Edit Activity</h5>
+            <h5 className="font-black uppercase tracking-widest text-xs text-primary/60">{t("edit")}</h5>
             <div className="flex gap-2">
                <Button onClick={onDelete} variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10">
                  <Trash2 className="h-4 w-4" />
@@ -165,7 +166,7 @@ export function TimelineItem({ id, title, date, type, location, cost, lat, lng, 
               <Input 
                 value={editTitle} 
                 onChange={(e) => setEditTitle(e.target.value)} 
-                placeholder="Activity Title"
+                placeholder={t("titlePlaceholder")}
                 className="font-bold text-lg"
               />
               <div className="relative">
@@ -177,7 +178,7 @@ export function TimelineItem({ id, title, date, type, location, cost, lat, lng, 
                   }} 
                   onBlur={() => setTimeout(() => setShowResults(false), 200)}
                   onFocus={() => editLocation.length >= 2 && setShowResults(true)}
-                  placeholder="Search Location (e.g. Shinjuku)..."
+                  placeholder={t("locationPlaceholder")}
                   className="pr-10"
                 />
                 <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
@@ -221,12 +222,16 @@ export function TimelineItem({ id, title, date, type, location, cost, lat, lng, 
             </div>
 
             <div className="flex gap-3 pt-2">
-              <Button onClick={handleSave} className="flex-1 bg-accent text-white rounded-full font-bold uppercase tracking-wider h-12">
-                <Check className="h-4 w-4 mr-2" /> Done
-              </Button>
-              <Button onClick={handleCancel} variant="outline" className="flex-1 rounded-full font-bold uppercase tracking-wider h-12">
-                 Cancel
-              </Button>
+              <span className="flex-1">
+                <Button onClick={handleSave} className="w-full bg-accent text-white rounded-full font-bold uppercase tracking-wider h-12">
+                  <Check className="h-4 w-4 mr-2" /> {t("done")}
+                </Button>
+              </span>
+              <span className="flex-1">
+                <Button onClick={handleCancel} variant="outline" className="w-full rounded-full font-bold uppercase tracking-wider h-12">
+                   {t("cancel")}
+                </Button>
+              </span>
             </div>
           </div>
         </Card>

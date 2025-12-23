@@ -1,0 +1,790 @@
+{
+    "HomePage": {
+        "title": "Welcome to Azen",
+        "description": "Your Japan travel companion"
+    },
+    "Hero": {
+        "badge": "New: AI-Powered Itinerary Builder",
+        "title": "Don't Just Visit Japan.",
+        "subtitle": "Understand It.",
+        "description": "Avoid tourist traps. Discover hidden gems. Travel like a local with Azen's curated guides and smart itinerary planner.",
+        "findGuide": "Find a Local Guide",
+        "startPlanning": "Start Planning Free"
+    },
+    "Features": {
+        "title": "The Azen Difference",
+        "description": "Why travelers choose us over generic wikis and tourist traps.",
+        "items": {
+            "guides": {
+                "title": "Real Local Guides",
+                "description": "Connect with verified residents, not scripted tour guides. Experience the authentic culture."
+            },
+            "traps": {
+                "title": "Tourist Trap Alerts",
+                "description": "Our database warns you about overpriced spots and suggests better, quieter alternatives."
+            },
+            "savings": {
+                "title": "Smart Savings",
+                "description": "Built-in hacks and transport calculators to save you money on JR passes and entry fees."
+            }
+        }
+    },
+    "Navigation": {
+        "about": "About",
+        "contact": "Contact",
+        "essentials": "Essentials",
+        "guides": "Guides",
+        "hacks": "Hacks",
+        "learn": "Learn",
+        "planner": "Planner"
+    },
+    "Footer": {
+        "tagline": "From Chaos to Clarity. Your Zen Japan Travel Platform.",
+        "platform": "Platform",
+        "company": "Company",
+        "followUs": "Follow Us",
+        "rights": "All rights reserved.",
+        "about": "About Us",
+        "privacy": "Privacy Policy"
+    },
+    "LanguageSwitcher": {
+        "switch": "Switch Language",
+        "en": "English",
+        "mn": "Монгол"
+    },
+    "Essentials": {
+        "title": "Japan Essentials",
+        "description": "Master the logistics of travel across Japan's most iconic cities. From local transport hacks to neighborhood guides, we've got you covered.",
+        "footer": "Azen Travel Guide. All rights reserved.",
+        "exploreGuide": "Explore Guide"
+    },
+    "Guides": {
+        "title": "Find a Local Guide",
+        "subtitle": "Connect with {count} verified locals who can show you the real Japan.",
+        "filters": "Filters",
+        "filter": {
+            "location": "Location",
+            "language": "Language",
+            "specialty": "Specialty",
+            "rate": "Hourly Rate (¥)",
+            "upTo": "Up to ¥{price}",
+            "apply": "Apply Filters"
+        },
+        "card": {
+            "bookNow": "Book Now",
+            "message": "Message",
+            "hour": "hour",
+            "noVideo": "No introduction video available for {name}."
+        }
+    },
+    "Planner": {
+        "defaultTitle": "Itinerary Timeline",
+        "addActivity": "Add Activity",
+        "saveItinerary": "Save Itinerary",
+        "estimatedCost": "Estimated Trip Cost",
+        "newActivity": "New Activity",
+        "selectLocation": "Select Location",
+        "saved": "Itinerary saved to your browser!",
+        "item": {
+            "edit": "Edit Activity",
+            "titlePlaceholder": "Activity Title",
+            "locationPlaceholder": "Search Location (e.g. Shinjuku)...",
+            "done": "Done",
+            "cancel": "Cancel",
+            "types": {
+                "flight": "Flight",
+                "spot": "Shrine/Spot",
+                "food": "Food",
+                "hotel": "Hotel",
+                "shopping": "Shopping",
+                "transport": "Transport"
+            },
+            "initialItems": {
+                "arrival": "Arrival at Narita",
+                "checkIn": "Check-in at Ryokan",
+                "checkInLocation": "Asakusa View Hotel",
+                "sensoji": "Visit Senso-ji",
+                "sensojiLocation": "Asakusa Temple"
+            },
+            "initialItemsLocations": {
+                "arrival": "Narita Airport",
+                "checkIn": "Asakusa View Hotel",
+                "sensoji": "Asakusa Temple"
+            }
+        }
+    },
+    "Hacks": {
+        "title": "Japan Hacks & Knowledge Hub",
+        "description": "Don't learn these lessons the hard way. Browse our database of cost-saving tips, logistical shortcuts, and tourist trap warnings.",
+        "trap": {
+            "alternative": "Azen Alternative:",
+            "readMore": "Read Full Analysis"
+        }
+    },
+    "Privacy": {
+        "title": "Security & Transparency",
+        "subtitle": "How Azen protects your journey",
+        "shield": "We never sell your personal data. Period.",
+        "lastUpdated": "Last updated: December 19, 2025",
+        "sections": {
+            "collection": {
+                "title": "Data Collection & Usage",
+                "summary": "Understanding what we collect and why we need it for your Japan trip.",
+                "content": "<p>To provide a seamless travel experience, we collect specific information including:</p><ul><li><strong>Identity Information:</strong> We store your name and email address when you create an itinerary or contact us.</li><li><strong>Identification (Optional):</strong> For specific guide bookings or transport services, we may require passport details as mandated by Japanese law for short-term visitors.</li><li><strong>Travel Preferences:</strong> Interests, dietary restrictions, and physical accessibility needs to tailor your recommendations.</li></ul><p>This data is used exclusively to optimize your itinerary and facilitate bookings with local partners.</p>"
+            },
+            "thirdParty": {
+                "title": "Third-Party Sharing",
+                "summary": "How we communicate with local guides and service providers.",
+                "content": "<p>Azen acts as a bridge. To fulfill your requests, we share limited data with:</p><ul><li><strong>Local Guides:</strong> Verified guides receive your name, travel dates, and preferred activities to prepare for your experience.</li><li><strong>Transport & Essentials:</strong> When you book eSIMs or JR Passes through our partners, necessary shipping and identification data is transmitted securely.</li></ul><p>All partners are bound by confidentiality agreements that align with our strict privacy standards.</p>"
+            },
+            "ai": {
+                "title": "AI & Data Processing",
+                "summary": "Transparency regarding our itinerary generation algorithms.",
+                "content": "<p>Our platform utilizes localized AI models to generate travel suggestions.</p><p>Your trip preferences are processed by our 'Zen Engine' to find the most efficient and culturally authentic routes. This data is anonymized before being used to train our general recommendation systems to protect your individual identity.</p>"
+            },
+            "rights": {
+                "title": "Your Rights & Data Portability",
+                "summary": "How you can control, download, or delete your information.",
+                "content": "<p>You have full control over your digital footprint on Azen:</p><ul><li><strong>Right to Deletion:</strong> You can request immediate deletion of your entire account and all associated itineraries by emailing <strong>privacy@azen.travel</strong> or using the 'Clear All Data' button in your dashboard.</li><li><strong>Data Export:</strong> You can download your itineraries in PDF or JSON format at any time.</li></ul><p>We process all deletion requests within 48 hours.</p>"
+            },
+            "contact": {
+                "title": "Contact Information",
+                "summary": "Direct access to our privacy officer in Kyoto.",
+                "content": "<p>If you have questions about our data practices, please reach out to our dedicated privacy concierge:</p><p class='contact'>Azen Security Team<br />privacy@azen.travel<br />Nakagyo Ward, Kyoto, Japan</p>"
+            }
+        }
+    },
+    "Contact": {
+        "title": "Let's Chat",
+        "subtitle": "Azen Travel Concierge",
+        "success": {
+            "title": "Arigato Gozaimasu!",
+            "message": "Your message has reached our Kyoto office. A member of our concierge team will get back to you within 24 hours.",
+            "button": "Send Another Message"
+        },
+        "info": {
+            "email": {
+                "title": "Drop Us a Line",
+                "reply": "Expect a reply within 24 hours"
+            },
+            "address": {
+                "title": "Our Kyoto Base",
+                "city": "Nakagyo Ward, Kyoto",
+                "country": "Kyoto 604-0000, Japan"
+            },
+            "map": "Base of Operations"
+        },
+        "form": {
+            "title": "Drop us a message",
+            "name": "Your Name",
+            "email": "Email Address",
+            "message": "Your Message",
+            "messagePlaceholder": "Tell us about your Japan travel dreams...",
+            "captcha": "System is protected by cloud security. Humans only please.",
+            "submit": "Send Message"
+        }
+    },
+    "About": {
+        "title": "Our Mission in Japan",
+        "subtitle": "\"Eliminating the friction between the traveler and the soul of Japan.\"",
+        "why": {
+            "title": "Why Azen Exists",
+            "p1": "Japan is a land of beautiful complexity. From the intricate etiquette of tea ceremonies to the maze-like streets of Shinjuku, it's easy for travelers to feel overwhelmed.",
+            "p2": "Most travel platforms provide generic \"top 10\" lists that lead to crowded tourist traps. We believe there's a better way to experience the archipelago.",
+            "quote": "Azen was built to bring \"Zen\" to your \"A to Z\" travel planning. We combine cutting-edge technology with deep-rooted local wisdom."
+        },
+        "values": {
+            "title": "Our Shared Values",
+            "items": {
+                "authenticity": {
+                    "title": "Authenticity",
+                    "desc": "No tourist traps. We only recommend places we and our local guides truly love."
+                },
+                "transparency": {
+                    "title": "Transparency",
+                    "desc": "Clear pricing, honest reviews, and no hidden agendas. Trust is our foundation."
+                },
+                "expertise": {
+                    "title": "Local Expertise",
+                    "desc": "Our knowledge comes from streets, not just search engines. We live where you travel."
+                }
+            }
+        },
+        "team": {
+            "title": "Meet the Concierges",
+            "subtitle": "The faces behind the screen",
+            "members": {
+                "takashi": {
+                    "role": "Local Expert & Founder",
+                    "bio": "Born and raised in Kyoto, Takashi spent 15 years in hospitality before founding Azen."
+                },
+                "elena": {
+                    "role": "Experience Specialist",
+                    "bio": "A culture enthusiast who specializes in finding hidden culinary gems across Tokyo."
+                },
+                "hiroki": {
+                    "role": "Technology Lead",
+                    "bio": "Bridging the gap between traditional wisdom and modern travel tech."
+                }
+            }
+        },
+        "footer": {
+            "verified": "Verified Local Guides only",
+            "quote": "\"We don't just book trips. We build connections that last a lifetime.\""
+        }
+    },
+    "Data": {
+        "Cities": {
+            "tokyo": {
+                "name": "Tokyo",
+                "teaser": "The high-velocity metropolis where the future intersects with tradition.",
+                "introduction": "Tokyo is not merely a city but a cluster of distinct villages connected by the world’s most complex train network. From the neon-drenched skyscrapers of Shinjuku to the quiet, incense-filled alleys of Asakusa, the energy here is kinetic yet impeccably organized. It is a city that demands participation, rewarding those who explore its vertical depth and endless labyrinths with efficiency, safety, and sensory wonder.",
+                "history": "Originally a fishing village named Edo, the city became Japan's political center in 1603. Following the Meiji Restoration in 1868, it was renamed Tokyo ('Eastern Capital'). Despite being leveled by the 1923 Great Kanto Earthquake and WWII bombings, Tokyo has consistently reborn itself, resulting in a dynamic, ever-changing skyline that values modernization over static preservation.",
+                "culture": "Tokyo's vibe is defined by 'organized chaos' and a rigorous social contract. Silence on trains is a critical norm, and pedestrians strictly stand on the left of escalators. While reserved by day, festivals like Sanja Matsuri reveal a wild, vibrant side where portable shrines are jostled to amuse the spirits.",
+                "expenses": "Tokyo remains the premium entry point to Japan. While mid-range hotel rates have surged due to tourism, food costs remain elastic—offering everything from ¥2,000 konbini meals to ¥30,000 omakase dinners. Pro-tip: 'Lunch tokuten' sets offer high-end culinary experiences at mid-range prices.",
+                "climate": "The 'urban heat island' effect makes Tokyo summers intensely humid. Winter is remarkably dry and sunny, offering the best visibility for seeing Mount Fuji. Spring cherry blossoms bring crowds, while autumn goldens the ginkgo avenues of Meiji Jingu.",
+                "gettingAround": "Tokyo is a train city. The JR Yamanote Line connects major hubs, but the network of multiple subway operators requires an IC Card for seamless travel. Note that 'Rapid' trains skip minor stations, which is crucial for navigation.",
+                "vibe": "A high-velocity cluster of urban villages where precision meets neon-lit energy.",
+                "districts": {
+                    "shinjuku": {
+                        "name": "Shinjuku",
+                        "description": "The chaotic, neon-lit heart of Tokyo. Home to the world's busiest station, towering skyscrapers, and the atmospheric alleyways of Golden Gai."
+                    },
+                    "shibuya": {
+                        "name": "Shibuya",
+                        "description": "The youth epicenter famous for the Scramble Crossing, trendy boutiques, and panoramic views from Shibuya Sky."
+                    },
+                    "ginza": {
+                        "name": "Ginza",
+                        "description": "Tokyo's upscale boulevards and luxury department stores. A 'Pedestrian Paradise' on weekends when the main street closes to traffic."
+                    },
+                    "akihabara": {
+                        "name": "Akihabara",
+                        "description": "Global headquarters for Otaku culture, filled with electronics, retro games, and vibrant anime facades."
+                    },
+                    "asakusa": {
+                        "name": "Asakusa",
+                        "description": "The spiritual soul of 'Shitamachi', centered around Senso-ji Temple and the historic Nakamise-dori shopping street."
+                    }
+                }
+            },
+            "kyoto": {
+                "name": "Kyoto",
+                "teaser": "The spiritual soul of Japan, defined by 2,000 temples and Zen serenity.",
+                "introduction": "Kyoto is the spiritual and historical heart of Japan, serving as the Imperial capital for over 1,000 years. Unlike the vertical sprawl of Tokyo, Kyoto is a grid of low-rise wooden heritage and Zen gardens. It moves at a slower, more deliberate pace, emphasizing tradition, seasonality, and the fleeting beauty of nature.",
+                "history": "Known as Heian-kyo, Kyoto was spared from WWII bombings due to its cultural significance, preserving its ancient street grid and machiya townhouses. It remains the best example of pre-modern Japanese urbanism, proud of its millennium-long tenure as the Imperial seat.",
+                "culture": "Kyoto culture is 'High Context' and steeped in elegance (miyabi). Gion is a workplace for geisha where photography is restricted to protect local traditions. The local dialect, Kyoto-ben, reflects the city's polite and indirect social nuances.",
+                "expenses": "Kyoto's pricing spikes during Sakura and Autumn seasons. While luxury Ryokans can be expensive, budget-friendly 'Obanzai' home-style cooking offers a taste of traditional hospitality. Busses are affordable but often overcrowded.",
+                "climate": "Located in a basin, Kyoto traps heat in summer and cold in winter. Snow on the Golden Pavilion is a rare bucket-list sight, while the stifling summer humidity makes Gion Matsuri physically demanding.",
+                "gettingAround": "Kyoto is a bus city struggling with congestion. Use trains to get close to your destination, then switch to walking or cycling. Regional travel to Osaka via Hankyu or Keihan 'Limited Express' trains requires no surcharge.",
+                "vibe": "A deliberate, aesthetic grid of low-rise heritage where time slows to the pace of a tea ceremony.",
+                "districts": {
+                    "southern-higashiyama": {
+                        "name": "Southern Higashiyama",
+                        "description": "The definitive image of old Kyoto, featuring preserved machiya houses and sloped cobblestone streets leading to Kiyomizu-dera."
+                    },
+                    "gion": {
+                        "name": "Gion",
+                        "description": "The famous Geisha district of exclusive tea houses and willow-lined canals, illuminated by lanterns at night."
+                    },
+                    "arashiyama": {
+                        "name": "Arashiyama",
+                        "description": "A scenic nature retreat featuring the iconic Bamboo Grove, Togetsukyo Bridge, and tranquil Zen temples."
+                    },
+                    "northern-higashiyama": {
+                        "name": "Northern Higashiyama",
+                        "description": "A contemplative area home to the Silver Pavilion and the Philosopher's Path, centered on Zen aesthetics."
+                    },
+                    "downtown": {
+                        "name": "Downtown Kyoto",
+                        "description": "The commercial hub featuring Nishiki Market ('Kyoto's Kitchen') and the atmospheric riverside dining of Pontocho."
+                    },
+                    "center": {
+                        "name": "Central Kyoto",
+                        "description": "Central Kyoto contains two of the most important tourist sites in the city: the Kyoto Gosho (Imperial Palace) and Nijo Castle, as well as a few smaller sights and attractions."
+                    },
+                    "station": {
+                        "name": "Kyoto Station Area",
+                        "description": "Comprising the Kyoto Station Building and the surrounding blocks, the Kyoto Station Area is not exactly a sightseeing destination, but odds are, you’ll wind up spending some time here. The shinkansen (bullet train), the Haruka airport express train and several other train lines all operate out of Kyoto Station, meaning you’ll almost certainly arrive here."
+                    },
+                    "southeast": {
+                        "name": "Southeast Kyoto",
+                        "description": "Southeast Kyoto, at the far southern end of the Higashiyama Mountains, is home to two of Kyoto’s greatest sights: the Shinto wonderland of Fushimi-Inari-Taisha Shrine and the Zen world of Tofuku-ji Temple and all the subtemples that surround it"
+                    },
+                    "kurama": {
+                        "name": "Kurama and Kibune",
+                        "description": "Kurama and Kibune are a pair of tranquil rural villages an easy 30-minute train north of Kyoto on Eizan Line. They form the best half-day trip out of Kyoto.Surrounded by forested mountains, these two quaint villages will ease your soul after spending too long among the neon and concrete of the city below. The premier attraction is Kurama-dera, a mountaintop temple with great views. Combine a visit here with a walk over the mountain to the village of Kibune. "
+                    },
+                    "ohara": {
+                        "name": "Ohara",
+                        "description": "Ohara is a tranquil rural village in the mountains north of Kyoto, about an hour (20 kilometers) from Kyoto Station by bus. In addition to several fine temples, the village is perfect for leisurely strolling.Sandwiched between the Hira-san-kei Mountains to the east and the Kitayama Mountains to the west, Ohara is a lovely valley that retains some of the rural charm that many visitors to Japan seek. The highlight is the superb Sanzen-in Temple, but there are also several smaller temples scattered about."
+                    },
+                    "takao": {
+                        "name": "Takao",
+                        "description": "About one 50 minutes northwest of Kyoto by bus, Takao feels like worlds away. It’s a small village that’s home to three superb temples: Jingo-ji, Saimyo-ji and Kozan-ji. The first two easily rank among my most favorite temples in the Kyoto area. Best of all, you can do a brilliant hike from Takao down to Hozukyo (on the JR Sagano-San-in Line)."
+                    },
+                    "uji": {
+                        "name": "Uji",
+                        "description": "Uji is a suburb of Kyoto about 20 minutes south of Kyoto by train. The town is located on the banks of the Uji-gawa River, tucked against picturesque mountains, which are covered with tea plantations (you’ll need a car to properly explore these). While Uji isn’t one of Kyoto’s main attractions, it makes a decent half-day trip out of Kyoto for those who’ve got at least five days in the city."
+                    }
+                }
+            },
+            "osaka": {
+                "name": "Osaka",
+                "teaser": "The Merchant's Kitchen: loud, friendly, and obsessed with food.",
+                "introduction": "Osaka is the counterweight to Tokyo's reserve. Known as 'The Nation’s Kitchen,' it is fueled by a culture of kuidaore (eating until you drop). Osakans are famous for their humor, directness, and lack of pretension. It is a city that feels lived-in and welcoming, where the best experiences are found in street food stalls and warm interactions.",
+                "history": "Ruled by merchants rather than aristocrats, Osaka's history is rooted in pragmatism and commerce. Toyotomi Hideyoshi established the castle here in 1583, but the city's true legacy is its role as the distribution center for the nation's rice and food.",
+                "culture": "Osaka distinguishes itself by standing on the right of escalators (unlike Tokyo). It's a city of neon signs, standing bars, and 'B-grade gourmet'. Bargaining is culturally acceptable here, reflecting its merchant roots.",
+                "expenses": "Osaka offers excellent value compared to Tokyo. Business hotels are cheaper, and the street food culture keeps dining costs low. You can enjoy luxury hotels for a fraction of the Tokyo price.",
+                "climate": "Similar to Kyoto but moderated by the bay. Intensive heat in summer is matched by the spectacle of the Tenjin Matsuri. Autumn gingko leaves turn Midosuji Boulevard into a golden corridor.",
+                "gettingAround": "The Midosuji Line is the city's main artery. Private rail companies like Nankai and Hankyu are often superior to JR for regional travel, with many 'Limited Express' trains requiring no extra fee.",
+                "vibe": "Unpretentious and energetic; a neon-soaked playground where the people are as warm as the takoyaki.",
+                "districts": {
+                    "minami": {
+                        "name": "Minami (Namba)",
+                        "description": "The beating heart of nightlife and food. Dotonbori Canal is a sensory explosion of neon and mechanical billboards."
+                    },
+                    "kita": {
+                        "name": "Kita (Umeda)",
+                        "description": "The sophisticated northern hub of skyscrapers, luxury shopping, and massive underground networks."
+                    },
+                    "shinsekai": {
+                        "name": "Shinsekai",
+                        "description": "A nostalgic, vintage district famous for kushikatsu and capturing the atmosphere of early 20th-century Osaka."
+                    },
+                    "castle": {
+                        "name": "Osaka Castle Area",
+                        "description": "A historical parkland with massive granite walls and moats, serving as the city's primary green space."
+                    },
+                    "bay": {
+                        "name": "Osaka Bay Area",
+                        "description": "Waterfront entertainment zone home to Universal Studios Japan and the world-class Kaiyukan aquarium."
+                    }
+                }
+            },
+            "nagoya": {
+                "name": "Nagoya",
+                "teaser": "Industrial engine and samurai stronghold of Central Japan.",
+                "introduction": "Nagoya is the industrial engine of Japan and a stronghold of samurai history. Often bypassed by travelers, it rewards those who stop with spacious avenues, world-class technology museums, and a unique, hearty culinary culture. It blends cutting-edge manufacturing with deep feudal roots.",
+                "history": "The birthplace of Japan's three unifiers (Nobunaga, Hideyoshi, Ieyasu), Nagoya is the historical pivot of the nation. Its strategic castle influenced the wide, defensive grid of the modern city, now the center of Japan's automotive industry.",
+                "culture": "Famous for its 'Morning Service' cafe culture and umami-rich 'Nagoya Meshi'. The city is pragmatic and prosperous, defined by industrial prowess and a unique red miso culinary tradition.",
+                "expenses": "Nagoya is the most affordable major city on the Golden Route. Business hotels and local soul food offer high value-for-money, making it a comfortable stop for budget-conscious travelers.",
+                "climate": "Infamous for intense summer humidity. Nagoya offers world-class autumn foliage in nearby Korankei and beautiful cherry blossoms along the Yamazaki River.",
+                "gettingAround": "A car-centric city with efficient subways. The Meijo Line loop and Meguru tourist bus are the best ways to reach major attractions like the Toyota museums.",
+                "vibe": "Pragmatic, spacious, and authentic; where industrial giants and samurai spirits coexist.",
+                "districts": {
+                    "sakae": {
+                        "name": "Sakae",
+                        "description": "Nagoya's downtown core featuring the TV Tower and Oasis 21 spaceship roof. The city's primary social hub."
+                    },
+                    "osu": {
+                        "name": "Osu Shopping District",
+                        "description": "A vibrant mix of traditional temples and eclectic retro shops, hosting the World Cosplay Summit."
+                    },
+                    "meieki": {
+                        "name": "Meieki",
+                        "description": "The vertical city around Nagoya Station, home to skyscrapers, luxury hotels, and the future Maglev terminal."
+                    },
+                    "atsuta": {
+                        "name": "Atsuta",
+                        "description": "A quiet, forested sanctuary housing one of Japan's most sacred sites, the Atsuta Jingu shrine."
+                    },
+                    "port": {
+                        "name": "Port of Nagoya",
+                        "description": "A bay-side leisure district featuring one of Japan's largest aquariums and the SCMAGLEV and Railway Park."
+                    }
+                }
+            }
+        },
+        "Languages": {
+            "english": "English",
+            "japanese": "Japanese",
+            "chinese": "Chinese",
+            "spanish": "Spanish",
+            "french": "French"
+        },
+        "Specialties": {
+            "history-buff": "History Buff",
+            "foodie": "Foodie",
+            "anime-manga": "Anime/Manga",
+            "photographer": "Photographer",
+            "nightlife": "Nightlife",
+            "local-gems": "Local Gems",
+            "tech": "Tech",
+            "pop-culture": "Pop Culture",
+            "temples": "Temples",
+            "photography": "Photography"
+        },
+        "Guides": {
+            "g1": {
+                "bio": "I know the secret jazz bars in Shinjuku and the best Takoyaki stalls that don't have a line.",
+                "tags": {
+                    "Foodie": "Foodie",
+                    "Nightlife": "Nightlife",
+                    "Local Gems": "Local Gems"
+                }
+            },
+            "g2": {
+                "bio": "Historian by day, guide by night. I'll show you the Kyoto that tourists miss.",
+                "tags": {
+                    "History Buff": "History Buff",
+                    "Temples": "Temples",
+                    "Photography": "Photography"
+                }
+            },
+            "g3": {
+                "bio": "From Akihabara to Nakano Broadway, I'm your otaku guide to Tokyo's geek culture.",
+                "tags": {
+                    "Anime/Manga": "Anime/Manga",
+                    "Tech": "Tech",
+                    "Pop Culture": "Pop Culture"
+                }
+            }
+        },
+        "Hacks": {
+            "suica-setup": {
+                "title": "Mobile Suica Mastery",
+                "summary": "Skip the queues for physical tickets and the scarcity of physical IC cards by turning your iPhone into a universal transit pass that works on almost every train, bus, and konbini in Japan.",
+                "proTip": "If your foreign credit card fails to top up the card in Apple Wallet, you can charge your Mobile Suica with cash at 7-Eleven ATMs.",
+                "steps": {
+                    "1": {
+                        "title": "Open Apple Wallet",
+                        "text": "Ensure your iPhone region is set correctly and tap the '+' icon in the Wallet app."
+                    },
+                    "2": {
+                        "title": "Select Transit Card",
+                        "text": "Search for 'Suica' (or PASMO/ICOCA). You can issue a new digital one directly."
+                    },
+                    "3": {
+                        "title": "Load Funds",
+                        "text": "Use a non-Visa credit card (Mastercard/Amex) to load an initial balance."
+                    },
+                    "4": {
+                        "title": "Enable Express Mode",
+                        "text": "Ensure 'Express Transit Mode' is ON to tap without waking the screen or using FaceID."
+                    },
+                    "5": {
+                        "title": "Tap to Go",
+                        "text": "At the station gate, simply hover the top of your iPhone near the illuminated blue IC reader."
+                    }
+                }
+            },
+            "luggage-forwarding": {
+                "title": "Hands-Free Travel (Takkyubin)",
+                "summary": "Stop dragging heavy suitcases through crowded stations; use Japan's affordable and hyper-reliable 'Takkyubin' service to send bags between hotels.",
+                "proTip": "Airport Deadline: You must send luggage 2 to 3 days before your flight to guarantee delivery.",
+                "steps": {
+                    "1": {
+                        "title": "Pack Early",
+                        "text": "Prepare your luggage the night before checkout."
+                    },
+                    "2": {
+                        "title": "Visit Front Desk",
+                        "text": "Ask your hotel for a 'Takkyubin' waybill. Use the Green Form (Prepaid)."
+                    },
+                    "3": {
+                        "title": "Fill the Waybill",
+                        "text": "Fill in the 'To' address (next hotel) and specify the delivery date."
+                    },
+                    "4": {
+                        "title": "Pay & Handover",
+                        "text": "Expect to pay ¥2,000–¥3,000. Keep your receipt copy."
+                    },
+                    "5": {
+                        "title": "Receive",
+                        "text": "Your bag will be waiting in your next hotel room automatically."
+                    }
+                }
+            },
+            "konbini-mastery": {
+                "title": "Mastering the Konbini",
+                "summary": "Japanese convenience stores are infrastructure hubs where you can withdraw cash, buy tickets, and eat high-quality meals 24/7.",
+                "proTip": "For high-demand tickets, find the QR code on the event website and show it to the clerk at the register.",
+                "steps": {
+                    "1": {
+                        "title": "ATMs",
+                        "text": "Use 7-Eleven ATMs for the best international card acceptance. They operate 24/7."
+                    },
+                    "2": {
+                        "title": "Food Heating",
+                        "text": "When buying bento, the clerk will ask 'Atatamemasu ka?' (Warm it up?)."
+                    },
+                    "3": {
+                        "title": "Trash Separation",
+                        "text": "Use bins for trash generated at the store. Separate bottles from burnables."
+                    },
+                    "4": {
+                        "title": "Ticket Machines",
+                        "text": "Use 'Multi-Copy' machines (Loppi/FamiPort) for Disney, USJ, or concerts."
+                    },
+                    "5": {
+                        "title": "Age Verification",
+                        "text": "Tap the '20' or 'Yes' button on the screen to confirm age for alcohol/tobacco."
+                    }
+                }
+            },
+            "shinkansen-baggage": {
+                "title": "Bullet Train Baggage",
+                "summary": "Avoid queuing at ticket offices and risking fines by using the official app and understanding oversized baggage rules.",
+                "proTip": "Bringing oversized luggage without a reservation incurs a ¥1,000 fine and you may be forced to move cars.",
+                "steps": {
+                    "1": {
+                        "title": "Download SmartEx",
+                        "text": "Install the official JR app before your trip."
+                    },
+                    "2": {
+                        "title": "Measure Luggage",
+                        "text": "If your bag's total dimensions are between 160cm and 250cm, it is 'Oversized'."
+                    },
+                    "3": {
+                        "title": "Book Correctly",
+                        "text": "In the app, select 'Seat with Oversized Baggage Area' (usually the last row)."
+                    },
+                    "4": {
+                        "title": "Tap Through",
+                        "text": "Link the ticket to your Suica in the app. Tap your phone at the Shinkansen gate."
+                    },
+                    "5": {
+                        "title": "Stow",
+                        "text": "Place luggage in the dedicated reserved space behind your seat."
+                    }
+                }
+            },
+            "trash-tactics": {
+                "title": "Urban Trash Tactics",
+                "summary": "Public trash cans are rare. Adopt the local mindset: you are responsible for your own waste until you return to your hotel.",
+                "proTip": "The round holes next to vending machines are exclusively for bottles and cans. Do not stuff wrappers in them.",
+                "steps": {
+                    "1": {
+                        "title": "Carry a Bag",
+                        "text": "Keep a small plastic bag in your daypack as your personal trash can."
+                    },
+                    "2": {
+                        "title": "Eat at Source",
+                        "text": "Don't walk and eat. Eat near the vendor and return the trash to them immediately."
+                    },
+                    "3": {
+                        "title": "Find Bins",
+                        "text": "Located at Konbini, Train Platforms, and beside Vending Machines."
+                    },
+                    "4": {
+                        "title": "Sort Correctly",
+                        "text": "Separate Burnables from Non-Burnables (plastics/metals) and PET bottles."
+                    },
+                    "5": {
+                        "title": "Hotel Drop-off",
+                        "text": "Dump your personal bag in your hotel bin at the end of the day."
+                    }
+                }
+            }
+        },
+        "Districts": {
+            "categories": {
+                "nightlife": "Nightlife",
+                "youth": "Youth",
+                "luxury": "Luxury",
+                "geek-culture": "Geek Culture",
+                "traditional": "Traditional",
+                "nature": "Nature",
+                "zen": "Zen",
+                "culinary": "Culinary",
+                "imperial": "Imperial",
+                "hub": "Transport Hub",
+                "spiritual": "Spiritual",
+                "rural": "Rural",
+                "modern": "Modern",
+                "retro": "Retro",
+                "historical": "Historical",
+                "entertainment": "Entertainment",
+                "eclectic": "Eclectic",
+                "leisure": "Leisure"
+            }
+        }
+    },
+    "EssentialsPage": {
+        "detail": {
+            "back": "Back to Cities",
+            "tabs": {
+                "introduction": "Introduction",
+                "districts": "Districts",
+                "transport": "Getting Around",
+                "understand": "Understand"
+            },
+            "sections": {
+                "welcome": "Welcome to {name}",
+                "districts": "Districts to Explore",
+                "areaGuide": "Area Guide",
+                "navigating": "Navigating the City",
+                "history": "History & Significance",
+                "culture": "Culture & Traditions",
+                "costs": "Cost of Travel",
+                "climate": "Climate & Seasons"
+            },
+            "images": {
+                "mapOverview": "Map Overview",
+                "history": "History",
+                "culture": "Culture",
+                "expenses": "Expenses",
+                "climate": "Climate",
+                "vibe": "Vibe"
+            }
+        }
+    },
+    "Learn": {
+        "hero": {
+            "title": "Master the Sounds of Japan.",
+            "subtitle": "The Soundscape"
+        },
+        "phrasebook": {
+            "title": "Phrasebook Collections",
+            "subtitle": "Curated survival packs for your journey.",
+            "learned": "{learned} / {total} Learned",
+            "learnedState": {
+                "learned": "Learned",
+                "markAsLearned": "Mark as learned"
+            },
+            "collections": {
+                "daily": {
+                    "title": "Daily Essentials",
+                    "description": "Top 5 Phrases for Daily Use",
+                    "phrases": {
+                        "hello": {
+                            "english": "Hello",
+                            "context": "Used during the day (10am - 5pm)."
+                        },
+                        "thanks": {
+                            "english": "Thank you",
+                            "context": "Casual. Use 'Arigatou Gozaimasu' for politeness."
+                        },
+                        "excuse": {
+                            "english": "Excuse me / Sorry",
+                            "context": "The magic word. Use it to call staff or apologize."
+                        },
+                        "yesno": {
+                            "english": "Yes / No",
+                            "context": "'Hai' also means 'I'm listening'."
+                        },
+                        "please": {
+                            "english": "Please (Request)",
+                            "context": "Use when ordering or asking for something."
+                        }
+                    }
+                },
+                "survival": {
+                    "title": "Survival Mode",
+                    "description": "If you get lost or in trouble, say these.",
+                    "phrases": {
+                        "toilet": {
+                            "english": "Where is the toilet?",
+                            "context": "Essential. 'Doko' means where."
+                        },
+                        "menu": {
+                            "english": "Do you have an English menu?",
+                            "context": "Many places have them!"
+                        },
+                        "understand": {
+                            "english": "I don't understand",
+                            "context": "Say it with a smile."
+                        },
+                        "wantgo": {
+                            "english": "I want to go to ~",
+                            "context": "Show a map and point while saying this."
+                        }
+                    }
+                },
+                "golden": {
+                    "title": "Golden Rules",
+                    "description": "8 Must-Know Phrases",
+                    "phrases": {
+                        "itadakimasu": {
+                            "english": "I humbly receive (before eating)",
+                            "context": "Clasp hands together before eating."
+                        },
+                        "gochisou": {
+                            "english": "Thank you for the meal (after eating)",
+                            "context": "Say it to the chef or staff when leaving."
+                        },
+                        "shitsurei": {
+                            "english": "Excuse me (entering/leaving)",
+                            "context": "Used when entering a room or ending a call."
+                        },
+                        "daijoubu": {
+                            "english": "It's okay / I'm fine",
+                            "context": "Can mean 'No thanks' or 'I'm good'."
+                        },
+                        "recommend": {
+                            "english": "What do you recommend?",
+                            "context": "Great for restaurants."
+                        },
+                        "thisone": {
+                            "english": "This one please",
+                            "context": "Point to the menu item."
+                        },
+                        "check": {
+                            "english": "Check, please",
+                            "context": "Cross fingers (x) is a gesture for check."
+                        },
+                        "delicious": {
+                            "english": "It's delicious",
+                            "context": "Staff love hearing this."
+                        }
+                    }
+                },
+                "vibes": {
+                    "title": "Local Vibes",
+                    "description": "Slang and connectors to bridge the gap.",
+                    "phrases": {
+                        "yabai": {
+                            "english": "Crazy / Cool / Bad",
+                            "context": "Context dependent. Like 'OMG'."
+                        },
+                        "majide": {
+                            "english": "Seriously?",
+                            "context": "Casual reaction."
+                        },
+                        "naruhodo": {
+                            "english": "I see / That makes sense",
+                            "context": "Good for active listening."
+                        },
+                        "meccha": {
+                            "english": "Very / Super",
+                            "context": "e.g., 'Meccha oishii' (Super delicious)."
+                        },
+                        "tashikani": {
+                            "english": "Exactly / True",
+                            "context": "Agreeing with someone."
+                        },
+                        "ukeru": {
+                            "english": "Funny / Hilarious",
+                            "context": "Used when something is funny."
+                        }
+                    }
+                }
+            }
+        },
+        "simulator": {
+            "title": "The Konbini Simulator",
+            "subtitle": "Practice your survival skills in a convenience store scenario.",
+            "enter": "Enter Konbini",
+            "waiting": "Waiting for response...",
+            "missionComplete": "Mission Complete! Refresh to restart.",
+            "roles": {
+                "clerk": "Clerk",
+                "user": "You"
+            },
+            "conversations": {
+                "welcome": "Welcome!",
+                "needBag": "Do you need a bag?",
+                "thankYou": "Thank you very much. Please come again!",
+                "yes": "Yes, please",
+                "no": "No, thank you",
+                "nod": "(Silently nods)"
+            },
+            "actions": {
+                "nod": "😐 Nod Silently",
+                "yes": "🛍️ Yes, please",
+                "no": "✋ No thanks"
+            }
+        }
+    }
+}

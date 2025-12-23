@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
@@ -7,48 +8,57 @@ import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
 
 export function GuideFilter() {
+  const t = useTranslations("Guides.filter")
+  const tCities = useTranslations("Data.Cities")
+  const tLanguages = useTranslations("Data.Languages")
+  const tSpecialties = useTranslations("Data.Specialties")
+  
   const [priceRange, setPriceRange] = useState([3000])
+
+  const locations = ["tokyo", "kyoto", "osaka", "hokkaido"]
+  const languages = ["english", "chinese", "spanish", "french"]
+  const specialties = ["history-buff", "foodie", "anime-manga", "photographer", "nightlife"]
 
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold mb-3">Location</h3>
+        <h3 className="text-lg font-semibold mb-3">{t("location")}</h3>
         <div className="space-y-2">
-          {["Tokyo", "Kyoto", "Osaka", "Hokkaido"].map((city) => (
-            <div key={city} className="flex items-center space-x-2">
-              <Checkbox id={city} />
-              <Label htmlFor={city}>{city}</Label>
+          {locations.map((cityId) => (
+            <div key={cityId} className="flex items-center space-x-2">
+              <Checkbox id={cityId} />
+              <Label htmlFor={cityId}>{tCities(`${cityId}.name`)}</Label>
             </div>
           ))}
         </div>
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold mb-3">Language</h3>
+        <h3 className="text-lg font-semibold mb-3">{t("language")}</h3>
         <div className="space-y-2">
-           {["English", "Chinese", "Spanish", "French"].map((lang) => (
-            <div key={lang} className="flex items-center space-x-2">
-              <Checkbox id={lang} />
-              <Label htmlFor={lang}>{lang}</Label>
+           {languages.map((langId) => (
+            <div key={langId} className="flex items-center space-x-2">
+              <Checkbox id={langId} />
+              <Label htmlFor={langId}>{tLanguages(langId)}</Label>
             </div>
           ))}
         </div>
       </div>
       
       <div>
-        <h3 className="text-lg font-semibold mb-3">Specialty</h3>
+        <h3 className="text-lg font-semibold mb-3">{t("specialty")}</h3>
          <div className="space-y-2">
-           {["History Buff", "Foodie", "Anime/Manga", "Photographer", "Nightlife"].map((tag) => (
-            <div key={tag} className="flex items-center space-x-2">
-              <Checkbox id={tag} />
-              <Label htmlFor={tag}>{tag}</Label>
+           {specialties.map((specId) => (
+            <div key={specId} className="flex items-center space-x-2">
+              <Checkbox id={specId} />
+              <Label htmlFor={specId}>{tSpecialties(specId)}</Label>
             </div>
           ))}
         </div>
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold mb-3">Hourly Rate (¥)</h3>
+        <h3 className="text-lg font-semibold mb-3">{t("rate")}</h3>
         <Slider
           defaultValue={[3000]}
           max={10000}
@@ -58,11 +68,11 @@ export function GuideFilter() {
         />
         <div className="flex justify-between text-sm text-muted-foreground">
             <span>¥0</span>
-            <span>Up to ¥{priceRange[0]}</span>
+            <span>{t("upTo", { price: priceRange[0] })}</span>
         </div>
       </div>
       
-      <Button className="w-full">Apply Filters</Button>
+      <Button className="w-full">{t("apply")}</Button>
     </div>
   )
 }

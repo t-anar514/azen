@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { useState } from "react"
 import {
   DndContext,
@@ -57,6 +58,7 @@ export function Timeline({
     onMove,
     onHover 
 }: TimelineProps) {
+  const t = useTranslations("Planner")
   const [isEditingTitle, setIsEditingTitle] = useState(false)
   const [tempTitle, setTempTitle] = useState(title)
 
@@ -121,7 +123,7 @@ export function Timeline({
                     size="sm" 
                     className="bg-accent hover:bg-accent/90 text-white rounded-full px-4"
                 >
-                    <Plus className="h-4 w-4 mr-2" /> Add Activity
+                    <Plus className="h-4 w-4 mr-2" /> {t("addActivity")}
                 </Button>
             </div>
         </div>
