@@ -25,6 +25,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.23.26",
+    "fuse.js": "^7.1.0",
     "lucide-react": "^0.561.0",
     "maplibre-gl": "^5.15.0",
     "next": "16.0.10",

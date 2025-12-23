@@ -12,17 +12,39 @@ import "maplibre-gl/dist/maplibre-gl.css"
 export default function ContactPage() {
   const t = useTranslations("Contact")
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({ name: "", email: "", message: "" })
 
   const OFFICE_COORDS = { lat: 35.0116, lng: 135.7681 } // Kyoto City Central
   const OPEN_FREE_MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty"
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Simulate API call
-    setTimeout(() => {
-      setSubmitted(true)
-    }, 800)
+    setLoading(true)
+
+    const form = e.target as HTMLFormElement
+    const data = new FormData(form)
+
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/azentraveljp@gmail.com", {
+        method: "POST",
+        body: data,
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
+      
+      if (response.ok) {
+        setSubmitted(true)
+        setFormData({ name: "", email: "", message: "" })
+      } else {
+        console.error("Submission failed")
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (submitted) {
@@ -68,7 +90,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                    <h3 className="font-bold text-primary mb-1">{t("info.email.title")}</h3>
-                   <p className="text-primary/60 text-sm mb-2 font-mono">support@azen.travel</p>
+                   <p className="text-primary/60 text-sm mb-2 font-mono">azentraveljp@gmail.com</p>
                    <p className="text-xs text-accent font-bold">{t("info.email.reply")}</p>
                 </div>
             </div>
@@ -112,11 +134,18 @@ export default function ContactPage() {
           <div className="bg-card p-8 md:p-12 rounded-[2.5rem] shadow-2xl border border-secondary/10">
              <h2 className="text-3xl font-playfair font-black text-primary mb-8">{t("form.title")}</h2>
              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* FormSubmit.co Configuration */}
+                <input type="hidden" name="_subject" value="New Azen Inquiry!" />
+                <input type="hidden" name="_next" value="https://localhost:3000/en/thanks" />
+                <input type="hidden" name="_captcha" value="false" />
+                <input type="text" name="_honey" style={{ display: 'none' }} />
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                    <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-widest font-black text-primary/40 ml-1">{t("form.name")}</label>
                       <Input 
                         required
+                        name="name"
                         value={formData.name}
                         onChange={e => setFormData({...formData, name: e.target.value})}
                         placeholder="John Doe" 
@@ -127,6 +156,7 @@ export default function ContactPage() {
                       <label className="text-[10px] uppercase tracking-widest font-black text-primary/40 ml-1">{t("form.email")}</label>
                       <Input 
                         required
+                        name="email"
                         type="email"
                         value={formData.email}
                         onChange={e => setFormData({...formData, email: e.target.value})}
@@ -140,6 +170,7 @@ export default function ContactPage() {
                   <label className="text-[10px] uppercase tracking-widest font-black text-primary/40 ml-1">{t("form.message")}</label>
                   <Textarea 
                     required
+                    name="message"
                     value={formData.message}
                     onChange={e => setFormData({...formData, message: e.target.value})}
                     placeholder={t("form.messagePlaceholder")} 
@@ -156,9 +187,18 @@ export default function ContactPage() {
 
                 <Button 
                   type="submit"
-                  className="w-full bg-accent hover:bg-accent/90 text-white rounded-full h-16 font-black uppercase tracking-[0.2em] transform transition active:scale-95 shadow-xl shadow-accent/20 flex gap-3"
+                  disabled={loading}
+                  className="w-full bg-accent hover:bg-accent/90 text-white rounded-full h-16 font-black uppercase tracking-[0.2em] transform transition active:scale-95 shadow-xl shadow-accent/20 flex gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                   <Send className="h-5 w-5" /> {t("form.submit")}
+                   {loading ? (
+                     <span className="flex items-center gap-2 animate-pulse">
+                        <Clock className="h-5 w-5 animate-spin" /> SENDING...
+                     </span>
+                   ) : (
+                     <>
+                        <Send className="h-5 w-5" /> {t("form.submit")}
+                     </>
+                   )}
                 </Button>
              </form>
           </div>

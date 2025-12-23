@@ -59,7 +59,7 @@ export function PhraseCard({ phrase, collectionId, onToggleLearned, isLearned }:
         
         {phrase.context && (
           <div className="inline-flex items-center gap-2 bg-[#88a47c] text-white text-xs font-bold px-3 py-1 rounded-full">
-            <span>Zen Tip</span>
+            <span>Azen Tip</span>
             <span className="font-normal opacity-90 border-l border-white/30 pl-2 ml-1">{t("context")}</span>
           </div>
         )}

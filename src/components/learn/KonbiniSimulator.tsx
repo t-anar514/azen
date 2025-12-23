@@ -50,22 +50,64 @@ export function KonbiniSimulator() {
     setTimeout(() => {
         let clerkMsg: Message | null = null
 
-        if (step === 1) {
+        if (step === 1) { // After Welcome (User Nods)
             clerkMsg = {
+                id: Date.now().toString() + 'c',
+                role: 'clerk',
+                text: 'ポイントカードはお持ちですか? (Pointo ka-do wa omochi desuka?)',
+                translation: t('conversations.pointCard')
+            }
+            setStep(2)
+        } else if (step === 2) { // After Point Card
+            clerkMsg = {
+                id: Date.now().toString() + 'c',
+                role: 'clerk',
+                text: 'お温めしますか？ (O-atatame shimasu ka?)',
+                translation: t('conversations.warmUp')
+            }
+            setStep(3)
+        } else if (step === 3) { // After Warm Up
+             clerkMsg = {
                 id: Date.now().toString() + 'c',
                 role: 'clerk',
                 text: '袋はいりますか？ (Fukuro wa irimasu ka?)',
                 translation: t('conversations.needBag')
             }
-            setStep(2)
-        } else if (step === 2) {
+            setStep(4)
+        } else if (step === 4) { // After Bag Question
+            if (action === 'yes') {
+                clerkMsg = {
+                    id: Date.now().toString() + 'c',
+                    role: 'clerk',
+                    text: '袋はお分けしますか? (Fukuro wo owake shimasu ka?)',
+                    translation: t('conversations.separateBag')
+                }
+                setStep(5)
+            } else {
+                clerkMsg = {
+                    id: Date.now().toString() + 'c',
+                    role: 'clerk',
+                    text: '他に何かお付けしますか？ (Hoka ni nanika otsuke shimasu ka?)',
+                    translation: t('conversations.anythingElse')
+                }
+                setStep(6)
+            }
+        } else if (step === 5) { // After Separate Bag
+            clerkMsg = {
+                id: Date.now().toString() + 'c',
+                role: 'clerk',
+                text: '他に何かお付けしますか？ (Hoka ni nanika otsuke shimasu ka?)',
+                translation: t('conversations.anythingElse')
+            }
+            setStep(6)
+        } else if (step === 6) { // After Utensils/Anything else
              clerkMsg = {
                 id: Date.now().toString() + 'c',
                 role: 'clerk',
                 text: 'ありがとうございます。またお越しください！',
                 translation: t('conversations.thankYou')
             }
-            setStep(3) // End
+            setStep(7) // End
         }
 
         if (clerkMsg) {
@@ -128,7 +170,8 @@ export function KonbiniSimulator() {
         </div>
 
         {/* Action Area */}
-        <div className="p-4 bg-gray-100 border-t border-gray-200 min-h-[100px] flex items-center justify-center">
+        <div className="p-4 bg-gray-100 border-t border-gray-200 min-h-[120px] flex items-center justify-center">
+             <div className="flex gap-3 flex-wrap justify-center">
              {step === 1 && (
                  <button
                     onClick={() => handleUserAction('nod', '(Silently nods)', 'nod')}
@@ -139,23 +182,103 @@ export function KonbiniSimulator() {
              )}
 
              {step === 2 && (
-                 <div className="flex gap-4 flex-wrap justify-center">
-                     <button
-                        onClick={() => handleUserAction('yes', 'はい、お願いします (Hai, onegaishimasu)', 'yes')}
+                 <>
+                    <button
+                        onClick={() => handleUserAction('no', 'ありません (Arimasen)', 'noPointCard')}
+                        className="bg-white border-2 border-gray-300 text-gray-600 px-6 py-3 rounded-xl font-bold hover:bg-gray-50 transition-colors"
+                    >
+                        {t("actions.pointCardNo")}
+                    </button>
+                    <button
+                        onClick={() => handleUserAction('yes', 'はい、あります (Hai, arimasu)', 'yes')}
                         className="bg-[#227c70] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#1a5f56] transition-colors"
-                     >
-                        {t("actions.yes")}
-                     </button>
-                      <button
-                        onClick={() => handleUserAction('no', 'いいえ、大丈夫です (Iie, daijoubu desu)', 'no')}
-                        className="bg-white border-2 border-red-400 text-red-500 px-6 py-3 rounded-xl font-bold hover:bg-red-50 transition-colors"
-                     >
-                        {t("actions.no")}
-                     </button>
-                 </div>
+                    >
+                        {t("actions.pointCardYes")}
+                    </button>
+                 </>
              )}
 
              {step === 3 && (
+                 <>
+                    <button
+                        onClick={() => handleUserAction('no', '大丈夫です (Daijoubu desu)', 'warmNo')}
+                        className="bg-white border-2 border-gray-300 text-gray-600 px-6 py-3 rounded-xl font-bold hover:bg-gray-50 transition-colors"
+                    >
+                        {t("actions.warmNo")}
+                    </button>
+                    <button
+                        onClick={() => handleUserAction('yes', 'はい、お願いします (Hai, onegaishimasu)', 'warmYes')}
+                        className="bg-[#227c70] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#1a5f56] transition-colors"
+                    >
+                        {t("actions.warmYes")}
+                    </button>
+                 </>
+             )}
+
+             {step === 4 && (
+                 <>
+                     <button
+                        onClick={() => handleUserAction('no', 'いいえ、大丈夫です (Iie, daijoubu desu)', 'no')}
+                        className="bg-white border-2 border-gray-300 text-gray-600 px-6 py-3 rounded-xl font-bold hover:bg-gray-50 transition-colors"
+                     >
+                        {t("actions.bagNo")}
+                     </button>
+                     <button
+                        onClick={() => handleUserAction('yes', 'はい、お願いします (Hai, onegaishimasu)', 'bagYes')}
+                        className="bg-[#227c70] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#1a5f56] transition-colors"
+                     >
+                        {t("actions.bagYes")}
+                     </button>
+                 </>
+             )}
+
+             {step === 5 && (
+                 <>
+                    <button
+                        onClick={() => handleUserAction('no', '一緒で大丈夫です (Issho de daijoubu desu)', 'bagSeparateNo')}
+                        className="bg-white border-2 border-gray-300 text-gray-600 px-6 py-3 rounded-xl font-bold hover:bg-gray-50 transition-colors"
+                    >
+                        {t("actions.separateNo")}
+                    </button>
+                    <button
+                        onClick={() => handleUserAction('yes', 'はい、お願いします (Hai, onegaishimasu)', 'bagSeparateYes')}
+                        className="bg-[#227c70] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#1a5f56] transition-colors"
+                    >
+                        {t("actions.separateYes")}
+                    </button>
+                 </>
+             )}
+
+             {step === 6 && (
+                 <>
+                    <button
+                        onClick={() => handleUserAction('chopsticks', 'お箸をお願いします (Ohashi wo onegaishimasu)', 'chopsticks')}
+                        className="bg-white border-2 border-[#88a47c] text-[#1c315e] px-4 py-3 rounded-xl font-bold hover:bg-[#fcfaf2] transition-colors text-sm"
+                    >
+                        {t("actions.chopsticks")}
+                    </button>
+                    <button
+                        onClick={() => handleUserAction('spoon', 'スプーンをお願いします (Supu-n wo onegaishimasu)', 'spoon')}
+                        className="bg-white border-2 border-[#88a47c] text-[#1c315e] px-4 py-3 rounded-xl font-bold hover:bg-[#fcfaf2] transition-colors text-sm"
+                    >
+                        {t("actions.spoon")}
+                    </button>
+                    <button
+                        onClick={() => handleUserAction('fork', 'フォークをお願いします (Fo-ku wo onegaishimasu)', 'fork')}
+                        className="bg-white border-2 border-[#88a47c] text-[#1c315e] px-4 py-3 rounded-xl font-bold hover:bg-[#fcfaf2] transition-colors text-sm"
+                    >
+                        {t("actions.fork")}
+                    </button>
+                    <button
+                        onClick={() => handleUserAction('none', '大丈夫です (Daijoubu desu)', 'noneeded')}
+                        className="bg-white border-2 border-gray-300 text-gray-400 px-4 py-3 rounded-xl font-bold hover:bg-gray-50 transition-colors text-sm"
+                    >
+                        {t("actions.noneeded")}
+                    </button>
+                 </>
+             )}
+
+             {step === 7 && (
                  <div className="text-gray-500 font-medium flex items-center gap-2">
                      <MessageSquare className="w-4 h-4" />
                      {t("missionComplete")}
@@ -165,6 +288,7 @@ export function KonbiniSimulator() {
              {step === 0 && messages.length > 0 && (
                  <p className="text-gray-400 text-sm">{t("waiting")}</p>
              )}
+             </div>
         </div>
       </div>
     </div>

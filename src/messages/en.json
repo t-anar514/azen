@@ -169,8 +169,8 @@
             },
             "address": {
                 "title": "Our Kyoto Base",
-                "city": "Nakagyo Ward, Kyoto",
-                "country": "Kyoto 604-0000, Japan"
+                "city": "Fushimi Ward, Kyoto",
+                "country": "Kyoto 612-82133, Japan"
             },
             "map": "Base of Operations"
         },
@@ -211,20 +211,12 @@
             }
         },
         "team": {
-            "title": "Meet the Concierges",
+            "title": "Meet the Founder",
             "subtitle": "The faces behind the screen",
             "members": {
-                "takashi": {
-                    "role": "Local Expert & Founder",
-                    "bio": "Born and raised in Kyoto, Takashi spent 15 years in hospitality before founding Azen."
-                },
-                "elena": {
-                    "role": "Experience Specialist",
-                    "bio": "A culture enthusiast who specializes in finding hidden culinary gems across Tokyo."
-                },
-                "hiroki": {
-                    "role": "Technology Lead",
-                    "bio": "Bridging the gap between traditional wisdom and modern travel tech."
+                "anar": {
+                    "role": "Founder",
+                    "bio": "Bridging the gap between traditional wisdom and modern travel tech"
                 }
             }
         },
@@ -774,16 +766,44 @@
             },
             "conversations": {
                 "welcome": "Welcome!",
+                "pointCard": "Do you have a point card?",
+                "warmUp": "Would you like it heated up?",
                 "needBag": "Do you need a bag?",
+                "separateBag": "Would you like these items bagged separately?",
+                "anythingElse": "Will that be all?",
                 "thankYou": "Thank you very much. Please come again!",
                 "yes": "Yes, please",
                 "no": "No, thank you",
-                "nod": "(Silently nods)"
+                "nod": "(Silently nods)",
+                "noPointCard": "I don't have one",
+                "pointCardNo": "No, I'm fine",
+                "warmYes": "Yes, please",
+                "warmNo": "No, I'm fine",
+                "bagSeparateYes": "Yes, please (separated)",
+                "bagSeparateNo": "No, same bag is fine",
+                "chopsticks": "Chopsticks, please",
+                "spoon": "Spoon, please",
+                "fork": "Fork, please",
+                "noneeded": "I'm fine / No thanks",
+                "bagYes": "Yes, please",
+                "bagNo": "No, thank you"
             },
             "actions": {
                 "nod": "😐 Nod Silently",
                 "yes": "🛍️ Yes, please",
-                "no": "✋ No thanks"
+                "no": "✋ No thanks",
+                "pointCardNo": "❌ No Card",
+                "pointCardYes": "✅ Yes",
+                "warmYes": "🔥 Heat it up",
+                "warmNo": "❄️ No thanks",
+                "bagYes": "🛍️ Need a bag",
+                "bagNo": "✋ No bag",
+                "separateYes": "↔️ Separate",
+                "separateNo": "🤝 Together",
+                "chopsticks": "🥢 Chopsticks",
+                "spoon": "🥄 Spoon",
+                "fork": "🍴 Fork",
+                "noneeded": "👋 That's all"
             }
         }
     }

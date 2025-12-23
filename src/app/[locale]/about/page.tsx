@@ -13,9 +13,9 @@ export default function AboutPage() {
   const t = useTranslations("About")
 
   const team = [
-    { name: "Takashi Sato", key: "takashi" },
-    { name: "Elena Chen", key: "elena" },
-    { name: "Hiroki Tanaka", key: "hiroki" }
+    { name: "Anar Tamir", key: "anar" },
+    // { name: "Elena Chen", key: "elena" },
+    // { name: "Hiroki Tanaka", key: "hiroki" }
   ]
 
   const values = [
@@ -108,7 +108,7 @@ export default function AboutPage() {
                  <div className="relative w-24 h-24 mb-6 mx-auto">
                     <div className="absolute inset-0 bg-secondary rounded-full rotate-6 group-hover:rotate-12 transition-transform" />
                     <div className="absolute inset-0 bg-primary/10 rounded-full flex items-center justify-center border-2 border-primary overflow-hidden">
-                       <img src={`https://i.pravatar.cc/150?u=${person.name}`} alt={person.name} className="grayscale hover:grayscale-0 transition-all" />
+                       <img src="https://testy-black-qaxiu3mnex-vh9kcnyv1p.edgeone.dev/IMG%204238.jpg" alt={person.name} className="grayscale hover:grayscale-0 transition-all" />
                     </div>
                  </div>
                  <div className="text-center">

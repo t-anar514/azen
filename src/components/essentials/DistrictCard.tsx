@@ -28,9 +28,6 @@ export function DistrictCard({ district, index }: DistrictCardProps) {
         <h3 className="text-xl font-bold text-[#1c315e] leading-tight group-hover:text-[#227c70] transition-colors">
           {district.name}
         </h3>
-        <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#88a47c]/10 text-[#88a47c] border border-[#88a47c]/20">
-          {t(district.category)}
-        </span>
       </div>
       
       <p className="text-[#1c315e]/70 text-sm leading-relaxed line-clamp-3">

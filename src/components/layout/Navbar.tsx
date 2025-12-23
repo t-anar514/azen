@@ -13,10 +13,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { LanguageSwitcher } from "./LanguageSwitcher"
+import { GlobalSearch } from "./GlobalSearch"
+import { useParams } from "next/navigation"
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = React.useState(false)
   const t = useTranslations("Navigation")
+  const { locale } = useParams()
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -39,7 +42,7 @@ export function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
           <div className="relative h-28 w-40 overflow-hidden">
-             <Image src="/logo.png" alt="Azen Logo" fill className="object-cover" />
+             <Image src="/logo.png" alt="Azen Logo" fill className="object-contain" />
           </div>
         </Link>
 
@@ -62,14 +65,9 @@ export function Navbar() {
           </Link>
         </nav>
 
-        {/* Omnibar (Search) */}
-        <div className="hidden md:flex relative w-64 lg:w-80">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search Kyoto, Guides, Hacks..."
-            className="pl-9 h-9 bg-muted/50 focus:bg-background transition-colors rounded-full"
-          />
+        {/* Global Search Omnibar */}
+        <div className="hidden md:flex">
+          <GlobalSearch locale={locale as string} />
         </div>
 
         {/* User Actions & Mobile Menu */}
