@@ -4,7 +4,6 @@
         "description": "Your Japan travel companion"
     },
     "Hero": {
-        "badge": "New: AI-Powered Itinerary Builder",
         "title": "Don't Just Visit Japan.",
         "subtitle": "Understand It.",
         "description": "Avoid tourist traps. Discover hidden gems. Travel like a local with Azen's curated guides and smart itinerary planner.",
@@ -39,7 +38,7 @@
         "planner": "Planner"
     },
     "Footer": {
-        "tagline": "From Chaos to Clarity. Your Zen Japan Travel Platform.",
+        "tagline": "From Chaos to Clarity. Your Azen Japan Travel Platform.",
         "platform": "Platform",
         "company": "Company",
         "followUs": "Follow Us",

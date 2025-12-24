@@ -9,9 +9,7 @@ export function Hero() {
   return (
     <section className="relative flex flex-col items-center justify-center py-20 md:py-32 text-center bg-gradient-to-b from-primary/5 to-transparent overflow-hidden">
       <div className="container relative z-10 px-4 md:px-6">
-        <div className="inline-block rounded-full bg-secondary/10 px-3 py-1 text-sm text-secondary font-medium mb-6 animate-fade-in-up">
-          {t("badge")}
-        </div>
+       
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-primary mb-8 animate-fade-in-up delay-100 font-serif">
           {t("title")} <br/>
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary italic pr-2">
