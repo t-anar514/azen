@@ -20,11 +20,11 @@ export function Hero() {
           {t("description")}
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up delay-300">
-          <Button asChild size="lg" className="rounded-full h-12 px-8 text-lg">
+          {/* <Button asChild size="lg" className="rounded-full h-12 px-8 text-lg">
             <Link href="/guides">
               {t("findGuide")} <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
-          </Button>
+          </Button> */}
           <Button asChild variant="outline" size="lg" className="rounded-full h-12 px-8 text-lg">
             <Link href="/planner">
               <Map className="mr-2 h-4 w-4" /> {t("startPlanning")}
