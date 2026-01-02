@@ -37,9 +37,9 @@ export function Footer() {
         <div className="flex flex-col gap-2">
           <h3 className="font-semibold">{t("followUs")}</h3>
           <div className="flex gap-4">
-            <Link href="/" className="text-muted-foreground hover:text-primary"><Instagram className="h-5 w-5" /></Link>
-            <Link href="/" className="text-muted-foreground hover:text-primary"><Twitter className="h-5 w-5" /></Link>
-            <Link href="/" className="text-muted-foreground hover:text-primary"><Facebook className="h-5 w-5" /></Link>
+            <Link href="https://www.instagram.com/azen.japan/" className="text-muted-foreground hover:text-primary"><Instagram className="h-5 w-5" /></Link>
+            <Link href="https://www.facebook.com/profile.php?id=61585063457607/" className="text-muted-foreground hover:text-primary"><Twitter className="h-5 w-5" /></Link>
+            <Link href="https://www.facebook.com/profile.php?id=61585063457607/" className="text-muted-foreground hover:text-primary"><Facebook className="h-5 w-5" /></Link>
           </div>
         </div>
       </div>
