@@ -9,21 +9,23 @@ import { BookingCard } from "@/components/experiences/BookingCard"
 import { ExperienceMap } from "@/components/experiences/ExperienceMap"
 import { GuideProfile } from "@/components/experiences/GuideProfile"
 import { ChevronLeft } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 export default function ExperiencePage() {
   const params = useParams()
   const router = useRouter()
+  const t = useTranslations("ExperienceDetail")
   const experience = EXPERIENCES.find(e => e.id === params.id)
 
   if (!experience) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <h1 className="text-2xl font-bold mb-4">Experience not found</h1>
+        <h1 className="text-2xl font-bold mb-4">{t('notFound')}</h1>
         <button 
           onClick={() => router.push('/')}
           className="text-[#227c70] font-semibold hover:underline"
         >
-          Return Home
+          {t('returnHome')}
         </button>
       </div>
     )
@@ -36,7 +38,7 @@ export default function ExperiencePage() {
           onClick={() => router.back()}
           className="flex items-center gap-2 text-[#1c315e] font-bold uppercase tracking-widest text-xs mb-6 hover:text-[#227c70] transition-colors"
         >
-          <ChevronLeft className="w-4 h-4" /> Back
+          <ChevronLeft className="w-4 h-4" /> {t('back')}
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
@@ -47,15 +49,15 @@ export default function ExperiencePage() {
             <ExperienceStory experience={experience} />
             
             <div className="space-y-6">
-                <h2 className="text-2xl font-black text-[#1c315e] tracking-tight">Your Meeting Point</h2>
+                <h2 className="text-2xl font-black text-[#1c315e] tracking-tight">{t('meetingPoint')}</h2>
                 <div className="h-[400px] w-full rounded-2xl overflow-hidden shadow-xl border border-white/20">
                     <ExperienceMap meetingPoint={experience.meetingPoint} />
                 </div>
             </div>
 
             <div className="space-y-6">
-                <h2 className="text-2xl font-black text-[#1c315e] tracking-tight">Your In-Person Guide</h2>
-                <GuideProfile guide={experience.guide} />
+                <h2 className="text-2xl font-black text-[#1c315e] tracking-tight">{t('guide')}</h2>
+                <GuideProfile guide={experience.guide} experienceId={experience.id} />
             </div>
           </div>
 

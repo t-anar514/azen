@@ -2,13 +2,17 @@
 
 import { Experience } from "@/data/experiences"
 import { Clock, Users, Globe, MapPin } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 export function ExperienceInfoBar({ experience }: { experience: Experience }) {
+  const tExp = useTranslations(`Experiences.${experience.id}`)
+  const tDetail = useTranslations("ExperienceDetail")
+
   const items = [
     { icon: <Clock className="w-5 h-5 text-[#227c70]" />, label: experience.duration },
-    { icon: <Users className="w-5 h-5 text-[#227c70]" />, label: `Max ${experience.maxGroupSize} People` },
+    { icon: <Users className="w-5 h-5 text-[#227c70]" />, label: `${tDetail('groupSize')}: ${experience.maxGroupSize}` },
     { icon: <Globe className="w-5 h-5 text-[#227c70]" />, label: experience.languages.join(" / ") },
-    { icon: <MapPin className="w-5 h-5 text-[#227c70]" />, label: experience.meetingPoint.name },
+    { icon: <MapPin className="w-5 h-5 text-[#227c70]" />, label: tExp('meetingPoint.name') },
   ]
 
   return (

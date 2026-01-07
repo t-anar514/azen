@@ -1,6 +1,7 @@
 import { Hero } from "@/components/home/Hero";
 import { FeatureBlock } from "@/components/home/Features";
 import { TrendingCarousel } from "@/components/home/TrendingCarousel";
+import { SampleItineraries } from "@/components/home/SampleItineraries";
 import { setRequestLocale } from 'next-intl/server';
 
 export default async function Home({
@@ -15,7 +16,8 @@ export default async function Home({
     <div className="flex flex-col min-h-screen">
       <Hero />
       <FeatureBlock />
-      {/* <TrendingCarousel /> */}
+      <SampleItineraries />
+       <TrendingCarousel /> 
     </div>
   );
 }

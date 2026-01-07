@@ -10,7 +10,12 @@ import {
   Coffee, 
   Utensils, 
   ShoppingBag, 
-  Train 
+  Train,
+  Camera,
+  Sparkles,
+  Landmark,
+  Wine,
+  Activity
 } from "lucide-react"
 
 // Mock Geocoding Data
@@ -32,6 +37,8 @@ const OPEN_FREE_MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty"
 interface InteractiveMapProps {
   items: ItemType[]
   hoveredId: string | null
+  onMapClick?: (lat: number, lng: number, locationName?: string) => void
+  isPicking?: boolean
 }
 
 const ActivityMarker = ({ item, isHovered, onSelect }: { item: ItemType & { coords: { lat: number, lng: number } }, isHovered: boolean, onSelect: (item: any) => void }) => {
@@ -43,6 +50,11 @@ const ActivityMarker = ({ item, isHovered, onSelect }: { item: ItemType & { coor
             case "hotel": return <Coffee {...props} />
             case "shopping": return <ShoppingBag {...props} />
             case "transport": return <Train {...props} />
+            case "sightseeing": return <Camera {...props} />
+            case "nature": return <Sparkles {...props} />
+            case "culture": return <Landmark {...props} />
+            case "nightlife": return <Wine {...props} />
+            case "activity": return <Activity {...props} />
             default: return <MapPin {...props} />
         }
     }
@@ -91,7 +103,7 @@ function MapUpdater({ items }: { items: (ItemType & { coords: { lat: number, lng
     return null;
 }
 
-export function InteractiveMap({ items, hoveredId }: InteractiveMapProps) {
+export function InteractiveMap({ items, hoveredId, onMapClick, isPicking }: InteractiveMapProps) {
   const [selectedItem, setSelectedItem] = useState<any>(null)
 
   // Enrich items with coordinates
@@ -118,8 +130,13 @@ export function InteractiveMap({ items, hoveredId }: InteractiveMapProps) {
             longitude: DEFAULT_CENTER.lng,
             zoom: 12
           }}
-          style={{ width: '100%', height: '100%' }}
+          style={{ width: '100%', height: '100%', cursor: isPicking ? 'crosshair' : 'grab' }}
           mapStyle={OPEN_FREE_MAP_STYLE}
+          onClick={(e) => {
+            if (isPicking && onMapClick) {
+              onMapClick(e.lngLat.lat, e.lngLat.lng)
+            }
+          }}
         >
           <NavigationControl position="top-right" />
           <FullscreenControl position="top-right" />

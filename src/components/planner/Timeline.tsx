@@ -23,7 +23,15 @@ import { Input } from "@/components/ui/input"
 import { Plus, Pencil, Check, X } from "lucide-react"
 
 // Type definition matching TimelineItem props
-export type ActivityType = "flight" | "spot" | "food" | "hotel" | "shopping" | "transport";
+export type ActivityType = 
+    "flight" | "spot" | "food" | "hotel" | "shopping" | "transport" | 
+    "sightseeing" | "nature" | "culture" | "nightlife" | "activity" |
+    "photo" | "landmark" | "castle" | "special" | "city" |
+    "meal" | "cafe" | "pizza" | "wine" | "beer" | "dessert" |
+    "train" | "car" | "bus" | "tram" | "bike" |
+    "house" | "camp" | "sleep" |
+    "market" | "gift" | "sale" |
+    "music" | "love" | "star" | "ticket";
 
 export type ItemType = {
   id: string
@@ -46,6 +54,10 @@ interface TimelineProps {
   onDelete: (id: string) => void
   onMove: (activeId: string, overId: string) => void
   onHover: (id: string | null) => void
+  pickingLocationId: string | null
+  onStartPicking: (id: string | null) => void
+  newItemId?: string | null
+  isManualAdd?: boolean
 }
 
 export function Timeline({ 
@@ -56,7 +68,11 @@ export function Timeline({
     onUpdate, 
     onDelete, 
     onMove,
-    onHover 
+    onHover,
+    pickingLocationId,
+    onStartPicking,
+    newItemId,
+    isManualAdd
 }: TimelineProps) {
   const t = useTranslations("Planner")
   const [isEditingTitle, setIsEditingTitle] = useState(false)
@@ -138,14 +154,20 @@ export function Timeline({
           strategy={verticalListSortingStrategy}
         >
           <div className="space-y-1">
-            {items.map((item) => (
+            {items.map((item, index) => (
               <TimelineItem 
                 key={item.id} 
                 {...item} 
+                index={index + 1}
                 onUpdate={(updates) => onUpdate(item.id, updates)}
                 onDelete={() => onDelete(item.id)}
                 onHover={() => onHover(item.id)}
                 onLeave={() => onHover(null)}
+                isPickingLocation={pickingLocationId === item.id}
+                onStartPicking={() => onStartPicking(item.id)}
+                onCancelPicking={() => onStartPicking(null)}
+                isNew={item.id === newItemId}
+                autoEdit={item.id === newItemId && !!isManualAdd}
               />
             ))}
           </div>

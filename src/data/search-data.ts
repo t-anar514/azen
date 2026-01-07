@@ -77,12 +77,15 @@ export const getSearchIndex = (locale: string, messages?: any): SearchItem[] => 
     });
   });
 
-  // Add Experiences (Default to data files as not in translations for now)
+  // Add Experiences
   EXPERIENCES.forEach(exp => {
+    const title = getT(`Experiences.${exp.id}.title`, exp.title);
+    const category = getT(`Experiences.${exp.id}.category`, exp.category);
+
     index.push({
       id: exp.id,
-      title: exp.title,
-      subtitle: `${exp.category} • ${exp.location}`,
+      title: title,
+      subtitle: `${category} • ${exp.location}`,
       category: 'Experiences',
       url: `/${locale}/experiences/${exp.id}`
     });

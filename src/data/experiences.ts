@@ -48,26 +48,14 @@ export const EXPERIENCES: Experience[] = [
       lat: 35.6580,
       lng: 139.7016,
       name: "Hachiko Statue",
-      description: "Outside Shibuya Station, Hachiko Exit. Look for the guide with the Teal Azen flag."
+      description: ""
     },
-    description: [
-      "Step away from the neon lights of the Scramble Crossing and into the narrow, smoke-filled alleys where Tokyo's salarymen relax. This tour takes you to three hand-picked 'izakayas' that don't have English menus and are rarely visited by tourists.",
-      "Experience the authentic 'Showa' era vibe of Nonbei Yokocho (Drunkard's Alley) and learn the local etiquette of drinking and socializing in Japan's most vibrant district."
-    ],
-    includes: [
-      "3 Signature Drinks",
-      "Assorted Local Snacks (Yakitori/Edamame)",
-      "Certified Local Guide",
-      "Entry Fees"
-    ],
-    toBring: [
-      "Passport for ID (if looking young)",
-      "Cash for extra drinks",
-      "Comfortable walking shoes"
-    ],
+    description: [],
+    includes: [],
+    toBring: [],
     guide: {
       name: "Kenji",
-      bio: "Local expert since 2015. Born and raised in Shibuya.",
+      bio: "",
       image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Kenji",
       isVerified: true
     }
@@ -79,11 +67,11 @@ export const EXPERIENCES: Experience[] = [
     location: "Akihabara, Tokyo",
     locationName: "Electric Town",
     basePrice: 2000,
-    heroImage: "https://images.unsplash.com/photo-1582236240224-b3e949d0dd44?q=80&w=1200",
+    heroImage: "https://i.pinimg.com/736x/7d/d9/a3/7dd9a3e1e18274b783bf17f6df5566eb.jpg",
     gallery: [
-      "https://images.unsplash.com/photo-1582236240224-b3e949d0dd44",
-      "https://images.unsplash.com/photo-1562113530-579e07ca3ff3",
-      "https://images.unsplash.com/photo-1618336753974-aae8e04506aa"
+      "https://i.pinimg.com/736x/76/a4/d5/76a4d55df936a8cb469e92d9b3ec54f9.jpg",
+      "https://i.pinimg.com/736x/28/25/27/2825278f8b4c4ae06c68c4358ed145d7.jpg",
+      "https://i.pinimg.com/1200x/12/b2/df/12b2df0d17bc46c9c0041bd3ca2f5d71.jpg"
     ],
     duration: "2 hrs",
     maxGroupSize: 10,
@@ -92,24 +80,14 @@ export const EXPERIENCES: Experience[] = [
       lat: 35.6984,
       lng: 139.7711,
       name: "Akihabara Station",
-      description: "Electric Town Gate. We meet in front of the Gundam Cafe."
+      description: ""
     },
-    description: [
-      "Explore the multi-story electronics meccas and hidden back-alley component shops of Electric Town. From the latest robotics to retro gaming consoles, this tour is a deep dive into Tokyo's tech heritage.",
-      "Learn about the evolution of Akihabara from a post-war black market to the world's leading hub for otaku culture and electronics."
-    ],
-    includes: [
-      "Interactive Electronics Demo",
-      "Retro Gaming Arcade Credits",
-      "Custom Tech Guide"
-    ],
-    toBring: [
-      "Fully charged camera",
-      "Your inner geek"
-    ],
+    description: [],
+    includes: [],
+    toBring: [],
     guide: {
       name: "Sarah",
-      bio: "Tech journalist and Tokyo resident for 8 years.",
+      bio: "",
       image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
       isVerified: true
     }
@@ -121,11 +99,11 @@ export const EXPERIENCES: Experience[] = [
     location: "Higashiyama, Kyoto",
     locationName: "Gion District",
     basePrice: 4500,
-    heroImage: "https://images.unsplash.com/photo-1545060411-827fc516f849?q=80&w=1200",
+    heroImage: "https://images.unsplash.com/photo-1576085898323-21811073b743?q=80&w=1200",
     gallery: [
-      "https://images.unsplash.com/photo-1545060411-827fc516f849",
+      "https://images.unsplash.com/photo-1576085898323-21811073b743",
       "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e",
-      "https://images.unsplash.com/photo-1512412086892-33d39f1124d0"
+      "https://images.unsplash.com/photo-1470737603524-8694a0773017"
     ],
     duration: "1.5 hrs",
     maxGroupSize: 4,
@@ -134,25 +112,14 @@ export const EXPERIENCES: Experience[] = [
       lat: 34.9948,
       lng: 135.7850,
       name: "Higashiyama Station",
-      description: "Exit 2. The guide will be wearing a traditional kimono."
+      description: ""
     },
-    description: [
-      "Find peace in the heart of Kyoto with a traditional Way of Tea (Chado) experience in a private 200-year-old machiya house. Learn the philosophy of Zen and the intricate movements of preparing matcha.",
-      "This is a quiet, meditative experience focused on mindfulness and seasonal beauty."
-    ],
-    includes: [
-      "Premium Uji Matcha",
-      "Wagashi (Seasonal Sweets)",
-      "Tea Master Instruction",
-      "Zen Philosophy Guide"
-    ],
-    toBring: [
-      "Clean socks (mandatory for entering the tea room)",
-      "An open mind"
-    ],
+    description: [],
+    includes: [],
+    toBring: [],
     guide: {
       name: "Yuki",
-      bio: "Licensed Tea Ceremony practitioner and Kyoto native.",
+      bio: "",
       image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Yuki",
       isVerified: true
     }

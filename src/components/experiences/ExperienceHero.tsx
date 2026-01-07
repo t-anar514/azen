@@ -3,19 +3,22 @@
 import Image from "next/image"
 import { Experience } from "@/data/experiences"
 import { Badge } from "@/components/ui/badge"
+import { useTranslations } from "next-intl"
 
 export function ExperienceHero({ experience }: { experience: Experience }) {
+  const t = useTranslations(`Experiences.${experience.id}`)
+  
   return (
     <div className="space-y-6">
       <div className="space-y-4">
         <Badge className="bg-[#88a47c] text-white hover:bg-[#88a47c]/90 border-none px-3 py-1 text-sm font-bold tracking-wide">
-          {experience.category}
+          {t('category')}
         </Badge>
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#1c315e] leading-tight tracking-tighter italic">
-          {experience.title}
+          {t('title')}
         </h1>
         <p className="text-xl text-[#1c315e]/70 font-medium">
-          {experience.location} • {experience.locationName}
+          {experience.location} • {t('locationName')}
         </p>
       </div>
 
