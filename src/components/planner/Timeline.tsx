@@ -20,8 +20,10 @@ import {
 import { TimelineItem } from "./TimelineItem"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Plus, Pencil, Check, X } from "lucide-react"
+import { supabase } from "@/lib/supabase"
+import { Cloud, CloudOff, RefreshCw, AlertCircle, Plus, Pencil, Check, X } from "lucide-react"
 
+export type SyncStatus = 'idle' | 'syncing' | 'saved' | 'error'
 // Type definition matching TimelineItem props
 export type ActivityType = 
     "flight" | "spot" | "food" | "hotel" | "shopping" | "transport" | 
@@ -58,6 +60,9 @@ interface TimelineProps {
   onStartPicking: (id: string | null) => void
   newItemId?: string | null
   isManualAdd?: boolean
+  isCompact?: boolean
+  onToggleCompact?: () => void
+  syncStatus?: SyncStatus
 }
 
 export function Timeline({ 
@@ -72,7 +77,10 @@ export function Timeline({
     pickingLocationId,
     onStartPicking,
     newItemId,
-    isManualAdd
+    isManualAdd,
+    isCompact,
+    onToggleCompact,
+    syncStatus
 }: TimelineProps) {
   const t = useTranslations("Planner")
   const [isEditingTitle, setIsEditingTitle] = useState(false)
@@ -130,10 +138,27 @@ export function Timeline({
                     <div className="flex items-center gap-3 group cursor-pointer" onClick={() => setIsEditingTitle(true)}>
                         <h2 className="text-2xl font-black font-mono tracking-tight uppercase italic text-primary truncate">{title}</h2>
                         <Pencil className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                        
+                        {/* Sync Status Indicator */}
+                        <div className="flex items-center gap-1.5 ml-1">
+                            {syncStatus === 'syncing' && <RefreshCw className="h-4 w-4 text-accent animate-spin" />}
+                            {syncStatus === 'saved' && <div title="Synchronized"><Cloud className="h-4 w-4 text-[#88a47c]" /></div>}
+                            {syncStatus === 'error' && <div title="Sync Failed"><AlertCircle className="h-4 w-4 text-destructive" /></div>}
+                            {syncStatus === 'idle' && <div title="Offline Mode"><CloudOff className="h-4 w-4 text-muted-foreground/30" /></div>}
+                        </div>
                     </div>
                 )}
             </div>
-            <div className="flex shrink-0">
+            <div className="flex shrink-0 gap-2">
+                <Button 
+                    onClick={onToggleCompact} 
+                    variant="outline"
+                    size="sm" 
+                    className={`rounded-full px-4 border-2 ${isCompact ? 'bg-accent/10 border-accent text-accent' : 'border-muted-foreground/20'}`}
+                    title={isCompact ? "Normal View" : "Compact View"}
+                >
+                    {isCompact ? "Normal" : "Compact"}
+                </Button>
                 <Button 
                     onClick={onAdd} 
                     size="sm" 
@@ -168,6 +193,7 @@ export function Timeline({
                 onCancelPicking={() => onStartPicking(null)}
                 isNew={item.id === newItemId}
                 autoEdit={item.id === newItemId && !!isManualAdd}
+                isCompact={isCompact}
               />
             ))}
           </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect, Suspense } from "react"
 import { Timeline, ItemType } from "@/components/planner/Timeline"
 import { InteractiveMap } from "@/components/planner/InteractiveMap"
 import { CostFooter } from "@/components/planner/CostFooter"
@@ -8,8 +8,11 @@ import { arrayMove } from "@dnd-kit/sortable"
 import { useTranslations } from "next-intl"
 import { useSearchParams } from "next/navigation"
 import { SAMPLE_ITINERARIES } from "@/data/templates"
+import { supabase } from "@/lib/supabase"
 
-export default function PlannerPage() {
+export type SyncStatus = 'idle' | 'syncing' | 'saved' | 'error'
+
+function PlannerContent() {
   const t = useTranslations("Planner")
   
   const searchParams = useSearchParams()
@@ -22,6 +25,9 @@ export default function PlannerPage() {
   const [pickingLocationId, setPickingLocationId] = useState<string | null>(null)
   const [newItemId, setNewItemId] = useState<string | null>(null)
   const [isManualAdd, setIsManualAdd] = useState(false)
+  const [isCompact, setIsCompact] = useState(false)
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle')
+  const [tripId, setTripId] = useState<string | null>(searchParams.get('trip'))
 
   const calculateTotal = useCallback((updatedItems: ItemType[]) => {
     setTotalCost(updatedItems.reduce((sum, item) => sum + item.cost, 0))
@@ -69,6 +75,80 @@ export default function PlannerPage() {
     ]
     setItems(initialItems)
   }, [t, templateId, calculateTotal])
+
+  // CLOUD FETCH
+  useEffect(() => {
+    async function loadFromCloud() {
+      if (!tripId) return
+      
+      setSyncStatus('syncing')
+      const { data, error } = await supabase
+        .from('itineraries')
+        .select('*')
+        .eq('id', tripId)
+        .single()
+
+      if (error) {
+        console.error("Cloud fetch failed:", error)
+        setSyncStatus('error')
+        return
+      }
+
+      if (data) {
+        setItems(data.items)
+        setItineraryTitle(data.title)
+        calculateTotal(data.items)
+        setSyncStatus('saved')
+      }
+    }
+
+    loadFromCloud()
+  }, [tripId, calculateTotal])
+
+  // CLOUD SYNC (Debounced)
+  useEffect(() => {
+    // skip initial load or if no tripod/items
+    if (!items.length) return
+
+    const timer = setTimeout(async () => {
+      setSyncStatus('syncing')
+      
+      const payload = {
+        title: itineraryTitle,
+        items: items,
+        updated_at: new Date().toISOString()
+      }
+
+      let result;
+      if (tripId) {
+        result = await supabase
+          .from('itineraries')
+          .update(payload)
+          .eq('id', tripId)
+      } else {
+        // Create new trip on first major change if not from template
+        result = await supabase
+          .from('itineraries')
+          .insert([payload])
+          .select()
+        
+        if (result.data?.[0]) {
+          setTripId(result.data[0].id)
+          // Update URL without reload? For now just internal state
+          window.history.replaceState(null, '', `?trip=${result.data[0].id}`)
+        }
+      }
+
+      if (result.error) {
+        console.error("Cloud sync failed:", result.error)
+        setSyncStatus('error')
+      } else {
+        setSyncStatus('saved')
+      }
+    }, 2000)
+
+    return () => clearTimeout(timer)
+  }, [items, itineraryTitle, tripId])
 
   const saveItinerary = () => {
     localStorage.setItem("azen_itinerary_items", JSON.stringify(items))
@@ -162,6 +242,9 @@ export default function PlannerPage() {
                     onStartPicking={setPickingLocationId}
                     newItemId={newItemId}
                     isManualAdd={isManualAdd}
+                    isCompact={isCompact}
+                    onToggleCompact={() => setIsCompact(!isCompact)}
+                    syncStatus={syncStatus}
                 />
             </div>
 
@@ -178,5 +261,13 @@ export default function PlannerPage() {
         
         <CostFooter total={totalCost} onSave={saveItinerary} />
     </div>
+  )
+}
+
+export default function PlannerPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen bg-background">Loading Planner...</div>}>
+      <PlannerContent />
+    </Suspense>
   )
 }

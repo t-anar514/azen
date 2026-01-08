@@ -69,12 +69,17 @@ const ActivityMarker = ({ item, isHovered, onSelect }: { item: ItemType & { coor
                 onSelect(item)
             }}
         >
-            <div className={`
-                p-2 rounded-full shadow-lg transition-all duration-300 cursor-pointer
-                ${isHovered ? 'bg-[#88a47c] scale-125 z-50' : 'bg-[#227c70] scale-100'}
-                border-2 border-white
-            `}>
-                {getIcon(item.type)}
+            <div className="relative group">
+                {isHovered && (
+                    <div className="absolute -inset-2 bg-[#88a47c]/40 rounded-full animate-pulse blur-sm" />
+                )}
+                <div className={`
+                    p-2 rounded-full shadow-lg transition-all duration-300 cursor-pointer relative z-10
+                    ${isHovered ? 'bg-[#88a47c] scale-125 ring-4 ring-[#88a47c]/30' : 'bg-[#227c70] scale-100'}
+                    border-2 border-white
+                `}>
+                    {getIcon(item.type)}
+                </div>
             </div>
         </Marker>
     )

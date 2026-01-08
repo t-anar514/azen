@@ -18,7 +18,6 @@ import {
   Check, 
   X, 
   Trash2,
-  Clock,
   Calendar,
   Camera,
   Landmark,
@@ -60,13 +59,14 @@ interface TimelineItemProps extends ItemType {
   onCancelPicking?: () => void
   isNew?: boolean
   autoEdit?: boolean
+  isCompact?: boolean
 }
 
 export function TimelineItem({ 
   id, title, date, type, location, cost, lat, lng, index,
   onUpdate, onDelete, onHover, onLeave, 
   isPickingLocation, onStartPicking, onCancelPicking,
-  isNew, autoEdit
+  isNew, autoEdit, isCompact
 }: TimelineItemProps) {
   const t = useTranslations("Planner.item")
   const [isEditing, setIsEditing] = useState(false)
@@ -459,46 +459,57 @@ export function TimelineItem({
     <div 
         ref={(node) => {
           setNodeRef(node)
-          // @ts-ignore
-          cardRef.current = node
+          cardRef.current = node as HTMLDivElement
         }} 
         style={style} 
-        className="mb-4 group relative"
+        className={`${isCompact ? 'mb-1' : 'mb-4'} group relative`}
         onMouseEnter={onHover}
         onMouseLeave={onLeave}
     >
       <Card 
-        className={`p-4 flex gap-4 items-center bg-card transition-all border-l-4 border-l-primary/10 hover:border-l-accent hover:shadow-lg ${isDragging ? 'opacity-50' : ''} ${isNew ? 'animate-pulse-highlight border-accent' : ''}`}
+        className={`
+          flex gap-4 items-center bg-card transition-all border-l-4 border-l-primary/10 hover:border-l-accent hover:shadow-lg
+          ${isDragging ? 'opacity-50' : ''} 
+          ${isNew ? 'animate-pulse-highlight border-accent' : ''}
+          ${isCompact ? 'p-2 py-2.5 rounded-lg' : 'p-4'}
+        `}
       >
-        <div className="text-muted-foreground cursor-grab active:cursor-grabbing flex flex-col items-center gap-1" {...attributes} {...listeners}>
-            <div className="h-6 w-6 rounded-full bg-accent/10 flex items-center justify-center border border-accent/20 group-hover:scale-110 transition-transform">
-              <span className="text-[10px] font-black text-accent">{index}</span>
+        <div className={`text-muted-foreground cursor-grab active:cursor-grabbing flex flex-col items-center gap-1 ${isCompact ? 'px-1' : ''}`} {...attributes} {...listeners}>
+            <div className={`${isCompact ? 'h-5 w-5' : 'h-6 w-6'} rounded-full bg-accent/10 flex items-center justify-center border border-accent/20 group-hover:scale-110 transition-transform shrink-0`}>
+              <span className={`${isCompact ? 'text-[8px]' : 'text-[10px]'} font-black text-accent`}>{index}</span>
             </div>
-            <MoveVertical className="h-3 w-3 opacity-0 group-hover:opacity-30" />
+            {!isCompact && <MoveVertical className="h-3 w-3 opacity-0 group-hover:opacity-30" />}
         </div>
         
-        <div className="flex-1 flex gap-4 items-center">
-            <div className="flex flex-col items-center justify-center h-12 w-12 rounded-2xl bg-muted/50 shrink-0 border border-secondary/10 group-hover:bg-accent/5 transition-colors">
-              <viewIconData.icon className={`h-6 w-6 ${viewIconData.color || 'text-primary'}`} />
+        <div className="flex-1 flex gap-3 items-center min-w-0">
+            <div className={`flex flex-col items-center justify-center rounded-xl bg-muted/50 shrink-0 border border-secondary/10 group-hover:bg-accent/5 transition-colors ${isCompact ? 'h-8 w-8' : 'h-12 w-12'}`}>
+              <viewIconData.icon className={`${isCompact ? 'h-4 w-4' : 'h-6 w-6'} ${viewIconData.color || 'text-primary'}`} />
             </div>
             
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-0.5">
-                 <h4 className="font-bold text-lg truncate text-primary">{title}</h4>
-                 <div className="flex flex-wrap gap-2 text-[10px] font-mono text-muted-foreground">
-                    <div className="flex items-center bg-secondary/10 px-2 py-0.5 rounded-full">
-                       <Calendar className="h-3 w-3 mr-1" />
-                       {new Date(date).toLocaleDateString([], { month: 'short', day: 'numeric' })}
-                    </div>
-                 </div>
+                 <h4 className={`font-bold truncate text-primary ${isCompact ? 'text-sm' : 'text-lg'}`}>{title}</h4>
+                 {!isCompact && (
+                   <div className="flex flex-wrap gap-2 text-[10px] font-mono text-muted-foreground">
+                      <div className="flex items-center bg-secondary/10 px-2 py-0.5 rounded-full">
+                         <Calendar className="h-3 w-3 mr-1" />
+                         {new Date(date).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                      </div>
+                   </div>
+                 )}
+                 {isCompact && (
+                   <span className="text-[10px] font-mono text-muted-foreground bg-secondary/10 px-1.5 py-0.5 rounded-md shrink-0">
+                     {new Date(date).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                   </span>
+                 )}
               </div>
-              <p className="text-sm text-muted-foreground truncate">{location}</p>
+              {!isCompact && <p className="text-sm text-muted-foreground truncate">{location}</p>}
             </div>
         </div>
 
         <div className="flex items-center gap-3">
             <div className="text-right">
-                 <Badge variant="outline" className="font-mono text-primary border-primary/20 bg-primary/5">
+                 <Badge variant="outline" className={`font-mono text-primary border-primary/20 bg-primary/5 ${isCompact ? 'text-[10px] py-0 px-1.5 h-5' : ''}`}>
                    ¥{cost.toLocaleString()}
                  </Badge>
             </div>
@@ -507,15 +518,15 @@ export function TimelineItem({
                 onClick={() => setIsEditing(true)}
                 variant="ghost" 
                 size="icon" 
-                className="h-8 w-8 rounded-full opacity-100 md:opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all shadow-sm shrink-0"
+                className={`rounded-full opacity-100 md:opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all shadow-sm shrink-0 ${isCompact ? 'h-6 w-6' : 'h-8 w-8'}`}
             >
-                <Pencil className="h-4 w-4 font-bold" />
+                <Pencil className={`${isCompact ? 'h-3 w-3' : 'h-4 w-4'} font-bold`} />
             </Button>
         </div>
       </Card>
       
       {/* Visual connector line */}
-      <div className="h-4 w-0.5 bg-border mx-auto my-1 group-last:hidden ml-[3.25rem] opacity-30" /> 
+      <div className={`bg-border mx-auto group-last:hidden opacity-30 ${isCompact ? 'h-2 w-0.5 my-0.5 ml-[2.35rem]' : 'h-4 w-0.5 my-1 ml-[3.25rem]'}`} /> 
     </div>
   )
 }
