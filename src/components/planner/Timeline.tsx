@@ -63,6 +63,7 @@ interface TimelineProps {
   isCompact?: boolean
   onToggleCompact?: () => void
   syncStatus?: SyncStatus
+  currency?: "MNT" | "USD" | "JPY"
 }
 
 export function Timeline({ 
@@ -80,7 +81,8 @@ export function Timeline({
     isManualAdd,
     isCompact,
     onToggleCompact,
-    syncStatus
+    syncStatus,
+    currency = "JPY"
 }: TimelineProps) {
   const t = useTranslations("Planner")
   const [isEditingTitle, setIsEditingTitle] = useState(false)
@@ -136,7 +138,7 @@ export function Timeline({
                     </div>
                 ) : (
                     <div className="flex items-center gap-3 group cursor-pointer" onClick={() => setIsEditingTitle(true)}>
-                        <h2 className="text-2xl font-black font-mono tracking-tight uppercase italic text-primary truncate">{title}</h2>
+                        <h2 className="text-2xl font-black font-mono tracking-tight uppercase italic text-primary">{title}</h2>
                         <Pencil className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                         
                         {/* Sync Status Indicator */}
@@ -157,7 +159,7 @@ export function Timeline({
                     className={`rounded-full px-4 border-2 ${isCompact ? 'bg-accent/10 border-accent text-accent' : 'border-muted-foreground/20'}`}
                     title={isCompact ? "Normal View" : "Compact View"}
                 >
-                    {isCompact ? "Normal" : "Compact"}
+                    {isCompact ? "Энгийн" : "Шахах"}
                 </Button>
                 <Button 
                     onClick={onAdd} 
@@ -194,6 +196,7 @@ export function Timeline({
                 isNew={item.id === newItemId}
                 autoEdit={item.id === newItemId && !!isManualAdd}
                 isCompact={isCompact}
+                currency={currency}
               />
             ))}
           </div>

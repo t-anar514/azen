@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, Suspense } from "react"
 import { Timeline, ItemType } from "@/components/planner/Timeline"
 import { InteractiveMap } from "@/components/planner/InteractiveMap"
 import { CostFooter } from "@/components/planner/CostFooter"
+import { TripSettings } from "@/components/planner/SettingsModal"
 import { arrayMove } from "@dnd-kit/sortable"
 import { useTranslations } from "next-intl"
 import { useSearchParams } from "next/navigation"
@@ -29,6 +30,26 @@ function PlannerContent() {
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle')
   const [tripId, setTripId] = useState<string | null>(searchParams.get('trip'))
 
+  const [settings, setSettings] = useState<TripSettings>({
+    simplifyExpenses: false,
+    defaultCurrency: "JPY",
+    startDate: "2024-01-01", // Placeholder that will be updated on mount
+    endDate: "2024-01-08"
+  })
+
+  // Initialize dates on client-side only
+  useEffect(() => {
+    // Only update if it's the placeholder
+    if (settings.startDate === "2024-01-01") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSettings(prev => ({
+        ...prev,
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+      }))
+    }
+  }, [settings.startDate])
+
   const calculateTotal = useCallback((updatedItems: ItemType[]) => {
     setTotalCost(updatedItems.reduce((sum, item) => sum + item.cost, 0))
   }, [])
@@ -39,10 +60,16 @@ function PlannerContent() {
     if (templateId) {
       const template = SAMPLE_ITINERARIES.find(t => t.id === templateId)
       if (template) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setItems(template.activities)
         setItineraryTitle(t(`item.templates.${templateId}.title`, { fallback: templateId }))
         calculateTotal(template.activities)
-        // Trigger auto-scroll to the first item
+        
+        // Update dates based on template if possible (mocking 14 days for golden route etc)
+        const start = new Date().toISOString().split('T')[0]
+        const end = new Date(Date.now() + (template.duration || 7) * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+        setSettings(prev => ({ ...prev, startDate: start, endDate: end }))
+
         if (template.activities.length > 0) {
             setNewItemId(template.activities[0].id)
         }
@@ -53,6 +80,7 @@ function PlannerContent() {
     // 2. Load from localStorage if no template
     const savedItems = localStorage.getItem("azen_itinerary_items")
     const savedTitle = localStorage.getItem("azen_itinerary_title")
+    const savedSettings = localStorage.getItem("azen_itinerary_settings")
     
     if (savedItems) {
       try {
@@ -60,9 +88,10 @@ function PlannerContent() {
         setItems(parsedItems)
         calculateTotal(parsedItems)
         if (savedTitle) setItineraryTitle(savedTitle)
+        if (savedSettings) setSettings(JSON.parse(savedSettings))
         return
       } catch (e) {
-        console.error("Failed to parse saved items", e)
+        console.error("Failed to parse saved data", e)
       }
     }
 
@@ -97,6 +126,7 @@ function PlannerContent() {
       if (data) {
         setItems(data.items)
         setItineraryTitle(data.title)
+        if (data.settings) setSettings(data.settings)
         calculateTotal(data.items)
         setSyncStatus('saved')
       }
@@ -116,44 +146,97 @@ function PlannerContent() {
       const payload = {
         title: itineraryTitle,
         items: items,
+        settings: settings,
         updated_at: new Date().toISOString()
       }
 
-      let result;
       if (tripId) {
-        result = await supabase
+        const { error } = await supabase
           .from('itineraries')
           .update(payload)
           .eq('id', tripId)
+        
+        if (error) {
+          console.error("Cloud sync update failed:", error)
+          setSyncStatus('error')
+        } else {
+          setSyncStatus('saved')
+        }
       } else {
         // Create new trip on first major change if not from template
-        result = await supabase
+        const { data, error } = await supabase
           .from('itineraries')
           .insert([payload])
           .select()
         
-        if (result.data?.[0]) {
-          setTripId(result.data[0].id)
+        if (error) {
+          console.error("Cloud sync insert failed:", error)
+          setSyncStatus('error')
+        } else if (data?.[0]) {
+          setTripId(data[0].id)
           // Update URL without reload? For now just internal state
-          window.history.replaceState(null, '', `?trip=${result.data[0].id}`)
+          window.history.replaceState(null, '', `?trip=${data[0].id}`)
+          setSyncStatus('saved')
         }
-      }
-
-      if (result.error) {
-        console.error("Cloud sync failed:", result.error)
-        setSyncStatus('error')
-      } else {
-        setSyncStatus('saved')
       }
     }, 2000)
 
     return () => clearTimeout(timer)
-  }, [items, itineraryTitle, tripId])
+  }, [items, itineraryTitle, settings, tripId])
 
   const saveItinerary = () => {
     localStorage.setItem("azen_itinerary_items", JSON.stringify(items))
     localStorage.setItem("azen_itinerary_title", itineraryTitle)
+    localStorage.setItem("azen_itinerary_settings", JSON.stringify(settings))
     console.log(t("saved"))
+  }
+
+  const handleSettingsUpdate = (newSettings: TripSettings) => {
+    // Date Range Logic
+    if (newSettings.startDate !== settings.startDate || newSettings.endDate !== settings.endDate) {
+      const activitiesOutside = items.filter(item => 
+        item.date < newSettings.startDate || item.date > newSettings.endDate
+      )
+
+      if (activitiesOutside.length > 0) {
+        const confirmMsg = t("dateWarning") || "Changing dates will remove some activities. Continue?"
+        if (!window.confirm(confirmMsg)) return
+        
+        const filteredItems = items.filter(item => 
+          item.date >= newSettings.startDate && item.date <= newSettings.endDate
+        )
+        setItems(filteredItems)
+        calculateTotal(filteredItems)
+      }
+    }
+    setSettings(newSettings)
+  }
+
+  const handleExport = () => {
+    const headers = ["ID", "Title", "Date", "Type", "Location", "Cost (JPY)"]
+    const rows = items.map(i => [
+      i.id,
+      i.title,
+      i.date,
+      i.type,
+      i.location,
+      i.cost.toString()
+    ])
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map(r => r.map(cell => `"${cell}"`).join(","))
+    ].join("\n")
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement("a")
+    const url = URL.createObjectURL(blob)
+    link.setAttribute("href", url)
+    link.setAttribute("download", `${itineraryTitle || 'trip'}_expenses.csv`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   // Clear newItemId after highlight
@@ -245,6 +328,7 @@ function PlannerContent() {
                     isCompact={isCompact}
                     onToggleCompact={() => setIsCompact(!isCompact)}
                     syncStatus={syncStatus}
+                    currency={settings.defaultCurrency}
                 />
             </div>
 
@@ -259,7 +343,13 @@ function PlannerContent() {
             </div>
         </div>
         
-        <CostFooter total={totalCost} onSave={saveItinerary} />
+        <CostFooter 
+          total={totalCost} 
+          onSave={saveItinerary} 
+          settings={settings}
+          onSettingsUpdate={handleSettingsUpdate}
+          onExport={handleExport}
+        />
     </div>
   )
 }

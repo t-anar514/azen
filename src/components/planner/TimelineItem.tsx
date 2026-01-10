@@ -12,7 +12,6 @@ import {
   Coffee, 
   Utensils, 
   ShoppingBag, 
-  Train, 
   MoveVertical, 
   Pencil, 
   Check, 
@@ -44,9 +43,11 @@ import {
   Heart,
   Star,
   Ticket,
-  Map as MapIcon
+  Map as MapIcon,
+  ChevronDown
 } from "lucide-react"
 import { ItemType, ActivityType } from "./Timeline"
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 
 interface TimelineItemProps extends ItemType {
   index: number
@@ -60,16 +61,29 @@ interface TimelineItemProps extends ItemType {
   isNew?: boolean
   autoEdit?: boolean
   isCompact?: boolean
+  currency?: "MNT" | "USD" | "JPY"
+}
+
+interface GeocodeFeature {
+  geometry: {
+    coordinates: [number, number]
+  }
+  properties: {
+    name: string
+    city?: string
+    country?: string
+  }
 }
 
 export function TimelineItem({ 
   id, title, date, type, location, cost, lat, lng, index,
   onUpdate, onDelete, onHover, onLeave, 
   isPickingLocation, onStartPicking, onCancelPicking,
-  isNew, autoEdit, isCompact
+  isNew, autoEdit, isCompact,
+  currency = "JPY"
 }: TimelineItemProps) {
   const t = useTranslations("Planner.item")
-  const [isEditing, setIsEditing] = useState(false)
+  const [isEditing, setIsEditing] = useState(autoEdit || false)
   const [editTitle, setEditTitle] = useState(title)
   const [editLocation, setEditLocation] = useState(location)
   const [editCost, setEditCost] = useState(cost)
@@ -78,19 +92,15 @@ export function TimelineItem({
   const [editLat, setEditLat] = useState(lat)
   const [editLng, setEditLng] = useState(lng)
   
-  const [searchResults, setSearchResults] = useState<any[]>([])
+  const [searchResults, setSearchResults] = useState<GeocodeFeature[]>([])
   const [showResults, setShowResults] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
 
-  // Scroll into view on creation
   useEffect(() => {
     if (isNew && cardRef.current) {
       cardRef.current.scrollIntoView({ behavior: "smooth", block: "center" })
     }
-    if (autoEdit) {
-      setIsEditing(true)
-    }
-  }, [isNew, autoEdit])
+  }, [isNew])
 
   // Use Photon API for free, open-source geocoding (no API key required)
   const searchLocation = async (query: string) => {
@@ -194,7 +204,7 @@ export function TimelineItem({
     }
   ]
 
-  const [activeCategory, setActiveCategory] = useState(iconCategories[0].id)
+
   
   const allIcons = iconCategories.flatMap(c => c.icons)
   
@@ -228,7 +238,11 @@ export function TimelineItem({
   }
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US').format(value)
+    switch(currency) {
+      case "MNT": return `₮ ${(value * 22).toLocaleString()}`
+      case "USD": return `$ ${(value / 150).toFixed(2)}`
+      default: return `¥${new Intl.NumberFormat('en-US').format(value)}`
+    }
   }
 
   const handleCostChange = (val: string) => {
@@ -245,159 +259,158 @@ export function TimelineItem({
   }
 
   if (isEditing) {
+    const EditIcon = editIconData.icon
     return (
-      <div ref={setNodeRef} style={style} className="mb-4">
-        <Card className={`p-6 space-y-6 border-2 border-accent shadow-xl bg-card ${isNew ? 'animate-pulse-highlight' : ''}`}>
-          <div className="flex justify-between items-center bg-muted/50 -m-6 mb-6 p-4 rounded-t-lg">
-            <h5 className="font-black uppercase tracking-widest text-xs text-primary/60">{t("edit")}</h5>
-            <div className="flex gap-2">
-               <Button onClick={onDelete} variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10">
-                 <Trash2 className="h-4 w-4" />
+      <div ref={setNodeRef} style={style} className="mb-3">
+        <Card className={`p-4 space-y-4 border-2 border-accent shadow-xl bg-card overflow-hidden ${isNew ? 'animate-pulse-highlight' : ''}`}>
+          <div className="flex justify-between items-center -mx-4 -mt-4 mb-2 p-3 bg-muted/30 border-b border-border/50">
+            <h5 className="font-black uppercase tracking-widest text-[10px] text-primary/60">{t("edit")}</h5>
+            <div className="flex gap-1">
+               <Button onClick={onDelete} variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:bg-destructive/10">
+                 <Trash2 className="h-3.5 w-3.5" />
                </Button>
-               <Button onClick={handleCancel} variant="ghost" size="icon" className="h-8 w-8">
-                 <X className="h-4 w-4" />
+               <Button onClick={handleCancel} variant="ghost" size="icon" className="h-7 w-7">
+                 <X className="h-3.5 w-3.5" />
                </Button>
             </div>
           </div>
 
-          <div className={`space-y-4 pt-2 transition-all duration-500 ${isPickingLocation ? 'opacity-20 pointer-events-none scale-95 blur-sm' : 'opacity-100'}`}>
-            {/* Categorized Icon Picker */}
-            <div className="space-y-3">
-              <div className="flex border-b border-muted overflow-x-auto scrollbar-hide">
-                {iconCategories.map((cat) => (
-                  <button
-                    key={cat.id}
-                    onClick={() => setActiveCategory(cat.id)}
-                    className={`px-3 py-2 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 whitespace-nowrap ${
-                      activeCategory === cat.id 
-                        ? "border-accent text-accent" 
-                        : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`}
+          <div className={`space-y-3 transition-all duration-500 ${isPickingLocation ? 'opacity-20 pointer-events-none scale-95 blur-sm' : 'opacity-100'}`}>
+            <div className="flex gap-3">
+              {/* Popover Icon Picker */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    className="h-12 w-12 p-0 flex-shrink-0 border-2 border-dashed border-accent/20 hover:border-accent hover:bg-accent/5 transition-all group rounded-xl"
                   >
-                    {cat.label}
-                  </button>
-                ))}
-              </div>
-              
-              <div className="grid grid-cols-6 gap-2 py-2">
-                {iconCategories.find(c => c.id === activeCategory)?.icons.map((a, i) => {
-                  const Icon = a.icon
-                  const isSelected = editType === a.type
-                  return (
-                    <button
-                      key={`${a.type}-${i}`}
-                      onClick={() => setEditType(a.type as ActivityType)}
-                      className={`p-3 rounded-xl transition-all border-2 flex items-center justify-center ${
-                        isSelected
-                          ? "bg-accent/10 border-accent text-accent scale-110 shadow-sm" 
-                          : "bg-muted border-transparent text-muted-foreground hover:bg-muted/80"
-                      }`}
-                      title={a.label}
-                    >
-                      <Icon className="h-5 w-5" />
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
+                    <div className="relative">
+                      <EditIcon className={`h-6 w-6 ${editIconData.color || 'text-accent'}`} />
+                      <div className="absolute -bottom-1 -right-1 bg-accent rounded-full p-0.5 shadow-sm group-hover:scale-110 transition-transform">
+                        <ChevronDown className="h-2 w-2 text-white" />
+                      </div>
+                    </div>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[320px] p-2 overflow-hidden rounded-2xl border-2 border-accent shadow-2xl" side="bottom" align="start">
+                  <div className="grid grid-cols-6 gap-2.5 p-1">
+                    {allIcons.map((a, i) => {
+                      const Icon = a.icon
+                      const isSelected = editType === a.type
+                      return (
+                        <button
+                          key={`${a.type}-${i}`}
+                          onClick={() => setEditType(a.type as ActivityType)}
+                          className={`aspect-square rounded-xl transition-all border-2 flex items-center justify-center group ${
+                            isSelected
+                              ? "bg-accent/10 border-accent text-accent scale-105 shadow-sm" 
+                              : "bg-muted/30 border-transparent text-muted-foreground hover:bg-muted"
+                          }`}
+                          title={a.label}
+                        >
+                          <Icon className={`h-5 w-5 transition-transform group-hover:scale-110 ${isSelected ? 'text-accent' : 'text-muted-foreground'}`} />
+                        </button>
+                      )
+                    })}
+                  </div>
+                </PopoverContent>
+              </Popover>
 
-            <div className="grid gap-3 pb-2">
-              <div className="relative">
-                <Input 
-                  type="date"
-                  value={editDate} 
-                  onChange={(e) => setEditDate(e.target.value)} 
-                  className="pl-10 h-12 bg-muted/30"
-                />
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-              </div>
-            </div>
-
-            <div className="grid gap-3">
-              <div className="relative">
+              <div className="relative flex-1">
                 <Input 
                   value={editTitle} 
                   onChange={(e) => setEditTitle(e.target.value)} 
                   placeholder={t("titlePlaceholder")}
-                  className="font-bold text-lg h-12 bg-muted/30"
+                  className="font-bold text-base h-12 bg-muted/20 border-none shadow-none focus-visible:ring-1 focus-visible:ring-accent/30 rounded-xl"
                 />
-                <Badge className="absolute right-3 top-1/2 -translate-y-1/2 bg-accent/20 text-accent hover:bg-accent/20 border-none font-mono">#{index}</Badge>
+                <Badge className="absolute right-3 top-1/2 -translate-y-1/2 bg-accent/10 text-accent hover:bg-accent/10 border-none font-mono text-[10px]">#{index}</Badge>
               </div>
-              
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <Input 
-                    value={editLocation} 
-                    onChange={(e) => {
-                      setEditLocation(e.target.value)
-                      searchLocation(e.target.value)
-                    }} 
-                    onBlur={() => setTimeout(() => setShowResults(false), 200)}
-                    onFocus={() => editLocation.length >= 2 && setShowResults(true)}
-                    placeholder={t("locationPlaceholder")}
-                    className="pr-10 h-12 bg-muted/30"
-                  />
-                  <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-                  
-                  {showResults && searchResults.length > 0 && (
-                    <div className="absolute bottom-full left-0 right-0 mb-2 bg-card border-2 border-accent rounded-xl shadow-2xl z-[110] overflow-hidden max-h-[200px] overflow-y-auto">
-                      {searchResults.map((feature, index) => {
-                        const { name, city, country } = feature.properties
-                        const label = [name, city, country].filter(Boolean).join(", ")
-                        return (
-                          <button
-                            key={index}
-                            className="w-full text-left p-3 hover:bg-accent/10 transition-colors border-b last:border-b-0 flex items-start gap-3"
-                            onClick={() => {
-                              setEditLocation(name || label)
-                              setEditLat(feature.geometry.coordinates[1])
-                              setEditLng(feature.geometry.coordinates[0])
-                              setShowResults(false)
-                            }}
-                          >
-                            <MapPin className="w-4 h-4 mt-0.5 text-accent shrink-0" />
-                            <div className="min-w-0">
-                              <div className="font-bold text-sm truncate">{name || label}</div>
-                              <div className="text-[10px] text-muted-foreground truncate">{label}</div>
-                            </div>
-                          </button>
-                        )
-                      })}
-                    </div>
-                  )}
-                </div>
-                
+            </div>
+
+            <div className="flex gap-2">
+              <div className="relative flex-[1.4]">
+                <Input 
+                  value={editLocation} 
+                  onChange={(e) => {
+                    setEditLocation(e.target.value)
+                    searchLocation(e.target.value)
+                  }} 
+                  onBlur={() => setTimeout(() => setShowResults(false), 200)}
+                  onFocus={() => editLocation.length >= 2 && setShowResults(true)}
+                  placeholder={t("locationPlaceholder")}
+                  className="pl-9 h-10 bg-muted/20 border-none shadow-none text-sm rounded-xl focus-visible:ring-1 focus-visible:ring-accent/30"
+                />
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
                 <Button 
                   type="button"
-                  variant="outline" 
-                  className={`h-12 w-12 p-0 shrink-0 border-2 transition-all ${isPickingLocation ? 'bg-accent border-accent text-white animate-pulse' : 'hover:border-accent hover:text-accent'}`}
+                  variant="ghost" 
+                  className={`absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0 shrink-0 transition-all rounded-lg ${isPickingLocation ? 'bg-accent text-white scale-90' : 'text-muted-foreground hover:text-accent'}`}
                   onClick={onStartPicking}
                   title="Pick on Map"
                 >
-                  <MapIcon className="h-5 w-5" />
+                  <MapIcon className="h-4 w-4" />
                 </Button>
+                
+                {showResults && searchResults.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-card border-2 border-accent rounded-xl shadow-2xl z-[110] overflow-hidden max-h-[200px] overflow-y-auto">
+                    {searchResults.map((feature, index) => {
+                      const { name, city, country } = feature.properties
+                      const label = [name, city, country].filter(Boolean).join(", ")
+                      return (
+                        <button
+                          key={index}
+                          className="w-full text-left p-3 hover:bg-accent/10 transition-colors border-b last:border-b-0 flex items-start gap-3"
+                          onClick={() => {
+                            setEditLocation(name || label)
+                            setEditLat(feature.geometry.coordinates[1])
+                            setEditLng(feature.geometry.coordinates[0])
+                            setShowResults(false)
+                          }}
+                        >
+                          <MapPin className="w-4 h-4 mt-0.5 text-accent shrink-0" />
+                          <div className="min-w-0">
+                            <div className="font-bold text-sm truncate">{name || label}</div>
+                            <div className="text-[10px] text-muted-foreground truncate">{label}</div>
+                          </div>
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
               </div>
 
-              <div className="space-y-3">
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-muted-foreground">¥</span>
+              <div className="relative flex-1">
+                <Input 
+                  type="date"
+                  value={editDate} 
+                  onChange={(e) => setEditDate(e.target.value)} 
+                  className="pl-9 h-10 bg-muted/20 border-none shadow-none text-sm rounded-xl focus-visible:ring-1 focus-visible:ring-accent/30"
+                />
+                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+              </div>
+            </div>
+
+            <div className="bg-muted/20 rounded-2xl p-3 space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="relative flex-1">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-xs text-muted-foreground">¥</span>
                   <Input 
                     type="text"
                     value={formatCurrency(editCost)} 
                     onChange={(e) => handleCostChange(e.target.value)} 
-                    className="pl-8 font-mono h-12 bg-muted/30 text-lg"
+                    className="pl-7 font-mono h-10 bg-white border-muted/50 text-sm rounded-xl focus-visible:ring-accent/30"
                   />
                 </div>
                 
-                <div className="flex flex-wrap gap-2">
-                  {[1000, 5000, 10000].map(amount => (
+                <div className="flex gap-1.5 overflow-x-auto scrollbar-hide py-1">
+                  {[1000, 5000].map(amount => (
                     <Button 
                       key={amount}
                       type="button" 
                       variant="outline" 
                       size="sm" 
                       onClick={() => addAmount(amount)}
-                      className="h-8 font-mono text-[10px] rounded-full border-muted-foreground/20 hover:border-accent hover:text-accent"
+                      className="h-8 px-3 font-mono text-[10px] rounded-full border-muted text-muted-foreground hover:border-accent hover:text-accent bg-white"
                     >
                       +{formatCurrency(amount)}
                     </Button>
@@ -407,7 +420,7 @@ export function TimelineItem({
                     variant="ghost" 
                     size="sm" 
                     onClick={() => setEditCost(0)}
-                    className="h-8 font-mono text-[10px] rounded-full text-muted-foreground hover:text-destructive"
+                    className="h-8 px-2 font-mono text-[10px] rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/5"
                   >
                     Reset
                   </Button>
@@ -415,36 +428,32 @@ export function TimelineItem({
               </div>
             </div>
 
-            <div className="flex gap-3 pt-4">
-              <span className="flex-1">
-                <Button 
-                  onClick={handleSave} 
-                  disabled={!editTitle || !editLocation || !editDate}
-                  className="w-full bg-accent text-white rounded-full font-bold uppercase tracking-wider h-14 shadow-lg shadow-accent/20 hover:shadow-accent/40 disabled:opacity-30 disabled:grayscale transition-all"
-                >
-                  <Check className="h-5 w-5 mr-2" /> {t("done")}
-                </Button>
-              </span>
-              <span className="flex-1">
-                <Button onClick={handleCancel} variant="ghost" className="w-full rounded-full font-bold uppercase tracking-wider h-14 hover:bg-muted">
-                   {t("cancel")}
-                </Button>
-              </span>
+            <div className="flex gap-2 pt-2">
+              <Button 
+                onClick={handleSave} 
+                disabled={!editTitle || !editLocation || !editDate}
+                className="flex-1 bg-accent hover:bg-accent/90 text-white rounded-xl font-bold uppercase tracking-wider h-11 text-xs shadow-lg shadow-accent/20 transition-all"
+              >
+                <Check className="h-4 w-4 mr-2" /> {t("done")}
+              </Button>
+              <Button onClick={handleCancel} variant="ghost" className="flex-1 rounded-xl font-bold uppercase tracking-wider h-11 text-xs hover:bg-muted text-muted-foreground">
+                 {t("cancel")}
+              </Button>
             </div>
           </div>
 
           {/* Map Picking Overlay */}
           {isPickingLocation && (
-            <div className="absolute inset-x-6 top-[150px] bottom-6 flex flex-col items-center justify-center text-center space-y-4 animate-in fade-in zoom-in duration-300 pointer-events-none">
-              <div className="bg-accent text-white px-6 py-4 rounded-3xl shadow-2xl pointer-events-auto flex flex-col items-center gap-2">
-                <div className="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center animate-bounce">
-                  <MapPin className="h-6 w-6 text-white" />
+            <div className="absolute inset-4 flex flex-col items-center justify-center text-center space-y-3 animate-in fade-in zoom-in duration-300 pointer-events-none">
+              <div className="bg-accent text-white px-5 py-4 rounded-2xl shadow-2xl pointer-events-auto flex flex-col items-center gap-2 max-w-[200px]">
+                <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center animate-bounce">
+                  <MapPin className="h-5 w-5 text-white" />
                 </div>
-                <div>
-                  <p className="font-black uppercase tracking-tighter text-sm">Газрын зураг дээр товших</p>
-                  <p className="text-[10px] opacity-80">Байршлаа сонгохын тулд зураг дээр дарна уу</p>
+                <div className="space-y-1">
+                  <p className="font-black uppercase tracking-tighter text-[10px]">Газрын зураг дээр товших</p>
+                  <p className="text-[9px] opacity-80 leading-tight">Сонгохын тулд зураг дээр дарна уу</p>
                 </div>
-                <Button size="sm" variant="secondary" className="mt-2 rounded-full h-8 px-4 text-[10px] font-bold uppercase" onClick={onCancelPicking}>
+                <Button size="sm" variant="secondary" className="mt-1 rounded-lg h-7 px-3 text-[9px] font-bold uppercase w-full bg-white text-accent hover:bg-white/90" onClick={onCancelPicking}>
                   Цуцлах
                 </Button>
               </div>

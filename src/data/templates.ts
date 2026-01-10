@@ -39,7 +39,7 @@ export const SAMPLE_ITINERARIES: SampleItinerary[] = [
   {
     id: "kyoto-zen",
     duration: 5,
-    heroImage: "https://images.unsplash.com/photo-1470737603524-8694a0773017?q=80&w=1200", // Zen garden
+    heroImage: "https://i.pinimg.com/736x/3a/d7/fe/3ad7fe4f962de763b1e5c6b91ec04c5a.jpg", // Zen garden
     basePrice: 85000,
     activities: [
       { id: "kz-1", title: "Arashiyama Bamboo Grove", date: "2025-04-10", type: "nature", location: "Bamboo Grove", cost: 0, lat: 35.0158, lng: 135.6706 },
