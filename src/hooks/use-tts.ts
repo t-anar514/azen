@@ -1,13 +1,26 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { synthesizeSpeech } from "@/services/tts-service"
 
 export function useTTS() {
   const [isSpeaking, setIsSpeaking] = useState(false)
 
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        window.speechSynthesis.cancel()
+      }
+    }
+  }, [])
+
   const speak = useCallback(async (text: string) => {
-    if (isSpeaking) return;
+    if (isSpeaking) {
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        window.speechSynthesis.cancel()
+      }
+    }
     
     setIsSpeaking(true)
     try {
@@ -19,5 +32,13 @@ export function useTTS() {
     }
   }, [isSpeaking])
 
-  return { speak, isSpeaking }
+  const stop = useCallback(() => {
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel()
+      setIsSpeaking(false)
+    }
+  }, [])
+
+  return { speak, stop, isSpeaking }
 }
+

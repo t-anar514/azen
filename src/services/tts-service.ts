@@ -1,21 +1,45 @@
-// Define your new hosted configuration
-const VOICEVOX_API_KEY = "fadcfce212c0c616fb1851ab9bcfb0774ee2100f527198f7a35f83ae1227fd93";
-const HOSTED_VOICEVOX_URL = "https://deprecatedapis.tts.quest/v2/voicevox/audio/";
+/**
+ * Uses the browser's native SpeechSynthesis API to read text.
+ * This provides instant, reliable TTS without external dependencies.
+ */
+export const synthesizeSpeech = (text: string, voiceName?: string): Promise<{ success: boolean; error?: unknown }> => {
+  return new Promise((resolve) => {
+    if (typeof window === "undefined" || !window.speechSynthesis) {
+      console.warn("Speech Synthesis not supported in this environment.");
+      return resolve({ success: false, error: "Not supported" });
+    }
 
-export const synthesizeSpeech = async (text: string, speakerId: number = 1) => {
-  try {
-    // 1. Construct the URL with required parameters
-    const encodedText = encodeURIComponent(text);
-    const url = `${HOSTED_VOICEVOX_URL}?key=${VOICEVOX_API_KEY}&speaker=${speakerId}&text=${encodedText}`;
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
 
-    // 2. Simply play the audio via the browser's Audio element
-    // This bypasses complex fetch/blob logic and works instantly
-    const audio = new Audio(url);
-    await audio.play();
+    const utterance = new SpeechSynthesisUtterance(text);
     
-    return { success: true };
-  } catch (error) {
-    console.error("Hosted TTS failed:", error);
-    return { success: false, error };
-  }
+    // Set language to Japanese
+    utterance.lang = "ja-JP";
+    utterance.rate = 0.9; // Slightly slower for better learning
+    utterance.pitch = 1.0;
+
+    // Try to find a high-quality Japanese voice if requested or available
+    const voices = window.speechSynthesis.getVoices();
+    if (voiceName) {
+      const selectedVoice = voices.find(v => v.name === voiceName);
+      if (selectedVoice) utterance.voice = selectedVoice;
+    } else {
+      // Prefer "Google 日本語" or "Kyoko" or any Japanese voice
+      const jaVoice = voices.find(v => v.lang === "ja-JP" || v.lang === "ja_JP");
+      if (jaVoice) utterance.voice = jaVoice;
+    }
+
+    utterance.onend = () => {
+      resolve({ success: true });
+    };
+
+    utterance.onerror = (event) => {
+      console.error("SpeechSynthesis error:", event);
+      resolve({ success: false, error: event });
+    };
+
+    window.speechSynthesis.speak(utterance);
+  });
 };
+

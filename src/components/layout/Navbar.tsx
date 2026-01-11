@@ -84,9 +84,9 @@ export function Navbar() {
             </SheetTrigger>
             <SheetContent side="right">
               <div className="grid gap-4 py-4">
-                <Link href="/guides" className="flex items-center gap-2 text-lg font-medium">
+                {/* <Link href="/guides" className="flex items-center gap-2 text-lg font-medium">
                   {t("guides")}
-                </Link>
+                </Link> */}
                 <Link href="/planner" className="flex items-center gap-2 text-lg font-medium">
                   {t("planner")}
                 </Link>
