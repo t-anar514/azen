@@ -127,6 +127,19 @@ export function InteractiveMap({ items, hoveredId, onMapClick, isPicking }: Inte
     })
   }, [items])
 
+  // Get map instance for resizing
+  const { current: mapInstance } = useMap()
+
+  useEffect(() => {
+    if (mapInstance) {
+      // Force a resize after a short delay to ensure container dimensions are settled
+      const timer = setTimeout(() => {
+        mapInstance.resize()
+      }, 100)
+      return () => clearTimeout(timer)
+    }
+  }, [mapInstance])
+
   return (
     <div className="h-full w-full relative">
         <Map

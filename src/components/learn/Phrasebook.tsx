@@ -90,17 +90,31 @@ export function Phrasebook() {
                 <p className="text-gray-600">{t(`collections.${currentCollection.id}.description`)}</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
                 {currentCollection.phrases.map((phrase, idx) => {
                   const phraseKey = `${phrase.romaji}-${currentCollection.title}`
                   return (
-                    <PhraseCard 
-                      key={phraseKey} 
-                      phrase={phrase}
-                      collectionId={currentCollection.id}
-                      isLearned={!!learnedPhrases[phraseKey]}
-                      onToggleLearned={(val) => toggleLearned(phraseKey, val)}
-                    />
+                    <motion.div
+                      key={phraseKey}
+                      initial={{ opacity: 1 }}
+                      drag="x"
+                      dragConstraints={{ left: 0, right: 0 }}
+                      onDragEnd={(e, info) => {
+                        if (info.offset.x < -100 && activeTab < phraseCollections.length - 1) {
+                          setActiveTab(prev => prev + 1)
+                        } else if (info.offset.x > 100 && activeTab > 0) {
+                          setActiveTab(prev => prev - 1)
+                        }
+                      }}
+                      className="touch-pan-y"
+                    >
+                      <PhraseCard 
+                        phrase={phrase}
+                        collectionId={currentCollection.id}
+                        isLearned={!!learnedPhrases[phraseKey]}
+                        onToggleLearned={(val) => toggleLearned(phraseKey, val)}
+                      />
+                    </motion.div>
                   )
                 })}
               </div>

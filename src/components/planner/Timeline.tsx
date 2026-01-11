@@ -114,11 +114,11 @@ export function Timeline({
   }
 
   return (
-    <div className="p-4 md:p-6 pb-24">
-        <div className="flex justify-between items-center mb-6 gap-4">
-            <div className="flex-1 min-w-0">
+    <div className="w-full max-w-2xl md:max-w-none mx-auto md:mx-0 p-3 md:p-6 pb-24 flex flex-col items-center md:items-start">
+        <div className="flex flex-col gap-4 mb-8 w-full items-center md:items-start text-center md:text-left">
+            <div className="flex items-center justify-center md:justify-start w-full">
                 {isEditingTitle ? (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 w-full justify-center md:justify-start">
                         <Input 
                             value={tempTitle}
                             onChange={(e) => setTempTitle(e.target.value)}
@@ -126,7 +126,7 @@ export function Timeline({
                                 if (e.key === 'Enter') handleTitleSubmit()
                                 if (e.key === 'Escape') handleTitleCancel()
                             }}
-                            className="text-2xl font-black font-mono tracking-tight uppercase italic text-primary h-auto py-1 px-2 border-accent"
+                            className="text-lg md:text-2xl font-black font-mono tracking-tight uppercase italic text-primary h-auto py-1 px-2 border-accent max-w-[250px] md:max-w-md"
                             autoFocus
                         />
                         <Button size="icon" variant="ghost" className="h-8 w-8 text-accent shrink-0" onClick={handleTitleSubmit}>
@@ -137,12 +137,12 @@ export function Timeline({
                         </Button>
                     </div>
                 ) : (
-                    <div className="flex items-center gap-3 group cursor-pointer" onClick={() => setIsEditingTitle(true)}>
-                        <h2 className="text-2xl font-black font-mono tracking-tight uppercase italic text-primary">{title}</h2>
-                        <Pencil className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                    <div className="flex items-center gap-2 group cursor-pointer justify-center md:justify-start min-w-0" onClick={() => setIsEditingTitle(true)}>
+                        <h2 className="text-xl md:text-3xl font-black font-mono tracking-tight uppercase italic text-primary leading-tight truncate">{title}</h2>
+                        <Pencil className="h-3.5 w-3.5 text-muted-foreground opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                         
                         {/* Sync Status Indicator */}
-                        <div className="flex items-center gap-1.5 ml-1">
+                        <div className="flex items-center gap-1.5 ml-1 shrink-0">
                             {syncStatus === 'syncing' && <RefreshCw className="h-4 w-4 text-accent animate-spin" />}
                             {syncStatus === 'saved' && <div title="Synchronized"><Cloud className="h-4 w-4 text-[#88a47c]" /></div>}
                             {syncStatus === 'error' && <div title="Sync Failed"><AlertCircle className="h-4 w-4 text-destructive" /></div>}
@@ -151,22 +151,23 @@ export function Timeline({
                     </div>
                 )}
             </div>
-            <div className="flex shrink-0 gap-2">
+
+            <div className="flex items-center gap-2 w-full max-w-[400px] md:max-w-none">
                 <Button 
                     onClick={onToggleCompact} 
                     variant="outline"
-                    size="sm" 
-                    className={`rounded-full px-4 border-2 ${isCompact ? 'bg-accent/10 border-accent text-accent' : 'border-muted-foreground/20'}`}
+                    size="lg" 
+                    className={`flex-1 md:flex-none rounded-full px-6 border-2 h-11 ${isCompact ? 'bg-accent/10 border-accent text-accent' : 'border-muted-foreground/20'}`}
                     title={isCompact ? "Normal View" : "Compact View"}
                 >
-                    {isCompact ? "Энгийн" : "Шахах"}
+                    <span className="text-sm font-bold">{isCompact ? "Энгийн" : "Шахах"}</span>
                 </Button>
                 <Button 
                     onClick={onAdd} 
-                    size="sm" 
-                    className="bg-accent hover:bg-accent/90 text-white rounded-full px-4"
+                    size="lg" 
+                    className="flex-[2] md:flex-none bg-accent hover:bg-accent/90 text-white rounded-full px-8 h-11"
                 >
-                    <Plus className="h-4 w-4 mr-2" /> {t("addActivity")}
+                    <Plus className="h-5 w-5 mr-1" /> <span className="text-sm font-bold truncate">{t("addActivity")}</span>
                 </Button>
             </div>
         </div>
@@ -180,7 +181,7 @@ export function Timeline({
           items={items}
           strategy={verticalListSortingStrategy}
         >
-          <div className="space-y-1">
+          <div className="w-full space-y-1">
             {items.map((item, index) => (
               <TimelineItem 
                 key={item.id} 

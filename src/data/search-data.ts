@@ -94,15 +94,17 @@ export const getSearchIndex = (locale: string, messages?: any): SearchItem[] => 
   // Add Phrases
   phraseCollections.forEach(collection => {
     collection.phrases.forEach(phrase => {
+      const translatedTitle = getT(`Learn.phrasebook.collections.${collection.id}.phrases.${phrase.id}.english`, phrase.english);
       index.push({
         id: phrase.id,
-        title: phrase.english,
+        title: translatedTitle,
         subtitle: `${phrase.japanese} (${phrase.romaji})`,
         category: 'Phrases',
         url: `/${locale}/learn`
       });
     });
   });
+
 
   return index;
 };

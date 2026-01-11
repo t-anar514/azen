@@ -10,15 +10,19 @@ export type PhraseCollection = {
   id: string;
   title: string;
   description: string;
+  coverImage: string;
   phrases: Phrase[];
 };
+
 
 export const phraseCollections: PhraseCollection[] = [
   {
     id: "daily",
     title: "Daily Essentials",
     description: "Top 5 Phrases for Daily Use",
+    coverImage: "https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&q=80&w=1000",
     phrases: [
+
       {
         id: "hello",
         japanese: "こんにちは",
@@ -60,7 +64,9 @@ export const phraseCollections: PhraseCollection[] = [
     id: "survival",
     title: "Survival Mode",
     description: "If you get lost or in trouble, say these.",
+    coverImage: "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&q=80&w=1000",
     phrases: [
+
       {
         id: "toilet",
         japanese: "トイレはどこですか？",
@@ -95,7 +101,9 @@ export const phraseCollections: PhraseCollection[] = [
     id: "golden",
     title: "Golden Rules",
     description: "8 Must-Know Phrases",
+    coverImage: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&q=80&w=1000",
     phrases: [
+
       {
         id: "itadakimasu",
         japanese: "いただきます",
@@ -158,7 +166,9 @@ export const phraseCollections: PhraseCollection[] = [
     id: "vibes",
     title: "Local Vibes",
     description: "Slang and connectors to bridge the gap.",
+    coverImage: "https://images.unsplash.com/photo-1480796090211-37d3534b4c45?auto=format&fit=crop&q=80&w=1000",
     phrases: [
+
       {
         id: "yabai",
         japanese: "ヤバい",

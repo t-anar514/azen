@@ -5,6 +5,8 @@ import { Timeline, ItemType } from "@/components/planner/Timeline"
 import { InteractiveMap } from "@/components/planner/InteractiveMap"
 import { CostFooter } from "@/components/planner/CostFooter"
 import { TripSettings } from "@/components/planner/SettingsModal"
+import { Button } from "@/components/ui/button"
+import { List, Map as MapIcon } from "lucide-react"
 import { arrayMove } from "@dnd-kit/sortable"
 import { useTranslations } from "next-intl"
 import { useSearchParams } from "next/navigation"
@@ -29,6 +31,14 @@ function PlannerContent() {
   const [isCompact, setIsCompact] = useState(false)
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle')
   const [tripId, setTripId] = useState<string | null>(searchParams.get('trip'))
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list') // Mobile toggle
+
+  // Auto-set compact on mobile
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setIsCompact(true)
+    }
+  }, [])
 
   const [settings, setSettings] = useState<TripSettings>({
     simplifyExpenses: false,
@@ -304,14 +314,20 @@ function PlannerContent() {
               location: locationName || t("selectedLocation") 
           })
           setPickingLocationId(null)
+          if (typeof window !== 'undefined' && window.innerWidth < 768) {
+              setViewMode('list')
+          }
       }
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] overflow-hidden">
+    <div className="flex flex-col h-[calc(100vh-64px)] overflow-hidden relative">
         <div className="flex flex-1 overflow-hidden">
             {/* Left: Timeline (Scrollable) */}
-            <div className="w-full md:w-1/2 lg:w-5/12 overflow-y-auto bg-muted/10 h-full scrollbar-hide">
+            <div className={`
+              ${viewMode === 'list' ? 'flex' : 'hidden'} 
+              md:flex w-full md:w-1/2 lg:w-5/12 overflow-y-auto bg-muted/10 h-full scrollbar-hide
+            `}>
                 <Timeline 
                     title={itineraryTitle}
                     onTitleChange={setItineraryTitle}
@@ -322,7 +338,12 @@ function PlannerContent() {
                     onMove={moveItem}
                     onHover={setHoveredId}
                     pickingLocationId={pickingLocationId}
-                    onStartPicking={setPickingLocationId}
+                    onStartPicking={(id) => {
+                        setPickingLocationId(id)
+                        if (typeof window !== 'undefined' && window.innerWidth < 768) {
+                            setViewMode(id ? 'map' : 'list')
+                        }
+                    }}
                     newItemId={newItemId}
                     isManualAdd={isManualAdd}
                     isCompact={isCompact}
@@ -332,8 +353,12 @@ function PlannerContent() {
                 />
             </div>
 
-            {/* Right: Map (Sticky/Fixed on Desktop, Hidden on Mobile) */}
-            <div className={`hidden md:block md:w-1/2 lg:w-7/12 h-full bg-muted border-l transition-all ${pickingLocationId ? 'ring-4 ring-accent ring-inset' : ''}`}>
+            {/* Right: Map (Sticky/Fixed on Desktop, Toggle on Mobile) */}
+            <div className={`
+              ${viewMode === 'map' ? 'flex' : 'hidden'} 
+              md:flex md:w-1/2 lg:w-7/12 flex-1 h-full bg-muted border-l transition-all 
+              ${pickingLocationId ? 'ring-4 ring-accent ring-inset' : ''}
+            `}>
                 <InteractiveMap 
                     items={items} 
                     hoveredId={hoveredId} 
@@ -341,6 +366,17 @@ function PlannerContent() {
                     isPicking={!!pickingLocationId}
                 />
             </div>
+        </div>
+
+        {/* Mobile View Toggle FAB */}
+        <div className="fixed bottom-24 right-6 z-50 md:hidden">
+            <Button
+                onClick={() => setViewMode(viewMode === 'list' ? 'map' : 'list')}
+                className="rounded-full w-14 h-14 shadow-2xl bg-primary hover:bg-primary/90 text-white border-2 border-white/20"
+                size="icon"
+            >
+                {viewMode === 'list' ? <MapIcon className="w-6 h-6" /> : <List className="w-6 h-6" />}
+            </Button>
         </div>
         
         <CostFooter 

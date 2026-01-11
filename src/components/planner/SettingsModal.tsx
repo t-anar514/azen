@@ -59,9 +59,9 @@ export function SettingsModal({ settings, onSave, onExport, trigger }: SettingsM
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[420px] bg-[#f8f7f0] border-none rounded-[32px] overflow-hidden p-0 shadow-2xl">
-        <DialogHeader className="p-6 pb-0 flex flex-row items-center justify-between">
-          <DialogTitle className="text-2xl font-bold text-[#1a1a1a]">{t("expenseSettings")}</DialogTitle>
+      <DialogContent className="w-[95vw] sm:max-w-[420px] bg-[#f8f7f0] border-none rounded-[24px] md:rounded-[32px] overflow-hidden p-0 shadow-2xl">
+        <DialogHeader className="p-4 md:p-6 pb-0 flex flex-row items-center justify-between">
+          <DialogTitle className="text-xl md:text-2xl font-bold text-[#1a1a1a]">{t("expenseSettings")}</DialogTitle>
         </DialogHeader>
 
         <div className="p-6 space-y-8">

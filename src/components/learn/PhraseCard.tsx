@@ -42,12 +42,12 @@ export function PhraseCard({ phrase, collectionId, onToggleLearned, isLearned }:
         <button
           onClick={handlePlay}
           className={`
-            p-3 rounded-full transition-all relative
+            p-4 md:p-3 rounded-full transition-all relative shrink-0
             ${isSpeaking ? "bg-[#227c70] text-white" : "bg-gray-100 text-gray-600 hover:bg-[#227c70] hover:text-white"}
           `}
           aria-label="Play audio"
         >
-          <Volume2 className="w-5 h-5" />
+          <Volume2 className="w-6 h-6 md:w-5 md:h-5 text-current" />
           {isSpeaking && (
             <span className="absolute inset-0 rounded-full border-2 border-[#227c70] animate-ping opacity-75" />
           )}

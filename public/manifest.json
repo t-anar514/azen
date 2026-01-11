@@ -1,0 +1,21 @@
+{
+    "name": "Azen - Japan Travel Guide",
+    "short_name": "Azen",
+    "description": "Premium Japan travel platform and Mongolian-Japanese learning hub.",
+    "start_url": "/mn",
+    "display": "standalone",
+    "background_color": "#fefdf4",
+    "theme_color": "#1c315e",
+    "icons": [
+        {
+            "src": "/logo.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/logo.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

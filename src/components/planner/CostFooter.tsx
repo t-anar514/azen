@@ -23,10 +23,10 @@ export function CostFooter({ total, onSave, settings, onSettingsUpdate, onExport
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-background border-t p-4 z-40 md:pl-0">
-        <div className="container flex justify-between items-center max-w-5xl mx-auto px-4">
+    <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t p-3 md:p-4 z-40 md:pl-0 shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
+        <div className="w-full flex flex-row items-center justify-between px-4 md:px-8 gap-2">
             
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 md:gap-3">
                  <SettingsModal 
                     settings={settings} 
                     onSave={onSettingsUpdate} 
@@ -34,14 +34,14 @@ export function CostFooter({ total, onSave, settings, onSettingsUpdate, onExport
                  />
                  <Button 
                   onClick={onSave}
-                  className="bg-primary text-primary-foreground px-6 py-2 rounded-full font-medium hover:bg-primary/90 transition-colors"
+                  className="bg-primary text-primary-foreground px-4 md:px-6 py-2 rounded-full text-xs md:text-sm font-bold hover:bg-primary/90 transition-all shadow-md active:scale-95"
                  >
                     {t("saveItinerary")}
                  </Button>
             </div>
-            <div className="text-right">
-                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">{t("estimatedCost")}</p>
-                <p className="text-2xl font-black font-mono tracking-tighter text-primary">
+            <div className="text-right min-w-0">
+                <p className="text-[8px] md:text-[10px] text-muted-foreground uppercase font-black tracking-widest truncate">{t("estimatedCost")}</p>
+                <p className="text-lg md:text-2xl font-black font-mono tracking-tighter text-primary truncate">
                     {formatCost(total)}
                 </p>
             </div>

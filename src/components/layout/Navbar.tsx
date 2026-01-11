@@ -12,14 +12,13 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { LanguageSwitcher } from "./LanguageSwitcher"
 import { GlobalSearch } from "./GlobalSearch"
-import { useParams } from "next/navigation"
+
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = React.useState(false)
   const t = useTranslations("Navigation")
-  const { locale } = useParams()
+
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -38,10 +37,10 @@ export function Navbar() {
           : "bg-transparent"
       )}
     >
-      <div className="container flex h-28 items-center justify-evenly">
+      <div className="w-full flex h-16 md:h-28 items-center justify-between px-4 md:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
-          <div className="relative h-28 w-40 overflow-hidden">
+          <div className="relative h-12 w-20 md:h-28 md:w-40 overflow-hidden">
              <Image src="/logo.png" alt="Azen Logo" fill className="object-contain" />
           </div>
         </Link>
@@ -67,37 +66,34 @@ export function Navbar() {
 
         {/* Global Search Omnibar */}
         <div className="hidden md:flex">
-          <GlobalSearch locale={locale as string} />
+          <GlobalSearch locale="mn" />
         </div>
 
-        {/* User Actions & Mobile Menu */}
+
+        {/* Mobile Search & Menu Toggle */}
         <div className="flex items-center gap-4">
-          <LanguageSwitcher />
+          <GlobalSearch locale="mn" className="md:hidden" />
           
-          {/* Mobile Menu */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="md:hidden h-11 w-11 hover:bg-muted rounded-full">
+                <Menu className="h-6 w-6" />
                 <span className="sr-only">Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right">
-              <div className="grid gap-4 py-4">
-                {/* <Link href="/guides" className="flex items-center gap-2 text-lg font-medium">
-                  {t("guides")}
-                </Link> */}
-                <Link href="/planner" className="flex items-center gap-2 text-lg font-medium">
-                  {t("planner")}
+            <SheetContent side="right" className="w-[300px] rounded-l-3xl p-6">
+              <div className="flex flex-col gap-6 pt-12">
+                <Link href="/planner" className="flex items-center gap-3 text-2xl font-black text-primary uppercase italic tracking-tight italic">
+                  <span>»</span> {t("planner")}
                 </Link>
-                <Link href="/hacks" className="flex items-center gap-2 text-lg font-medium">
-                  {t("hacks")}
+                <Link href="/hacks" className="flex items-center gap-3 text-2xl font-black text-primary uppercase italic tracking-tight italic">
+                  <span>»</span> {t("hacks")}
                 </Link>
-                <Link href="/essentials" className="flex items-center gap-2 text-lg font-medium">
-                  {t("essentials")}
+                <Link href="/essentials" className="flex items-center gap-3 text-2xl font-black text-primary uppercase italic tracking-tight italic">
+                  <span>»</span> {t("essentials")}
                 </Link>
-                <Link href="/learn" className="flex items-center gap-2 text-lg font-medium">
-                  {t("learn")}
+                <Link href="/learn" className="flex items-center gap-3 text-2xl font-black text-primary uppercase italic tracking-tight italic">
+                  <span>»</span> {t("learn")}
                 </Link>
               </div>
             </SheetContent>

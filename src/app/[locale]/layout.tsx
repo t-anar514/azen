@@ -25,10 +25,12 @@ export async function generateMetadata({
   return {
     title: "Azen | Japan Travel Platform",
     description: "From Chaos to Clarity. Comprehensive Japan Travel Guide.",
+    manifest: '/manifest.json',
+    themeColor: '#1c315e',
+    viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0',
     alternates: {
       canonical: `/${locale}`,
       languages: {
-        en: '/en',
         mn: '/mn',
       },
     },

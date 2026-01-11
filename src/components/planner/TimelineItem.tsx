@@ -262,9 +262,9 @@ export function TimelineItem({
     const EditIcon = editIconData.icon
     return (
       <div ref={setNodeRef} style={style} className="mb-3">
-        <Card className={`p-4 space-y-4 border-2 border-accent shadow-xl bg-card overflow-hidden ${isNew ? 'animate-pulse-highlight' : ''}`}>
-          <div className="flex justify-between items-center -mx-4 -mt-4 mb-2 p-3 bg-muted/30 border-b border-border/50">
-            <h5 className="font-black uppercase tracking-widest text-[10px] text-primary/60">{t("edit")}</h5>
+        <Card className={`p-3 md:p-4 space-y-3 md:space-y-4 border-2 border-accent shadow-xl bg-card overflow-hidden ${isNew ? 'animate-pulse-highlight' : ''}`}>
+          <div className="flex justify-between items-center -mx-3 md:-mx-4 -mt-3 md:-mt-4 mb-2 p-2.5 md:p-3 bg-muted/30 border-b border-border/50">
+            <h5 className="font-black uppercase tracking-widest text-[9px] md:text-[10px] text-primary/60">{t("edit")}</h5>
             <div className="flex gap-1">
                <Button onClick={onDelete} variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:bg-destructive/10">
                  <Trash2 className="h-3.5 w-3.5" />
@@ -338,7 +338,7 @@ export function TimelineItem({
                   onBlur={() => setTimeout(() => setShowResults(false), 200)}
                   onFocus={() => editLocation.length >= 2 && setShowResults(true)}
                   placeholder={t("locationPlaceholder")}
-                  className="pl-9 h-10 bg-muted/20 border-none shadow-none text-sm rounded-xl focus-visible:ring-1 focus-visible:ring-accent/30"
+                  className="pl-9 pr-10 h-10 bg-muted/20 border-none shadow-none text-sm rounded-xl focus-visible:ring-1 focus-visible:ring-accent/30"
                 />
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
                 <Button 
@@ -477,48 +477,42 @@ export function TimelineItem({
     >
       <Card 
         className={`
-          flex gap-4 items-center bg-card transition-all border-l-4 border-l-primary/10 hover:border-l-accent hover:shadow-lg
+          w-full flex gap-2 md:gap-4 items-center bg-card transition-all border-l-4 border-l-primary/10 hover:border-l-accent hover:shadow-lg
           ${isDragging ? 'opacity-50' : ''} 
           ${isNew ? 'animate-pulse-highlight border-accent' : ''}
-          ${isCompact ? 'p-2 py-2.5 rounded-lg' : 'p-4'}
+          ${isCompact ? 'p-2 rounded-lg' : 'p-3 md:p-4'}
         `}
       >
-        <div className={`text-muted-foreground cursor-grab active:cursor-grabbing flex flex-col items-center gap-1 ${isCompact ? 'px-1' : ''}`} {...attributes} {...listeners}>
-            <div className={`${isCompact ? 'h-5 w-5' : 'h-6 w-6'} rounded-full bg-accent/10 flex items-center justify-center border border-accent/20 group-hover:scale-110 transition-transform shrink-0`}>
-              <span className={`${isCompact ? 'text-[8px]' : 'text-[10px]'} font-black text-accent`}>{index}</span>
+        {/* Left Column: Drag & Index */}
+        <div className={`text-muted-foreground cursor-grab active:cursor-grabbing flex flex-col items-center justify-center gap-1 shrink-0 ${isCompact ? 'w-6' : 'w-8 md:w-10'}`} {...attributes} {...listeners}>
+            <div className={`${isCompact ? 'h-5 w-5' : 'h-6 w-6 md:h-7 md:w-7'} rounded-full bg-accent/10 flex items-center justify-center border border-accent/20 group-hover:scale-110 transition-transform`}>
+              <span className={`${isCompact ? 'text-[8px]' : 'text-[10px] md:text-xs'} font-black text-accent`}>{index}</span>
             </div>
-            {!isCompact && <MoveVertical className="h-3 w-3 opacity-0 group-hover:opacity-30" />}
+            {!isCompact && <MoveVertical className="h-3 w-3 opacity-30 md:opacity-0 group-hover:opacity-30" />}
         </div>
         
-        <div className="flex-1 flex gap-3 items-center min-w-0">
-            <div className={`flex flex-col items-center justify-center rounded-xl bg-muted/50 shrink-0 border border-secondary/10 group-hover:bg-accent/5 transition-colors ${isCompact ? 'h-8 w-8' : 'h-12 w-12'}`}>
-              <viewIconData.icon className={`${isCompact ? 'h-4 w-4' : 'h-6 w-6'} ${viewIconData.color || 'text-primary'}`} />
+        {/* Middle Body: Icon & Content */}
+        <div className="flex-1 flex gap-2 md:gap-3 items-center min-w-0">
+            <div className={`flex flex-col items-center justify-center rounded-xl bg-muted/50 shrink-0 border border-secondary/10 group-hover:bg-accent/5 transition-colors ${isCompact ? 'h-8 w-8' : 'h-10 w-10 md:h-12 md:w-12'}`}>
+              <viewIconData.icon className={`${isCompact ? 'h-4 w-4' : 'h-5 w-5 md:h-6 md:w-6'} ${viewIconData.color || 'text-primary'}`} />
             </div>
             
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-0.5">
-                 <h4 className={`font-bold truncate text-primary ${isCompact ? 'text-sm' : 'text-lg'}`}>{title}</h4>
-                 {!isCompact && (
-                   <div className="flex flex-wrap gap-2 text-[10px] font-mono text-muted-foreground">
-                      <div className="flex items-center bg-secondary/10 px-2 py-0.5 rounded-full">
-                         <Calendar className="h-3 w-3 mr-1" />
-                         {new Date(date).toLocaleDateString([], { month: 'short', day: 'numeric' })}
-                      </div>
-                   </div>
-                 )}
-                 {isCompact && (
-                   <span className="text-[10px] font-mono text-muted-foreground bg-secondary/10 px-1.5 py-0.5 rounded-md shrink-0">
-                     {new Date(date).toLocaleDateString([], { month: 'short', day: 'numeric' })}
-                   </span>
-                 )}
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mb-0.5">
+                 <h4 className={`font-bold truncate text-primary ${isCompact ? 'text-xs' : 'text-sm md:text-lg'}`}>{title}</h4>
+                 <div className="flex items-center bg-secondary/10 px-1.5 py-0.5 rounded-full text-[9px] md:text-[10px] font-mono text-muted-foreground shrink-0 border border-secondary/5">
+                    <Calendar className="h-2.5 w-2.5 mr-1 overflow-hidden" />
+                    {new Date(date).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                 </div>
               </div>
-              {!isCompact && <p className="text-sm text-muted-foreground truncate">{location}</p>}
+              {!isCompact && <p className="text-[10px] md:text-sm text-muted-foreground truncate opacity-80">{location}</p>}
             </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        {/* Right Column: Cost & Actions */}
+        <div className="flex items-center gap-1.5 md:gap-3 shrink-0">
             <div className="text-right">
-                 <Badge variant="outline" className={`font-mono text-primary border-primary/20 bg-primary/5 ${isCompact ? 'text-[10px] py-0 px-1.5 h-5' : ''}`}>
+                 <Badge variant="outline" className={`font-mono text-primary border-primary/20 bg-primary/5 px-1.5 md:px-2.5 ${isCompact ? 'text-[9px] py-0 h-4 md:h-5' : 'text-[10px] md:text-sm'}`}>
                    ¥{cost.toLocaleString()}
                  </Badge>
             </div>
@@ -527,15 +521,15 @@ export function TimelineItem({
                 onClick={() => setIsEditing(true)}
                 variant="ghost" 
                 size="icon" 
-                className={`rounded-full opacity-100 md:opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all shadow-sm shrink-0 ${isCompact ? 'h-6 w-6' : 'h-8 w-8'}`}
+                className={`rounded-full shadow-sm shrink-0 border border-muted/10 transition-all ${isCompact ? 'h-7 w-7' : 'h-9 w-9 md:h-11 md:w-11'} text-muted-foreground hover:text-accent hover:bg-accent/10`}
             >
-                <Pencil className={`${isCompact ? 'h-3 w-3' : 'h-4 w-4'} font-bold`} />
+                <Pencil className={`${isCompact ? 'h-3.5 w-3.5' : 'h-4 w-4 md:h-5 md:w-5'} font-bold`} />
             </Button>
         </div>
       </Card>
       
       {/* Visual connector line */}
-      <div className={`bg-border mx-auto group-last:hidden opacity-30 ${isCompact ? 'h-2 w-0.5 my-0.5 ml-[2.35rem]' : 'h-4 w-0.5 my-1 ml-[3.25rem]'}`} /> 
+      <div className={`bg-border mx-auto md:mx-0 group-last:hidden opacity-30 ${isCompact ? 'h-2 w-0.5 my-0.5 ml-[2.35rem]' : 'h-4 w-0.5 my-1 ml-[3.25rem]'}`} /> 
     </div>
   )
 }
