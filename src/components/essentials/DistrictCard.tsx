@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { District } from "@/data/cities";
+import type { CityDistrict as District } from "@/lib/supabase/types";
 
 interface DistrictCardProps {
   district: District;

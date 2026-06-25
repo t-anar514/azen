@@ -11,13 +11,15 @@ import { arrayMove } from "@dnd-kit/sortable"
 import { useTranslations } from "next-intl"
 import { useSearchParams } from "next/navigation"
 import { SAMPLE_ITINERARIES } from "@/data/templates"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/lib/supabase/client"
 
 export type SyncStatus = 'idle' | 'syncing' | 'saved' | 'error'
 
 function PlannerContent() {
   const t = useTranslations("Planner")
-  
+  const [supabase] = useState(() => createClient())
+  const [userId, setUserId] = useState<string | null>(null)
+
   const searchParams = useSearchParams()
   const templateId = searchParams.get('template')
 
@@ -39,6 +41,15 @@ function PlannerContent() {
       setIsCompact(true)
     }
   }, [])
+
+  // Track auth state — cloud save/sync and sharing require being logged in.
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null))
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUserId(session?.user?.id ?? null)
+    })
+    return () => listener.subscription.unsubscribe()
+  }, [supabase])
 
   const [settings, setSettings] = useState<TripSettings>({
     simplifyExpenses: false,
@@ -143,16 +154,16 @@ function PlannerContent() {
     }
 
     loadFromCloud()
-  }, [tripId, calculateTotal])
+  }, [tripId, calculateTotal, supabase])
 
-  // CLOUD SYNC (Debounced)
+  // CLOUD SYNC (Debounced) — only for logged-in users; guests stay on localStorage only.
   useEffect(() => {
-    // skip initial load or if no tripod/items
-    if (!items.length) return
+    // skip initial load or if no items, or not logged in
+    if (!items.length || !userId) return
 
     const timer = setTimeout(async () => {
       setSyncStatus('syncing')
-      
+
       const payload = {
         title: itineraryTitle,
         items: items,
@@ -165,7 +176,7 @@ function PlannerContent() {
           .from('itineraries')
           .update(payload)
           .eq('id', tripId)
-        
+
         if (error) {
           console.error("Cloud sync update failed:", error)
           setSyncStatus('error')
@@ -176,9 +187,9 @@ function PlannerContent() {
         // Create new trip on first major change if not from template
         const { data, error } = await supabase
           .from('itineraries')
-          .insert([payload])
+          .insert([{ ...payload, owner_id: userId }])
           .select()
-        
+
         if (error) {
           console.error("Cloud sync insert failed:", error)
           setSyncStatus('error')
@@ -192,7 +203,7 @@ function PlannerContent() {
     }, 2000)
 
     return () => clearTimeout(timer)
-  }, [items, itineraryTitle, settings, tripId])
+  }, [items, itineraryTitle, settings, tripId, userId, supabase])
 
   const saveItinerary = () => {
     localStorage.setItem("azen_itinerary_items", JSON.stringify(items))
@@ -379,12 +390,14 @@ function PlannerContent() {
             </Button>
         </div>
         
-        <CostFooter 
-          total={totalCost} 
-          onSave={saveItinerary} 
+        <CostFooter
+          total={totalCost}
+          onSave={saveItinerary}
           settings={settings}
           onSettingsUpdate={handleSettingsUpdate}
           onExport={handleExport}
+          tripId={tripId}
+          isLoggedIn={!!userId}
         />
     </div>
   )

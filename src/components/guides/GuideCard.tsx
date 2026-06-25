@@ -7,42 +7,31 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { BookingModal } from "./BookingModal"
+import { MessageModal } from "./MessageModal"
 import {
   Dialog,
   DialogContent,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import type { GuideRow } from "@/lib/supabase/types"
 
 interface GuideProps {
-  guide: {
-    id: string
-    name: string
-    location: string
-    tags: string[]
-    rating: number
-    reviewCount: number
-    price: number
-    bio: string
-    isVerified: boolean
-    image: string
-    videoUrl?: string
-  }
+  guide: GuideRow
 }
 
 export function GuideCard({ guide }: GuideProps) {
   const t = useTranslations("Guides.card")
-  const tData = useTranslations("Data.Guides")
-  const isYouTube = guide.videoUrl?.includes("youtube.com") || guide.videoUrl?.includes("youtu.be")
+  const isYouTube = guide.video_url?.includes("youtube.com") || guide.video_url?.includes("youtu.be")
 
   return (
     <Card className="overflow-hidden flex flex-col md:flex-row p-4 gap-4">
       {/* Visuals */}
       <div className="relative w-full md:w-48 h-48 shrink-0">
          <Avatar className="w-full h-full rounded-md">
-            <AvatarImage src={guide.image} className="object-cover" />
+            <AvatarImage src={guide.image ?? undefined} className="object-cover" />
             <AvatarFallback>{guide.name[0]}</AvatarFallback>
          </Avatar>
-         
+
          {/* Video Intro Overlay */}
          <Dialog>
             <DialogTrigger asChild>
@@ -52,20 +41,20 @@ export function GuideCard({ guide }: GuideProps) {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden bg-black text-white border-none">
                  <div className="aspect-video w-full flex items-center justify-center bg-black">
-                    {guide.videoUrl ? (
+                    {guide.video_url ? (
                         isYouTube ? (
-                            <iframe 
+                            <iframe
                                 title={`${guide.name} intro`}
-                                src={guide.videoUrl.replace("watch?v=", "embed/")}
+                                src={guide.video_url.replace("watch?v=", "embed/")}
                                 className="w-full h-full border-none"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowFullScreen
                             />
                         ) : (
-                            <video 
-                                src={guide.videoUrl} 
-                                controls 
-                                autoPlay 
+                            <video
+                                src={guide.video_url}
+                                controls
+                                autoPlay
                                 className="w-full h-full object-contain"
                             />
                         )
@@ -84,40 +73,45 @@ export function GuideCard({ guide }: GuideProps) {
                 <div>
                      <h3 className="text-xl font-bold flex items-center gap-2">
                         {guide.name}
-                        {guide.isVerified && <CheckCircle2 className="w-5 h-5 text-green-500" />}
+                        {guide.is_verified && <CheckCircle2 className="w-5 h-5 text-green-500" />}
                     </h3>
                     <div className="text-sm text-muted-foreground flex items-center gap-1">
                         <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                         <span className="font-semibold text-foreground">{guide.rating}</span>
-                        <span>({guide.reviewCount})</span>
+                        <span>({guide.review_count})</span>
                         • {guide.location}
                     </div>
                 </div>
                 <div className="text-right">
-                    <div className="text-lg font-bold">¥{guide.price}</div>
+                    <div className="text-lg font-bold">¥{guide.price ?? 0}</div>
                     <div className="text-xs text-muted-foreground">/{t("hour")}</div>
                 </div>
             </div>
 
             <p className="mt-2 text-muted-foreground text-sm line-clamp-2 italic">
-              &quot;{tData(`${guide.id}.bio`)}&quot;
+              &quot;{guide.bio}&quot;
             </p>
-            
+
             <div className="flex flex-wrap gap-2 mt-3">
                 {guide.tags.map((tag) => (
                     <Badge key={tag} variant="secondary" className="text-xs">
-                        {tData(`${guide.id}.tags.${tag}`)}
+                        {tag}
                     </Badge>
                 ))}
             </div>
         </div>
 
         <div className="mt-4 flex gap-3">
-             <BookingModal 
-                guideName={guide.name} 
+             <BookingModal
+                guideId={guide.id}
+                guideName={guide.name}
                 trigger={<Button className="flex-1">{t("bookNow")}</Button>}
              />
-             <Button variant="outline" className="flex-1">{t("message")}</Button>
+             <MessageModal
+                guideId={guide.id}
+                guideName={guide.name}
+                trigger={<Button variant="outline" className="flex-1">{t("message")}</Button>}
+             />
         </div>
       </div>
     </Card>

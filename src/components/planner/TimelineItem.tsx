@@ -502,7 +502,7 @@ export function TimelineItem({
                  <h4 className={`font-bold truncate text-primary ${isCompact ? 'text-xs' : 'text-sm md:text-lg'}`}>{title}</h4>
                  <div className="flex items-center bg-secondary/10 px-1.5 py-0.5 rounded-full text-[9px] md:text-[10px] font-mono text-muted-foreground shrink-0 border border-secondary/5">
                     <Calendar className="h-2.5 w-2.5 mr-1 overflow-hidden" />
-                    {new Date(date).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                    {new Date(date).toLocaleDateString("en-US", { month: 'short', day: 'numeric', timeZone: 'UTC' })}
                  </div>
               </div>
               {!isCompact && <p className="text-[10px] md:text-sm text-muted-foreground truncate opacity-80">{location}</p>}
@@ -513,7 +513,7 @@ export function TimelineItem({
         <div className="flex items-center gap-1.5 md:gap-3 shrink-0">
             <div className="text-right">
                  <Badge variant="outline" className={`font-mono text-primary border-primary/20 bg-primary/5 px-1.5 md:px-2.5 ${isCompact ? 'text-[9px] py-0 h-4 md:h-5' : 'text-[10px] md:text-sm'}`}>
-                   ¥{cost.toLocaleString()}
+                   ¥{cost.toLocaleString("en-US")}
                  </Badge>
             </div>
             

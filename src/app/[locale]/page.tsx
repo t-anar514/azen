@@ -2,10 +2,9 @@ import { Hero } from "@/components/home/Hero";
 import { FeatureBlock } from "@/components/home/Features";
 import { HomeCarousel } from "@/components/home/HomeCarousel";
 import { LearnSection } from "@/components/home/LearnSection";
-import { HACKS } from "@/data/hacks";
-import { CITIES } from "@/data/cities";
 import { SAMPLE_ITINERARIES } from "@/data/templates";
 import { setRequestLocale, getTranslations } from 'next-intl/server';
+import { createClient } from "@/lib/supabase/server";
 
 export default async function Home({
   params
@@ -18,8 +17,13 @@ export default async function Home({
   const tHacks = await getTranslations("Hacks");
   const tEssentials = await getTranslations("Essentials");
   const tLearn = await getTranslations("Learn");
-  const tData = await getTranslations("Data");
   const tItineraries = await getTranslations("SampleItineraries");
+
+  const supabase = await createClient();
+  const [{ data: hacks }, { data: cities }] = await Promise.all([
+    supabase.from("hacks").select("*").eq("published", true).order("order_index", { ascending: true }).limit(8),
+    supabase.from("cities").select("*").eq("published", true).order("order_index", { ascending: true }).limit(8),
+  ]);
 
   const itineraryItems = SAMPLE_ITINERARIES.map(item => ({
     id: item.id,
@@ -32,23 +36,23 @@ export default async function Home({
     footerRight: `¥${item.basePrice.toLocaleString()}`
   }));
 
-  const hackItems = HACKS.map(hack => ({
+  const hackItems = (hacks ?? []).map(hack => ({
     id: hack.id,
-    image: hack.coverImage,
-    title: tData(`Hacks.${hack.id}.title`),
-    description: tData(`Hacks.${hack.id}.summary`),
+    image: hack.cover_image,
+    title: hack.title,
+    description: hack.summary,
     badge: tHacks(`categories.${hack.category}`),
     category: hack.category,
-    link: `/hacks#${hack.id}`
+    link: `/hacks/${hack.id}`
   }));
 
-  const cityItems = CITIES.map(city => ({
+  const cityItems = (cities ?? []).map(city => ({
     id: city.id,
-    image: city.heroImage,
-    title: tData(`Cities.${city.id}.name`),
-    description: tData(`Cities.${city.id}.teaser`),
+    image: city.hero_image,
+    title: city.name,
+    description: city.teaser,
     badge: "Хот",
-    link: "/essentials"
+    link: `/essentials/${city.id}`
   }));
 
   return (

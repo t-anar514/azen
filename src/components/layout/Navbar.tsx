@@ -5,6 +5,10 @@ import NextImage from "next/image"
 // Workaround for Next.js 16 + React 19 type mismatch
 const Image = NextImage as any
 import { Link } from "@/i18n/routing"
+// Flights/Transfer aren't registered in i18n/routing.ts's `pathnames` map
+// (deliberate scope-reduction for this feature), so they use plain
+// next/link instead of the typed locale-aware Link used everywhere else.
+import NextLink from "next/link"
 import { useTranslations } from "next-intl"
 
 import { Search, Menu } from "lucide-react"
@@ -13,6 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { GlobalSearch } from "./GlobalSearch"
+import { AccountMenu } from "./AccountMenu"
 
 
 export function Navbar() {
@@ -37,19 +42,19 @@ export function Navbar() {
           : "bg-transparent"
       )}
     >
-      <div className="w-full flex h-16 md:h-28 items-center justify-between px-4 md:px-8">
+      <div className="w-full flex h-16 md:h-20 items-center justify-between px-4 md:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
-          <div className="relative h-12 w-20 md:h-28 md:w-40 overflow-hidden">
+          <div className="relative h-9 w-16 md:h-12 md:w-24 overflow-hidden">
              <Image src="/logo.png" alt="Azen Logo" fill className="object-contain" />
           </div>
         </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-6">
-          {/* <Link href="/guides" className="text-sm font-medium hover:text-primary transition-colors">
+         <Link href="/guides" className="text-sm font-medium hover:text-primary transition-colors">
             {t("guides")}
-          </Link> */}
+          </Link> 
           <Link href="/planner" className="text-sm font-medium hover:text-primary transition-colors">
             {t("planner")}
           </Link>
@@ -62,11 +67,19 @@ export function Navbar() {
           <Link href="/learn" className="text-sm font-medium hover:text-primary transition-colors">
             {t("learn")}
           </Link>
+          <NextLink href="/flights" className="text-sm font-medium hover:text-primary transition-colors">
+            {t("flights")}
+          </NextLink>
+          <NextLink href="/transfer" className="text-sm font-medium hover:text-primary transition-colors">
+            {t("transfer")}
+          </NextLink>
         </nav>
 
-        {/* Global Search Omnibar */}
-        <div className="hidden md:flex">
+        {/* Global Search + Account (kept visually apart from the content nav tabs above) */}
+        <div className="hidden md:flex items-center gap-4">
           <GlobalSearch locale="mn" />
+          <div className="h-6 w-px bg-border" />
+          <AccountMenu />
         </div>
 
 
@@ -82,19 +95,30 @@ export function Navbar() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] rounded-l-3xl p-6">
-              <div className="flex flex-col gap-6 pt-12">
-                <Link href="/planner" className="flex items-center gap-3 text-2xl font-black text-primary uppercase italic tracking-tight italic">
-                  <span>»</span> {t("planner")}
+              <div className="flex flex-col gap-2 pt-12">
+                <Link href="/guides" className="flex items-center gap-3 rounded-lg px-3 py-3 text-lg font-semibold text-foreground transition-colors hover:bg-muted hover:text-primary">
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent" /> {t("guides")}
                 </Link>
-                <Link href="/hacks" className="flex items-center gap-3 text-2xl font-black text-primary uppercase italic tracking-tight italic">
-                  <span>»</span> {t("hacks")}
+                <Link href="/planner" className="flex items-center gap-3 rounded-lg px-3 py-3 text-lg font-semibold text-foreground transition-colors hover:bg-muted hover:text-primary">
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent" /> {t("planner")}
                 </Link>
-                <Link href="/essentials" className="flex items-center gap-3 text-2xl font-black text-primary uppercase italic tracking-tight italic">
-                  <span>»</span> {t("essentials")}
+                <Link href="/hacks" className="flex items-center gap-3 rounded-lg px-3 py-3 text-lg font-semibold text-foreground transition-colors hover:bg-muted hover:text-primary">
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent" /> {t("hacks")}
                 </Link>
-                <Link href="/learn" className="flex items-center gap-3 text-2xl font-black text-primary uppercase italic tracking-tight italic">
-                  <span>»</span> {t("learn")}
+                <Link href="/essentials" className="flex items-center gap-3 rounded-lg px-3 py-3 text-lg font-semibold text-foreground transition-colors hover:bg-muted hover:text-primary">
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent" /> {t("essentials")}
                 </Link>
+                <Link href="/learn" className="flex items-center gap-3 rounded-lg px-3 py-3 text-lg font-semibold text-foreground transition-colors hover:bg-muted hover:text-primary">
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent" /> {t("learn")}
+                </Link>
+                <NextLink href="/flights" className="flex items-center gap-3 rounded-lg px-3 py-3 text-lg font-semibold text-foreground transition-colors hover:bg-muted hover:text-primary">
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent" /> {t("flights")}
+                </NextLink>
+                <NextLink href="/transfer" className="flex items-center gap-3 rounded-lg px-3 py-3 text-lg font-semibold text-foreground transition-colors hover:bg-muted hover:text-primary">
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent" /> {t("transfer")}
+                </NextLink>
+                <div className="my-2 border-t border-border" />
+                <AccountMenu variant="mobile" />
               </div>
             </SheetContent>
           </Sheet>

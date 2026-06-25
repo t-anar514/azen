@@ -20,7 +20,6 @@ import {
 import { TimelineItem } from "./TimelineItem"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { supabase } from "@/lib/supabase"
 import { Cloud, CloudOff, RefreshCw, AlertCircle, Plus, Pencil, Check, X } from "lucide-react"
 
 export type SyncStatus = 'idle' | 'syncing' | 'saved' | 'error'

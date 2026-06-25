@@ -1,10 +1,20 @@
-import { CITIES } from "@/data/cities"
+import { createClient } from "@/lib/supabase/server"
 import { CityCard } from "@/components/essentials/CityCard"
-import { useTranslations } from "next-intl"
-import { setRequestLocale } from "next-intl/server"
+import { getTranslations } from "next-intl/server"
 
-export default function EssentialsPage({ params }: { params: Promise<{ locale: string }> }) {
-  const t = useTranslations("Essentials")
+async function getCities() {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from("cities")
+    .select("*")
+    .eq("published", true)
+    .order("order_index", { ascending: true })
+  return data ?? []
+}
+
+export default async function EssentialsPage() {
+  const t = await getTranslations("Essentials")
+  const cities = await getCities()
 
   return (
     <div className="min-h-screen bg-background py-12 px-4 md:px-6">
@@ -21,7 +31,7 @@ export default function EssentialsPage({ params }: { params: Promise<{ locale: s
 
         <section>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {CITIES.map((city) => (
+            {cities.map((city) => (
               <CityCard key={city.id} city={city} />
             ))}
           </div>

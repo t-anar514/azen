@@ -1,25 +1,39 @@
 import { TrapAlert } from "@/components/hacks/TrapAlert"
-import { HACKS } from "@/data/hacks"
-import { useTranslations } from "next-intl"
+import { createClient } from "@/lib/supabase/server"
+import { getTranslations } from "next-intl/server"
 
-export default function HacksPage() {
-  const t = useTranslations("Hacks")
+async function getHacks() {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from("hacks")
+    .select("*")
+    .eq("published", true)
+    .order("order_index", { ascending: true })
+  return data ?? []
+}
+
+export default async function HacksPage() {
+  const t = await getTranslations("Hacks")
+  const hacks = await getHacks()
 
   return (
-    <div className=" py-8 px-4 md:px-6">
-      <div className="mb-8 text-center max-w-2xl mx-auto">
-        <h1 className="text-4xl font-black tracking-tight text-primary mb-4 uppercase italic">
-          {t("title")}
-        </h1>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          {t("description")}
-        </p>
-      </div>
+    <div className="min-h-screen bg-background py-12 px-4 md:px-6">
+      <div className="max-w-7xl mx-auto space-y-12">
+        <header className="text-center space-y-4 max-w-3xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-primary">
+            {t("title")}
+          </h1>
+          <p className="text-lg text-muted-foreground">
+            {t("description")}
+          </p>
+          <div className="w-24 h-1 bg-accent mx-auto rounded-full" />
+        </header>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {HACKS.map((hack) => (
-          <TrapAlert key={hack.id} hack={hack} />
-        ))}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {hacks.map((hack) => (
+            <TrapAlert key={hack.id} hack={hack} />
+          ))}
+        </div>
       </div>
     </div>
   )

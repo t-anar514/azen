@@ -1,19 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CheckCircle2 } from "lucide-react";
-import { HackStep } from "@/data/hacks";
-
-import { useTranslations } from "next-intl";
+import type { HackStepRow } from "@/lib/supabase/types";
 
 interface StepGuideProps {
-  steps: HackStep[];
-  hackId: string;
+  steps: HackStepRow[];
 }
 
-export const StepGuide = ({ steps, hackId }: StepGuideProps) => {
-  const t = useTranslations("Data.Hacks");
-
+export const StepGuide = ({ steps }: StepGuideProps) => {
   return (
     <div className="space-y-12">
       <div className="flex items-center gap-2 mb-8">
@@ -41,13 +35,13 @@ export const StepGuide = ({ steps, hackId }: StepGuideProps) => {
                 <div className="w-1 flex-1 bg-secondary/10 mt-4 rounded-full min-h-[4rem]" />
               )}
             </div>
-            
+
             <div className="flex-1 pt-1 pb-12">
               <h3 className="text-2xl font-black text-primary tracking-tight mb-3">
-                {t(`${hackId}.steps.${step.step}.title`)}
+                {step.title}
               </h3>
               <p className="text-muted-foreground text-lg leading-relaxed max-w-2xl">
-                {t(`${hackId}.steps.${step.step}.text`)}
+                {step.text}
               </p>
             </div>
           </motion.div>

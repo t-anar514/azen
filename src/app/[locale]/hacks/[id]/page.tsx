@@ -1,49 +1,53 @@
-"use client";
-
-import { useParams, notFound } from "next/navigation";
-import { HACKS } from "@/data/hacks";
+import { notFound } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 import { HackHero } from "@/components/hacks/HackHero";
 import { QuickFix } from "@/components/hacks/QuickFix";
 import { StepGuide } from "@/components/hacks/StepGuide";
 import { ProTip } from "@/components/hacks/ProTip";
 import { RelatedHacks } from "@/components/hacks/RelatedHacks";
-import { motion } from "framer-motion";
-import { useTranslations } from "next-intl";
 
-export default function HackDetailPage() {
-  const params = useParams();
-  const hack = HACKS.find((h) => h.id === params.id);
-  const tData = useTranslations("Data.Hacks");
+interface Props {
+  params: Promise<{ id: string }>;
+}
+
+export default async function HackDetailPage({ params }: Props) {
+  const { id } = await params;
+  const supabase = await createClient();
+
+  const { data: hack } = await supabase.from("hacks").select("*").eq("id", id).single();
 
   if (!hack) {
     notFound();
   }
 
-  const relatedHacks = HACKS.filter((h) => hack.relatedIds.includes(h.id));
+  const relatedIds = hack.related_ids ?? [];
+  const { data: relatedHacks } = relatedIds.length
+    ? await supabase.from("hacks").select("*").in("id", relatedIds)
+    : { data: [] };
 
   return (
     <div className="min-h-screen bg-background">
       <HackHero
-        title={tData(`${hack.id}.title`)}
+        title={hack.title}
         category={hack.category}
-        coverImage={hack.coverImage}
+        coverImage={hack.cover_image ?? ""}
       />
 
       <div className="max-w-4xl mx-auto px-4 py-12 md:py-20 space-y-20">
         <section>
-          <QuickFix summary={tData(`${hack.id}.summary`)} />
+          <QuickFix summary={hack.summary ?? ""} />
         </section>
 
         <section>
-          <StepGuide steps={hack.steps} hackId={hack.id} />
+          <StepGuide steps={hack.steps} />
         </section>
 
         <section>
-          <ProTip text={tData(`${hack.id}.proTip`)} />
+          <ProTip text={hack.pro_tip ?? ""} />
         </section>
 
         <section className="pt-10 border-t border-secondary/10">
-          <RelatedHacks hacks={relatedHacks} />
+          <RelatedHacks hacks={relatedHacks ?? []} />
         </section>
       </div>
 

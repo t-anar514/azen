@@ -1,12 +1,12 @@
 "use client";
 
-import { Hack } from "@/data/hacks";
+import type { HackRow } from "@/lib/supabase/types";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
 interface RelatedHacksProps {
-  hacks: Hack[];
+  hacks: HackRow[];
 }
 
 export const RelatedHacks = ({ hacks }: RelatedHacksProps) => {
@@ -33,7 +33,7 @@ export const RelatedHacks = ({ hacks }: RelatedHacksProps) => {
             >
               <div className="relative aspect-[16/10]">
                 <img
-                  src={hack.coverImage}
+                  src={hack.cover_image ?? undefined}
                   alt={hack.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />

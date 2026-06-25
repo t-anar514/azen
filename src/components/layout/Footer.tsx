@@ -1,6 +1,6 @@
 import { Link } from "@/i18n/routing"
 import { useTranslations } from "next-intl"
-import { Instagram, Twitter, Facebook } from "lucide-react"
+import { Instagram, Facebook } from "lucide-react"
 import NextImage from "next/image"
 // Workaround for Next.js 16 + React 19 type mismatch
 const Image = NextImage as any
@@ -14,9 +14,9 @@ export function Footer() {
       <div className="px-4 md:px-6 grid grid-cols-1 gap-8 md:grid-cols-4">
         <div className="flex flex-col gap-4">
           <Link href="/" className="flex items-center gap-2">
-           <div className="relative h-48 w-48 overflow-hidden">
-                        <Image src="/logobg.png" alt="Azen Logo" fill className="object-cover" />
-                     </div>
+            <div className="relative h-16 w-16 overflow-hidden rounded-xl">
+              <Image src="/logobg.png" alt="Azen Logo" fill className="object-cover" />
+            </div>
           </Link>
           <p className="text-sm text-foreground/80 leading-relaxed font-sans max-w-xs">
             {t("tagline")}
@@ -37,9 +37,8 @@ export function Footer() {
         <div className="flex flex-col gap-2">
           <h3 className="font-semibold">{t("followUs")}</h3>
           <div className="flex gap-4">
-            <a href="https://www.instagram.com/azen.japan/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Instagram className="h-5 w-5" /></a>
-            <a href="https://www.facebook.com/profile.php?id=61585063457607/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Twitter className="h-5 w-5" /></a>
-            <a href="https://www.facebook.com/profile.php?id=61585063457607/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Facebook className="h-5 w-5" /></a>
+            <a href="https://www.instagram.com/azen.japan/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors"><Instagram className="h-5 w-5" /></a>
+            <a href="https://www.facebook.com/profile.php?id=61585063457607/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors"><Facebook className="h-5 w-5" /></a>
           </div>
         </div>
       </div>

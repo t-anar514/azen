@@ -3,24 +3,22 @@
 import React from "react"
 import { motion } from "framer-motion"
 import { Volume2, Check } from "lucide-react"
-import { Phrase } from "@/data/japanese-course"
+import type { PhraseRow } from "@/lib/supabase/types"
 import { useTTS } from "@/hooks/use-tts"
 import { useTranslations } from "next-intl"
 
 interface PhraseCardProps {
-  phrase: Phrase
-  collectionId: string
+  phrase: PhraseRow
   onToggleLearned: (isLearned: boolean) => void
   isLearned: boolean
 }
 
-export function PhraseCard({ phrase, collectionId, onToggleLearned, isLearned }: PhraseCardProps) {
-  const t = useTranslations(`Learn.phrasebook.collections.${collectionId}.phrases.${phrase.id}`);
+export function PhraseCard({ phrase, onToggleLearned, isLearned }: PhraseCardProps) {
   const tCommon = useTranslations("Learn.phrasebook");
   const { speak, isSpeaking } = useTTS()
 
   const handlePlay = () => {
-    speak(phrase.japanese)
+    speak(phrase.japanese, phrase.audio_url)
   }
 
   return (
@@ -55,19 +53,19 @@ export function PhraseCard({ phrase, collectionId, onToggleLearned, isLearned }:
       </div>
 
       <div className="flex-1">
-        <p className="text-lg text-gray-800 font-medium mb-2">{t("english")}</p>
-        
+        <p className="text-lg text-gray-800 font-medium mb-2">{phrase.english}</p>
+
         {phrase.context && (
           <div className="inline-flex items-center gap-2 bg-[#88a47c] text-white text-xs font-bold px-3 py-1 rounded-full">
             <span>Azen Tip</span>
-            <span className="font-normal opacity-90 border-l border-white/30 pl-2 ml-1">{t("context")}</span>
+            <span className="font-normal opacity-90 border-l border-white/30 pl-2 ml-1">{phrase.context}</span>
           </div>
         )}
       </div>
 
        <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
           <label className="flex items-center gap-3 cursor-pointer group select-none">
-            <div 
+            <div
               className={`
                 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors
                 ${isLearned ? "bg-[#227c70] border-[#227c70] text-white" : "border-gray-300 group-hover:border-[#227c70] text-transparent"}
@@ -84,4 +82,3 @@ export function PhraseCard({ phrase, collectionId, onToggleLearned, isLearned }:
     </motion.div>
   )
 }
-

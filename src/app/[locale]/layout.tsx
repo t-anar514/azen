@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "../globals.css";
 import { Navbar } from "@/components/layout/Navbar";
@@ -26,8 +26,6 @@ export async function generateMetadata({
     title: "Azen | Japan Travel Platform",
     description: "From Chaos to Clarity. Comprehensive Japan Travel Guide.",
     manifest: '/manifest.json',
-    themeColor: '#1c315e',
-    viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0',
     alternates: {
       canonical: `/${locale}`,
       languages: {
@@ -36,6 +34,14 @@ export async function generateMetadata({
     },
   };
 }
+
+export const viewport: Viewport = {
+  themeColor: '#1c315e',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 export default async function RootLayout({
   children,
