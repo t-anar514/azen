@@ -33,9 +33,9 @@ export default async function TransferHistoryPage() {
   const bookings = await getMyBookings()
 
   return (
-    <div className="min-h-screen bg-[#e6e2c3] pt-16 pb-16">
+    <div className="min-h-screen bg-background pt-16 pb-16">
       <div className="mx-auto max-w-2xl px-4">
-        <h1 className="mb-6 text-2xl font-black text-[#1c315e]">Миний хүргэлтүүд</h1>
+        <h1 className="mb-6 text-2xl font-black text-foreground">Миний хүргэлтүүд</h1>
 
         {bookings.length === 0 ? (
           <Card>
@@ -48,10 +48,10 @@ export default async function TransferHistoryPage() {
                 <Card className="transition-shadow hover:shadow-md">
                   <CardContent className="flex flex-wrap items-center justify-between gap-2 pt-6">
                     <div>
-                      <p className="font-semibold text-[#1c315e]">{booking.flight_number}</p>
+                      <p className="font-semibold text-foreground">{booking.flight_number}</p>
                       <p className="text-sm text-gray-500">{formatDateTime(booking.pickup_datetime)}</p>
                     </div>
-                    <span className="rounded-full bg-[#227c70]/10 px-3 py-1 text-xs font-semibold text-[#227c70]">
+                    <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
                       {BOOKING_STATUS_LABELS[booking.status]}
                     </span>
                   </CardContent>

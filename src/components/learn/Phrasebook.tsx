@@ -52,21 +52,21 @@ export function Phrasebook({ collections }: PhrasebookProps) {
     <div className="py-12 max-w-6xl mx-auto px-4">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
-          <h2 className="text-3xl font-bold text-[#1c315e] flex items-center gap-2">
-            <Sparkles className="text-[#227c70]" />
+          <h2 className="text-3xl font-bold text-foreground flex items-center gap-2">
+            <Sparkles className="text-primary" />
             {t("title")}
           </h2>
           <p className="text-gray-600 mt-1">{t("subtitle")}</p>
         </div>
 
-        <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm border border-[#88a47c]/30">
+        <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm border border-border/30">
           <Trophy className="w-5 h-5 text-yellow-500" />
-          <span className="font-bold text-[#1c315e]">{t("learned", { learned: learnedCount, total: totalPhrases })}</span>
+          <span className="font-bold text-foreground">{t("learned", { learned: learnedCount, total: totalPhrases })}</span>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex overflow-x-auto pb-4 mb-6 scrollbar-hide gap-2 md:gap-4 sticky top-20 z-30 bg-[#e6e2c3] py-2 -mx-4 px-4 md:static md:bg-transparent">
+      <div className="flex overflow-x-auto pb-4 mb-6 scrollbar-hide gap-2 md:gap-4 sticky top-20 z-30 bg-background py-2 -mx-4 px-4 md:static md:bg-transparent">
         {collections.map((collection, idx) => (
           <button
             key={collection.id}
@@ -74,8 +74,8 @@ export function Phrasebook({ collections }: PhrasebookProps) {
             className={`
               whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-bold transition-all
               ${activeTab === idx
-                ? "bg-[#1c315e] text-white shadow-md transform scale-105"
-                : "bg-white text-gray-600 hover:bg-white/80 hover:text-[#1c315e]"}
+                ? "bg-primary text-white shadow-md transform scale-105"
+                : "bg-white text-gray-600 hover:bg-white/80 hover:text-foreground"}
             `}
           >
             {collection.title}
@@ -94,7 +94,7 @@ export function Phrasebook({ collections }: PhrasebookProps) {
               transition={{ duration: 0.3 }}
             >
               <div className="mb-6">
-                <h3 className="text-xl font-bold text-[#1c315e]">{currentCollection.title}</h3>
+                <h3 className="text-xl font-bold text-foreground">{currentCollection.title}</h3>
                 <p className="text-gray-600">{currentCollection.description}</p>
               </div>
 

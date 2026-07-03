@@ -25,13 +25,13 @@ export function BookingStatusCard({ booking, driver, heading }: BookingStatusCar
     <div className="mx-auto max-w-2xl space-y-6 px-4 pb-16">
       <Card>
         <CardContent className="space-y-4 pt-6">
-          {heading && <h1 className="text-2xl font-black text-[#1c315e]">{heading}</h1>}
+          {heading && <h1 className="text-2xl font-black text-foreground">{heading}</h1>}
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="font-mono text-sm text-gray-500">Аяллын код: {booking.trip_code}</p>
             <span
               className={cn(
                 "rounded-full px-3 py-1 text-xs font-semibold",
-                isCancelled ? "bg-red-100 text-red-700" : "bg-[#227c70]/10 text-[#227c70]"
+                isCancelled ? "bg-red-100 text-red-700" : "bg-primary/10 text-primary"
               )}
             >
               {BOOKING_STATUS_LABELS[booking.status]}
@@ -45,7 +45,7 @@ export function BookingStatusCard({ booking, driver, heading }: BookingStatusCar
                   key={step}
                   className={cn(
                     "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium",
-                    i <= currentIndex ? "bg-[#227c70] text-white" : "bg-gray-100 text-gray-400"
+                    i <= currentIndex ? "bg-primary text-white" : "bg-gray-100 text-gray-400"
                   )}
                 >
                   {i < currentIndex && <Check className="h-3 w-3" />}
@@ -62,23 +62,23 @@ export function BookingStatusCard({ booking, driver, heading }: BookingStatusCar
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <p className="text-xs uppercase text-gray-500">Нислэгийн дугаар</p>
-              <p className="font-semibold text-[#1c315e]">{booking.flight_number}</p>
+              <p className="font-semibold text-foreground">{booking.flight_number}</p>
             </div>
             <div>
               <p className="text-xs uppercase text-gray-500">Цаг</p>
-              <p className="font-semibold text-[#1c315e]">{formatDateTime(booking.pickup_datetime)}</p>
+              <p className="font-semibold text-foreground">{formatDateTime(booking.pickup_datetime)}</p>
             </div>
             <div>
               <p className="text-xs uppercase text-gray-500">Авах газар</p>
-              <p className="font-semibold text-[#1c315e]">{booking.pickup_location}</p>
+              <p className="font-semibold text-foreground">{booking.pickup_location}</p>
             </div>
             <div>
               <p className="text-xs uppercase text-gray-500">Хүргэх газар</p>
-              <p className="font-semibold text-[#1c315e]">{booking.dropoff_location}</p>
+              <p className="font-semibold text-foreground">{booking.dropoff_location}</p>
             </div>
             <div>
               <p className="text-xs uppercase text-gray-500">Үнэ</p>
-              <p className="font-semibold text-[#227c70]">
+              <p className="font-semibold text-primary">
                 {new Intl.NumberFormat("mn-MN").format(booking.price)} {booking.currency}
               </p>
             </div>
@@ -87,15 +87,15 @@ export function BookingStatusCard({ booking, driver, heading }: BookingStatusCar
       </Card>
 
       {driver && (
-        <Card className="border-[#227c70]/40 bg-[#227c70]/5">
+        <Card className="border-primary/40 bg-primary/5">
           <CardContent className="flex items-center justify-between pt-6">
             <div>
               <p className="text-xs uppercase text-gray-500">Жолооч</p>
-              <p className="font-semibold text-[#1c315e]">{driver.full_name}</p>
+              <p className="font-semibold text-foreground">{driver.full_name}</p>
             </div>
             <a
               href={`tel:${driver.phone}`}
-              className="flex items-center gap-2 rounded-full bg-[#227c70] px-4 py-2 text-sm font-semibold text-white"
+              className="flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white"
             >
               <Phone className="h-4 w-4" /> {driver.phone}
             </a>

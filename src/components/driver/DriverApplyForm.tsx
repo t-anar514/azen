@@ -64,7 +64,7 @@ export function DriverApplyForm({ userId }: DriverApplyFormProps) {
     <form onSubmit={handleSubmit} className="mx-auto max-w-lg space-y-6 px-4 pb-16">
       <Card>
         <CardContent className="space-y-4 pt-6">
-          <h2 className="font-bold text-[#1c315e]">Хувийн мэдээлэл</h2>
+          <h2 className="font-bold text-foreground">Хувийн мэдээлэл</h2>
           <div className="space-y-2">
             <Label htmlFor="full_name">Бүтэн нэр</Label>
             <Input id="full_name" required value={fullName} onChange={(e) => setFullName(e.target.value)} />
@@ -87,7 +87,7 @@ export function DriverApplyForm({ userId }: DriverApplyFormProps) {
 
       <Card>
         <CardContent className="space-y-4 pt-6">
-          <h2 className="font-bold text-[#1c315e]">Тээврийн хэрэгсэл</h2>
+          <h2 className="font-bold text-foreground">Тээврийн хэрэгсэл</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="vehicle_make">Үйлдвэрлэгч</Label>
@@ -107,7 +107,7 @@ export function DriverApplyForm({ userId }: DriverApplyFormProps) {
 
       <Card>
         <CardContent className="space-y-4 pt-6">
-          <h2 className="font-bold text-[#1c315e]">Бичиг баримт</h2>
+          <h2 className="font-bold text-foreground">Бичиг баримт</h2>
           <DriverDocUploadField label="Иргэний үнэмлэх" docType="id" value={idDocumentUrl} onChange={setIdDocumentUrl} />
           <DriverDocUploadField
             label="Жолооны үнэмлэх"
@@ -126,7 +126,7 @@ export function DriverApplyForm({ userId }: DriverApplyFormProps) {
 
       {error && <p className="text-sm text-destructive">{error}</p>}
 
-      <Button type="submit" size="lg" className="w-full bg-[#227c70] hover:bg-[#227c70]/90" disabled={submitting}>
+      <Button type="submit" size="lg" className="w-full bg-primary hover:bg-primary/90" disabled={submitting}>
         {submitting ? "Илгээж байна…" : "Хүсэлт илгээх"}
       </Button>
     </form>

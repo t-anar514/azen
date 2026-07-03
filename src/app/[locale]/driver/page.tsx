@@ -50,11 +50,11 @@ export default async function DriverDashboardPage() {
   const activeJobs = (jobs ?? []) as BookingRow[]
 
   return (
-    <div className="min-h-screen bg-[#e6e2c3] pt-16 pb-16">
+    <div className="min-h-screen bg-background pt-16 pb-16">
       <div className="mx-auto max-w-2xl px-4">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-black text-[#1c315e]">Жолоочийн самбар</h1>
-          <Link href="/driver/history" className="text-sm font-semibold text-[#227c70]">
+          <h1 className="text-2xl font-black text-foreground">Жолоочийн самбар</h1>
+          <Link href="/driver/history" className="text-sm font-semibold text-primary">
             Түүх →
           </Link>
         </div>
@@ -72,7 +72,7 @@ export default async function DriverDashboardPage() {
                 <CardContent className="space-y-3 pt-6">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="font-mono text-sm text-gray-500">{job.trip_code}</p>
-                    <span className="rounded-full bg-[#227c70]/10 px-3 py-1 text-xs font-semibold text-[#227c70]">
+                    <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
                       {BOOKING_STATUS_LABELS[job.status]}
                     </span>
                   </div>
@@ -80,27 +80,27 @@ export default async function DriverDashboardPage() {
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div>
                       <p className="text-xs uppercase text-gray-500">Нислэг</p>
-                      <p className="font-semibold text-[#1c315e]">{job.flight_number}</p>
+                      <p className="font-semibold text-foreground">{job.flight_number}</p>
                     </div>
                     <div>
                       <p className="text-xs uppercase text-gray-500">Цаг</p>
-                      <p className="font-semibold text-[#1c315e]">{formatDateTime(job.pickup_datetime)}</p>
+                      <p className="font-semibold text-foreground">{formatDateTime(job.pickup_datetime)}</p>
                     </div>
                     <div>
                       <p className="text-xs uppercase text-gray-500">Авах газар</p>
-                      <p className="font-semibold text-[#1c315e]">{job.pickup_location}</p>
+                      <p className="font-semibold text-foreground">{job.pickup_location}</p>
                     </div>
                     <div>
                       <p className="text-xs uppercase text-gray-500">Хүргэх газар</p>
-                      <p className="font-semibold text-[#1c315e]">{job.dropoff_location}</p>
+                      <p className="font-semibold text-foreground">{job.dropoff_location}</p>
                     </div>
                     <div>
                       <p className="text-xs uppercase text-gray-500">Зорчигч</p>
-                      <p className="font-semibold text-[#1c315e]">{job.guest_name}</p>
+                      <p className="font-semibold text-foreground">{job.guest_name}</p>
                     </div>
                     <div>
                       <p className="text-xs uppercase text-gray-500">Утас</p>
-                      <a href={`tel:${job.guest_phone}`} className="font-semibold text-[#227c70]">
+                      <a href={`tel:${job.guest_phone}`} className="font-semibold text-primary">
                         {job.guest_phone}
                       </a>
                     </div>

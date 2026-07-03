@@ -88,7 +88,7 @@ export function CityDetailTabs({ city }: { city: CityRow }) {
           >
             {activeTab === "introduction" && (
               <CityDetailSection title={t("sections.welcome", { name: city.name })}>
-                <p className="text-xl leading-relaxed text-[#1c315e]/80 font-medium">{city.introduction}</p>
+                <p className="text-xl leading-relaxed text-foreground/80 font-medium">{city.introduction}</p>
                 <CategoryGrid />
               </CityDetailSection>
             )}
@@ -104,16 +104,16 @@ export function CityDetailTabs({ city }: { city: CityRow }) {
                         alt={`${city.name} map overview`}
                         className="w-full h-full object-contain p-4 transition-transform duration-700 group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#1c315e]/20 to-transparent pointer-events-none" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent pointer-events-none" />
                       <div className="absolute top-6 left-6">
-                        <span className="bg-[#227c70] text-white px-4 py-1.5 rounded-full text-[10px] font-black tracking-[0.2em] uppercase shadow-lg">
+                        <span className="bg-primary text-white px-4 py-1.5 rounded-full text-[10px] font-black tracking-[0.2em] uppercase shadow-lg">
                           {t("sections.areaGuide")}
                         </span>
                       </div>
 
                       <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-white/80 backdrop-blur-md border border-white/20 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 hidden md:block">
-                        <p className="text-[10px] font-bold text-[#1c315e]/60 uppercase tracking-widest">Interactive Area Map</p>
-                        <p className="text-sm font-medium text-[#1c315e]">Click a district to zoom and discover deep local secrets.</p>
+                        <p className="text-[10px] font-bold text-foreground/60 uppercase tracking-widest">Interactive Area Map</p>
+                        <p className="text-sm font-medium text-foreground">Click a district to zoom and discover deep local secrets.</p>
                       </div>
                     </div>
                   </div>
@@ -121,10 +121,10 @@ export function CityDetailTabs({ city }: { city: CityRow }) {
                   {/* Right Side: Scrollable Bento Grid */}
                   <div className="w-full lg:w-1/2">
                     <div className="mb-10 space-y-2">
-                      <h2 className="text-4xl font-black text-[#1c315e] tracking-tighter uppercase italic">
+                      <h2 className="text-4xl font-black text-foreground tracking-tighter uppercase italic">
                         {t("sections.districts")}
                       </h2>
-                      <div className="h-1 w-20 bg-[#227c70] rounded-full" />
+                      <div className="h-1 w-20 bg-primary rounded-full" />
                     </div>
 
                     <div className="grid gap-6 sm:grid-cols-1 xl:grid-cols-2">
@@ -133,9 +133,9 @@ export function CityDetailTabs({ city }: { city: CityRow }) {
                       ))}
                     </div>
 
-                    <div className="mt-16 p-8 rounded-3xl border border-dashed border-[#88a47c]/40 bg-[#88a47c]/5 text-center">
-                      <MapPin className="w-8 h-8 text-[#88a47c] mx-auto mb-3 opacity-40" />
-                      <p className="text-sm font-medium text-[#1c315e]/50 italic">
+                    <div className="mt-16 p-8 rounded-3xl border border-dashed border-border/40 bg-muted/5 text-center">
+                      <MapPin className="w-8 h-8 text-muted-foreground mx-auto mb-3 opacity-40" />
+                      <p className="text-sm font-medium text-foreground/50 italic">
                         More micro-neighborhoods being mapped by our local guides...
                       </p>
                     </div>

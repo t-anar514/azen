@@ -45,12 +45,12 @@ export default async function DriverHistoryPage() {
   const totalEarnings = completed.reduce((sum, j) => sum + Number(j.price), 0)
 
   return (
-    <div className="min-h-screen bg-[#e6e2c3] pt-16 pb-16">
+    <div className="min-h-screen bg-background pt-16 pb-16">
       <div className="mx-auto max-w-2xl px-4">
-        <h1 className="mb-2 text-2xl font-black text-[#1c315e]">Дууссан аяллууд</h1>
+        <h1 className="mb-2 text-2xl font-black text-foreground">Дууссан аяллууд</h1>
         <p className="mb-6 text-sm text-gray-600">
           Нийт орлого (төлбөр баталгаажаагүй ч): {" "}
-          <span className="font-semibold text-[#227c70]">
+          <span className="font-semibold text-primary">
             {new Intl.NumberFormat("mn-MN").format(totalEarnings)} ₮
           </span>
         </p>
@@ -66,13 +66,13 @@ export default async function DriverHistoryPage() {
                 <CardContent className="flex flex-wrap items-center justify-between gap-2 pt-6">
                   <div>
                     <p className="font-mono text-sm text-gray-500">{job.trip_code}</p>
-                    <p className="text-sm text-[#1c315e]">{formatDateTime(job.pickup_datetime)}</p>
+                    <p className="text-sm text-foreground">{formatDateTime(job.pickup_datetime)}</p>
                   </div>
                   <div className="text-right">
-                    <span className="rounded-full bg-[#227c70]/10 px-3 py-1 text-xs font-semibold text-[#227c70]">
+                    <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
                       {BOOKING_STATUS_LABELS[job.status]}
                     </span>
-                    <p className="mt-1 text-sm font-semibold text-[#1c315e]">
+                    <p className="mt-1 text-sm font-semibold text-foreground">
                       {new Intl.NumberFormat("mn-MN").format(job.price)} {job.currency}
                     </p>
                   </div>

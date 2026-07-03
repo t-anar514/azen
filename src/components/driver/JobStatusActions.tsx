@@ -57,7 +57,7 @@ export function JobStatusActions({ bookingId, currentStatus }: JobStatusActionsP
       <Button
         type="button"
         size="sm"
-        className="bg-[#227c70] hover:bg-[#227c70]/90"
+        className="bg-primary hover:bg-primary/90"
         disabled={updating}
         onClick={() => handleAdvance(next)}
       >

@@ -3,12 +3,26 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ============================================================================
+   AZEN — globals.css  ·  "Eternal Sky" retheme
+   ----------------------------------------------------------------------------
+   Keeps existing shadcn token NAMES so every component that already uses
+   bg-background / text-primary / bg-accent re-skins automatically.
+   Only the :root and .dark VALUES changed, plus Eternal-Sky extras and the
+   route-line keyframe.
+
+   Concept: Köke sky-blue (Mongolian "eternal sky") = brand + communicate.
+            Saffron (felt/sunrise) = reserve/book.
+            Route line = signature motif (origin → destination).
+   ============================================================================ */
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
-  --font-serif: var(--font-playfair);
-  --font-playfair: var(--font-playfair);
+  --font-serif: var(--font-display);     /* was --font-playfair */
+  --font-display: var(--font-display);
+  --font-playfair: var(--font-display);  /* backwards compat */
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -38,6 +52,18 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+
+  /* Eternal-Sky extras — use directly (bg-saffron, text-sky-500, …) */
+  --color-sky-900: #0F3B6B;
+  --color-sky-700: #1A4E8A;
+  --color-sky-500: #2D7DD2;
+  --color-sky-200: #BBD4EE;
+  --color-sky-50:  #EAF2FB;
+  --color-saffron: #DE8C2E;
+  --color-saffron-600: #C9761E;
+  --color-saffron-50:  #FCF2E3;
+  --color-success: #2E8B6F;
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -48,118 +74,105 @@
 }
 
 :root {
-  --radius: 0.625rem;
+  --radius: 0.75rem;
 
-  /* "Modern Retro Japan" Palette */
-  --background: #e6e2c3;
-  /* Cream/Beige */
-  --foreground: #1c315e;
-  /* Deep Navy */
+  /* ---- Eternal Sky ---- */
+  --background: #F6F8FB;         /* Mist — cool off-white */
+  --foreground: #16202B;         /* Ink */
 
-  --card: #ffffff;
-  /* Surface/Card Background */
-  --card-foreground: #1c315e;
+  --card: #FFFFFF;
+  --card-foreground: #16202B;
+  --popover: #FFFFFF;
+  --popover-foreground: #16202B;
 
-  --popover: #ffffff;
-  --popover-foreground: #1c315e;
+  --primary: #1A4E8A;            /* Köke sky — brand + "message/talk" */
+  --primary-foreground: #FFFFFF;
 
-  --primary: #1c315e;
-  /* Deep Blue - Primary */
-  --primary-foreground: #e6e2c3;
+  --secondary: #EAF2FB;          /* Sky-50 surface */
+  --secondary-foreground: #1A4E8A;
 
-  --secondary: #88a47c;
-  /* Sage Green - Secondary */
-  --secondary-foreground: #ffffff;
-
-  --muted: #f2f0e4;
+  --muted: #EEF2F7;
   --muted-foreground: #64748B;
 
-  --accent: #227c70;
-  /* Teal - Accent */
-  --accent-foreground: #ffffff;
+  --accent: #DE8C2E;             /* Saffron — "reserve/book" + accent marks */
+  --accent-foreground: #FFFFFF;
 
-  --destructive: #EF4444;
-  --destructive-foreground: #ffffff;
+  --destructive: #C2483B;
+  --destructive-foreground: #FFFFFF;
 
-  --border: #88a47c;
-  --input: #E2E8F0;
-  --ring: #1c315e;
+  --border: #DCE3EC;
+  --input: #DCE3EC;
+  --ring: #2D7DD2;               /* sky-500 focus */
 
-  --chart-1: #227c70;
-  --chart-2: #88a47c;
-  --chart-3: #1c315e;
-  --chart-4: #e6e2c3;
-  --chart-5: #f2f0e4;
+  --chart-1: #1A4E8A;
+  --chart-2: #2D7DD2;
+  --chart-3: #DE8C2E;
+  --chart-4: #2E8B6F;
+  --chart-5: #BBD4EE;
 
-  --sidebar: #f2f0e4;
-  --sidebar-foreground: #1c315e;
-  --sidebar-primary: #227c70;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e6e2c3;
-  --sidebar-accent-foreground: #1c315e;
-  --sidebar-border: #88a47c;
-  --sidebar-ring: #227c70;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #16202B;
+  --sidebar-primary: #1A4E8A;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #EAF2FB;
+  --sidebar-accent-foreground: #1A4E8A;
+  --sidebar-border: #DCE3EC;
+  --sidebar-ring: #2D7DD2;
 }
 
 .dark {
-  /* Dark mode overrides - keeping user's preference for Light/Cream as primary, 
-     but providing dark mode mappings if system switches. 
-     Ideally, for this specific aesthetic, we might want to enforce the Cream mode or have a dedicated Dark version.
-     For now, I'll map these to darker versions of the palette. */
-  --background: #1c315e;
-  /* Deep Navy as background */
-  --foreground: #e6e2c3;
-  /* Cream as text */
-  --card: #2a4070;
-  --card-foreground: #e6e2c3;
-  --popover: #2a4070;
-  --popover-foreground: #e6e2c3;
-  --primary: #227c70;
-  --primary-foreground: #ffffff;
-  --secondary: #88a47c;
-  --secondary-foreground: #1c315e;
-  --muted: #2a4070;
-  --muted-foreground: #a0aec0;
-  --accent: #2a4070;
-  --accent-foreground: #e6e2c3;
-  --destructive: #EF4444;
-  --destructive-foreground: #ffffff;
-  --border: #4a5568;
-  --input: #4a5568;
-  --ring: #227c70;
+  --background: #0F1B2A;
+  --foreground: #E7EEF6;
+  --card: #16263A;
+  --card-foreground: #E7EEF6;
+  --popover: #16263A;
+  --popover-foreground: #E7EEF6;
+  --primary: #5AA0E0;
+  --primary-foreground: #0F1B2A;
+  --secondary: #1C3350;
+  --secondary-foreground: #E7EEF6;
+  --muted: #1C3350;
+  --muted-foreground: #9DB0C6;
+  --accent: #ECA64F;
+  --accent-foreground: #0F1B2A;
+  --destructive: #E06B5E;
+  --destructive-foreground: #0F1B2A;
+  --border: #2A3F5C;
+  --input: #2A3F5C;
+  --ring: #5AA0E0;
 
-  --sidebar: #1c315e;
-  --sidebar-foreground: #e6e2c3;
-  --sidebar-primary: #227c70;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #2a4070;
-  --sidebar-accent-foreground: #e6e2c3;
-  --sidebar-border: #4a5568;
-  --sidebar-ring: #227c70;
+  --chart-1: #5AA0E0;
+  --chart-2: #2D7DD2;
+  --chart-3: #ECA64F;
+  --chart-4: #4FB494;
+  --chart-5: #BBD4EE;
+
+  --sidebar: #0F1B2A;
+  --sidebar-foreground: #E7EEF6;
+  --sidebar-primary: #5AA0E0;
+  --sidebar-primary-foreground: #0F1B2A;
+  --sidebar-accent: #1C3350;
+  --sidebar-accent-foreground: #E7EEF6;
+  --sidebar-border: #2A3F5C;
+  --sidebar-ring: #5AA0E0;
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-
-  html {
-    @apply overflow-x-hidden;
-  }
-
-  body {
-    @apply bg-background text-foreground overflow-x-hidden min-h-screen relative;
-  }
+  * { @apply border-border outline-ring/50; }
+  html { @apply overflow-x-hidden; }
+  body { @apply bg-background text-foreground overflow-x-hidden min-h-screen relative; }
 }
 
 @layer utilities {
+  /* pulse-highlight re-tinted to sky */
   @keyframes pulse-highlight {
-    0% { box-shadow: 0 0 0 0 rgba(34, 124, 112, 0.4); border-color: rgba(34, 124, 112, 1); border-width: 4px; }
-    70% { box-shadow: 0 0 0 15px rgba(34, 124, 112, 0); border-color: rgba(34, 124, 112, 1); border-width: 4px; }
-    100% { box-shadow: 0 0 0 0 rgba(34, 124, 112, 0); border-color: var(--border); border-width: 1px; }
+    0%   { box-shadow: 0 0 0 0 rgba(45,125,210,.40); border-color: rgba(45,125,210,1); border-width: 4px; }
+    70%  { box-shadow: 0 0 0 15px rgba(45,125,210,0); border-color: rgba(45,125,210,1); border-width: 4px; }
+    100% { box-shadow: 0 0 0 0 rgba(45,125,210,0); border-color: var(--border); border-width: 1px; }
   }
+  .animate-pulse-highlight { animation: pulse-highlight 2s cubic-bezier(.4,0,.6,1); }
 
-  .animate-pulse-highlight {
-    animation: pulse-highlight 2s cubic-bezier(0.4, 0, 0.6, 1);
-  }
+  /* route-line draw — planner map + page dividers */
+  @keyframes route-draw { from { stroke-dashoffset: 240; } to { stroke-dashoffset: 0; } }
+  .animate-route { stroke-dasharray: 240; animation: route-draw 1.1s cubic-bezier(.2,.6,.2,1) forwards; }
 }

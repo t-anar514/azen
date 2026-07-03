@@ -24,7 +24,7 @@ export function ContentCard({
   title,
   description,
   badge,
-  badgeColor = "bg-[#227c70]",
+  badgeColor = "bg-primary",
   link,
   footerLeft,
   footerRight,
@@ -77,7 +77,7 @@ export function ContentCard({
           </div>
           {aspectRatio !== "portrait" && (
             <div className="p-5">
-              <h3 className="font-bold text-xl mb-2 text-primary whitespace-normal leading-tight group-hover:text-[#227c70] transition-colors">
+              <h3 className="font-bold text-xl mb-2 text-primary whitespace-normal leading-tight group-hover:text-primary transition-colors">
                 {title}
               </h3>
               {description && (

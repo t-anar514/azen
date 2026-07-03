@@ -35,7 +35,7 @@ export function TrendingCarousel() {
                               className="object-cover transition-transform duration-300 group-hover:scale-105"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent p-4 flex flex-col justify-end">
-                              <Badge className="w-fit mb-2 bg-[#88a47c] text-white hover:bg-[#88a47c]/90 border-none">{t(`${item.id}.category`)}</Badge>
+                              <Badge className="w-fit mb-2 bg-muted text-white hover:bg-muted/90 border-none">{t(`${item.id}.category`)}</Badge>
                                <h3 className="text-white font-bold text-lg whitespace-normal leading-tight">{t(`${item.id}.title`)}</h3>
                                <p className="text-white/80 text-sm">{item.location}</p>
                                <div className="mt-2 text-white font-medium">From ¥{item.basePrice.toLocaleString()}</div>

@@ -23,7 +23,7 @@ export default function ExperiencePage() {
         <h1 className="text-2xl font-bold mb-4">{t('notFound')}</h1>
         <button 
           onClick={() => router.push('/')}
-          className="text-[#227c70] font-semibold hover:underline"
+          className="text-primary font-semibold hover:underline"
         >
           {t('returnHome')}
         </button>
@@ -32,11 +32,11 @@ export default function ExperiencePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#e6e2c3] pb-20 md:pb-0">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <div className="max-w-7xl mx-auto px-4 py-6 md:py-10">
         <button 
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-[#1c315e] font-bold uppercase tracking-widest text-xs mb-6 hover:text-[#227c70] transition-colors"
+          className="flex items-center gap-2 text-foreground font-bold uppercase tracking-widest text-xs mb-6 hover:text-primary transition-colors"
         >
           <ChevronLeft className="w-4 h-4" /> {t('back')}
         </button>
@@ -49,14 +49,14 @@ export default function ExperiencePage() {
             <ExperienceStory experience={experience} />
             
             <div className="space-y-6">
-                <h2 className="text-2xl font-black text-[#1c315e] tracking-tight">{t('meetingPoint')}</h2>
+                <h2 className="text-2xl font-black text-foreground tracking-tight">{t('meetingPoint')}</h2>
                 <div className="h-[400px] w-full rounded-2xl overflow-hidden shadow-xl border border-white/20">
                     <ExperienceMap meetingPoint={experience.meetingPoint} />
                 </div>
             </div>
 
             <div className="space-y-6">
-                <h2 className="text-2xl font-black text-[#1c315e] tracking-tight">{t('guide')}</h2>
+                <h2 className="text-2xl font-black text-foreground tracking-tight">{t('guide')}</h2>
                 <GuideProfile guide={experience.guide} experienceId={experience.id} />
             </div>
           </div>

@@ -1,4 +1,5 @@
 import { TrapAlert } from "@/components/hacks/TrapAlert"
+import { PageHeader } from "@/components/ui/page-header"
 import { createClient } from "@/lib/supabase/server"
 import { getTranslations } from "next-intl/server"
 
@@ -19,15 +20,11 @@ export default async function HacksPage() {
   return (
     <div className="min-h-screen bg-background py-12 px-4 md:px-6">
       <div className="max-w-7xl mx-auto space-y-12">
-        <header className="text-center space-y-4 max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-primary">
-            {t("title")}
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            {t("description")}
-          </p>
-          <div className="w-24 h-1 bg-accent mx-auto rounded-full" />
-        </header>
+        <PageHeader
+          eyebrow="Аяллын заавар"
+          title={t("title")}
+          lead={t("description")}
+        />
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {hacks.map((hack) => (

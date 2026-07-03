@@ -2,19 +2,10 @@ import {defineRouting} from 'next-intl/routing';
 import {createNavigation} from 'next-intl/navigation';
 
 export const routing = defineRouting({
-  // A list of all locales that are supported
   locales: ['mn'],
-
-
-  // Used when no locale matches
   defaultLocale: 'mn',
-  
   localeDetection: false,
-  
   localePrefix: 'as-needed',
-  
-  // The `pathnames` object holds all the custom paths
-  // which can be localized.
   pathnames: {
     '/': '/',
     '/about': '/about',
@@ -23,15 +14,25 @@ export const routing = defineRouting({
     '/essentials/[id]': '/essentials/[id]',
     '/experiences': '/experiences',
     '/experiences/[id]': '/experiences/[id]',
+    '/flights': '/flights',
     '/guides': '/guides',
     '/hacks': '/hacks',
     '/hacks/[id]': '/hacks/[id]',
     '/learn': '/learn',
     '/planner': '/planner',
+    '/planner/shared/[id]': '/planner/shared/[id]',
     '/privacy': '/privacy',
     '/login': '/login',
     '/signup': '/signup',
     '/account': '/account',
+    '/account/messages': '/account/messages',
+    '/transfer': '/transfer',
+    '/transfer/history': '/transfer/history',
+    '/transfer/confirmation/[id]': '/transfer/confirmation/[id]',
+    '/transfer/trip/[id]': '/transfer/trip/[id]',
+    '/driver': '/driver',
+    '/driver/apply': '/driver/apply',
+    '/driver/history': '/driver/history',
     '/admin': '/admin',
     '/admin/cities': '/admin/cities',
     '/admin/cities/new': '/admin/cities/new',
@@ -45,11 +46,14 @@ export const routing = defineRouting({
     '/admin/learn': '/admin/learn',
     '/admin/learn/new': '/admin/learn/new',
     '/admin/learn/[id]/edit': '/admin/learn/[id]/edit',
+    '/admin/transfers': '/admin/transfers',
+    '/admin/flights': '/admin/flights',
+    '/admin/flights/new': '/admin/flights/new',
+    '/admin/flights/[id]/edit': '/admin/flights/[id]/edit',
+    '/admin/drivers': '/admin/drivers',
     '/admin/users': '/admin/users',
   }
 });
 
-// Lightweight wrappers around Next.js' navigation APIs
-// that will consider the routing configuration
 export const {Link, redirect, usePathname, useRouter, getPathname} =
   createNavigation(routing);

@@ -30,7 +30,7 @@ export function SonicHero() {
       <motion.h1 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-4xl md:text-6xl font-bold text-[#1c315e] mb-2"
+        className="text-4xl md:text-6xl font-bold text-foreground mb-2"
       >
         {t("title")}
       </motion.h1>
@@ -46,17 +46,17 @@ export function SonicHero() {
             className={`
               relative w-24 h-32 md:w-32 md:h-40 rounded-xl cursor-pointer 
               bg-white shadow-sm border-2 transition-all duration-300 flex flex-col items-center justify-center
-              ${activeVowel === vowel.romaji ? "border-[#227c70] ring-4 ring-[#227c70]/20" : "border-transparent hover:border-[#227c70]"}
+              ${activeVowel === vowel.romaji ? "border-primary ring-4 ring-primary/20" : "border-transparent hover:border-primary"}
             `}
           >
-            <span className="text-4xl md:text-5xl font-bold text-[#1c315e] mb-2">{vowel.char}</span>
+            <span className="text-4xl md:text-5xl font-bold text-foreground mb-2">{vowel.char}</span>
             <span className="text-lg text-gray-400 font-medium">{vowel.romaji}</span>
             
             {activeVowel === vowel.romaji && (
                <motion.div 
                  initial={{ opacity: 0, scale: 0.5 }}
                  animate={{ opacity: 1, scale: 1 }}
-                 className="absolute -top-3 -right-3 bg-[#227c70] text-white p-1.5 rounded-full shadow-md"
+                 className="absolute -top-3 -right-3 bg-primary text-white p-1.5 rounded-full shadow-md"
                >
                  <Volume2 className="w-4 h-4" />
                </motion.div>

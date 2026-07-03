@@ -23,7 +23,7 @@ export default async function LearnPage() {
   const collections = await getCollections()
 
   return (
-    <div className="bg-[#e6e2c3] min-h-screen pb-20">
+    <div className="bg-background min-h-screen pb-20">
       <SonicHero />
       <Phrasebook collections={collections} />
       <KonbiniSimulator />

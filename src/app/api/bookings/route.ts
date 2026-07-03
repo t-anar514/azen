@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { generateTripCode } from "@/lib/bookings"
+import { quoteTransferPrice } from "@/lib/transfers/pricing"
 
 // Public endpoint — booking a transfer doesn't require an account (guest
 // checkout, per the brief). If the requester happens to be logged in, the
@@ -34,16 +35,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "flight_direction must be 'arrival' or 'departure'" }, { status: 400 })
   }
 
-  // Price comes from the server-side vehicle option, never trusted from the
-  // client — otherwise a tampered request could book at any price.
-  const { data: vehicle, error: vehicleError } = await supabase
-    .from("vehicle_options")
-    .select("*")
-    .eq("id", body.vehicle_option_id)
-    .eq("is_active", true)
-    .single()
+  // zone_id is nullable — a guest can type a one-off address that isn't in
+  // the curated zone list yet, which quoteTransferPrice() handles by falling
+  // back to the vehicle's flat starting price. But if one *was* provided it
+  // must be a string, not something a tampered request could smuggle other
+  // types through as.
+  const zoneId: string | null = body.zone_id ?? null
+  if (zoneId !== null && typeof zoneId !== "string") {
+    return NextResponse.json({ error: "zone_id must be a string or null" }, { status: 400 })
+  }
 
-  if (vehicleError || !vehicle) {
+  // Price is always computed here from the vehicle + zone, never trusted
+  // from the client — otherwise a tampered request could book at any price.
+  const quote = await quoteTransferPrice({ vehicleOptionId: body.vehicle_option_id, zoneId })
+
+  if (!quote) {
     return NextResponse.json({ error: "Selected vehicle is not available" }, { status: 400 })
   }
 
@@ -65,9 +71,12 @@ export async function POST(request: Request) {
         pickup_datetime: body.pickup_datetime,
         pickup_location: body.pickup_location,
         dropoff_location: body.dropoff_location,
-        vehicle_option_id: vehicle.id,
-        price: vehicle.price,
-        currency: vehicle.currency,
+        vehicle_option_id: body.vehicle_option_id,
+        price: quote.price,
+        currency: quote.currency,
+        zone_id: zoneId,
+        distance_km: quote.distanceKm,
+        pricing_source: quote.source,
         notes: body.notes ?? null,
       })
       .select()

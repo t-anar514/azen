@@ -41,16 +41,16 @@ export default async function DriverApplyPage() {
   if (existing) {
     const copy = STATUS_COPY[existing.verification_status as DriverVerificationStatus]
     return (
-      <div className="min-h-screen bg-[#e6e2c3] pt-16 pb-16">
+      <div className="min-h-screen bg-background pt-16 pb-16">
         <div className="mx-auto max-w-lg px-4">
           <Card>
             <CardContent className="space-y-3 pt-6 text-center">
-              <h1 className="text-xl font-black text-[#1c315e]">{copy.title}</h1>
+              <h1 className="text-xl font-black text-foreground">{copy.title}</h1>
               <p className="text-sm text-gray-600">{copy.body}</p>
               {existing.verification_status === "approved" && (
                 <Link
                   href="/driver"
-                  className="inline-block rounded-full bg-[#227c70] px-5 py-2 text-sm font-semibold text-white"
+                  className="inline-block rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white"
                 >
                   Самбар руу очих
                 </Link>
@@ -63,9 +63,9 @@ export default async function DriverApplyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#e6e2c3] pt-16 pb-16">
+    <div className="min-h-screen bg-background pt-16 pb-16">
       <div className="mx-auto max-w-lg px-4 pb-6 text-center">
-        <h1 className="text-2xl font-black text-[#1c315e]">Жолооч болох хүсэлт</h1>
+        <h1 className="text-2xl font-black text-foreground">Жолооч болох хүсэлт</h1>
         <p className="mt-2 text-sm text-gray-600">
           Мэдээллээ бөглөж, шаардлагатай бичиг баримтаа хуулж илгээнэ үү.
         </p>

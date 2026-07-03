@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useLocale, useTranslations } from "next-intl"
+import { useLocale } from "next-intl"
 import { routing, usePathname, useRouter } from "@/i18n/routing"
 import {
   DropdownMenu,
@@ -14,7 +14,6 @@ import { Languages } from "lucide-react"
 import { useParams } from "next/navigation"
 
 export function LanguageSwitcher() {
-  const t = useTranslations("LanguageSwitcher")
   const locale = useLocale()
   const router = useRouter()
   const pathname = usePathname()
@@ -23,15 +22,15 @@ export function LanguageSwitcher() {
   function onLanguageChange(newLocale: string) {
     router.replace(
       // @ts-ignore
-      {pathname, params},
-      {locale: newLocale}
+      { pathname, params },
+      { locale: newLocale }
     )
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="flex items-center gap-2">
+        <Button variant="ghost" size="sm" className="gap-1.5 h-9">
           <Languages className="h-4 w-4" />
           <span className="uppercase text-xs font-semibold">{locale}</span>
         </Button>
@@ -41,9 +40,9 @@ export function LanguageSwitcher() {
           <DropdownMenuItem
             key={cur}
             onClick={() => onLanguageChange(cur)}
-            className={locale === cur ? "bg-accent" : ""}
+            className={locale === cur ? "bg-accent text-accent-foreground font-semibold" : ""}
           >
-            {t(cur)}
+            {cur.toUpperCase()}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

@@ -35,13 +35,13 @@ export function SampleItineraries() {
                               className="object-cover transition-transform duration-300 group-hover:scale-105"
                           />
                           <div className="absolute top-4 left-4">
-                              <Badge className="bg-[#227c70] text-white hover:bg-[#227c70]/90 border-none px-3 py-1">
+                              <Badge className="bg-primary text-white hover:bg-primary/90 border-none px-3 py-1">
                                 {item.duration} {item.duration === 1 ? t('day') : t('days')}
                               </Badge>
                           </div>
                       </div>
                       <div className="p-5 bg-white">
-                           <h3 className="font-bold text-xl mb-2 text-primary whitespace-normal leading-tight group-hover:text-[#227c70] transition-colors">
+                           <h3 className="font-bold text-xl mb-2 text-primary whitespace-normal leading-tight group-hover:text-primary transition-colors">
                              {t(`${item.id}.title`)}
                            </h3>
                            <p className="text-muted-foreground text-sm whitespace-normal line-clamp-2 mb-4">

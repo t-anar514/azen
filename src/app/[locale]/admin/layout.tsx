@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { href: "/admin/learn", label: "Learn (Phrasebook)" },
   { href: "/admin/drivers", label: "Drivers" },
   { href: "/admin/transfers", label: "Transfers" },
+  { href: "/admin/transfer-pricing", label: "Transfer pricing" },
   { href: "/admin/flights", label: "Flights" },
   { href: "/admin/users", label: "Users" },
 ]

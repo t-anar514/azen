@@ -22,19 +22,19 @@ export function DistrictCard({ district, index }: DistrictCardProps) {
         boxShadow: "0 10px 30px -10px rgba(28, 49, 94, 0.1)",
         borderColor: "var(--secondary)" 
       }}
-      className="group relative bg-[#fcfaf2] border border-[#e6e2c3] rounded-2xl p-6 transition-all duration-300 flex flex-col gap-4 cursor-pointer"
+      className="group relative bg-muted border border-border rounded-2xl p-6 transition-all duration-300 flex flex-col gap-4 cursor-pointer"
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <h3 className="text-xl font-bold text-[#1c315e] leading-tight group-hover:text-[#227c70] transition-colors">
+        <h3 className="text-xl font-bold text-foreground leading-tight group-hover:text-primary transition-colors">
           {district.name}
         </h3>
       </div>
       
-      <p className="text-[#1c315e]/70 text-sm leading-relaxed line-clamp-3">
+      <p className="text-foreground/70 text-sm leading-relaxed line-clamp-3">
         {district.description}
       </p>
 
-      <div className="mt-auto pt-2 flex items-center gap-2 text-[10px] font-bold text-[#227c70] opacity-0 group-hover:opacity-100 transform translate-y-1 group-hover:translate-y-0 transition-all duration-300">
+      <div className="mt-auto pt-2 flex items-center gap-2 text-[10px] font-bold text-primary opacity-0 group-hover:opacity-100 transform translate-y-1 group-hover:translate-y-0 transition-all duration-300">
         <span>EXPLORE AREA</span>
         <svg 
           className="w-3 h-3 transition-transform group-hover:translate-x-1" 

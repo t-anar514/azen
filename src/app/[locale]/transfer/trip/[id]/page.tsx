@@ -14,7 +14,7 @@ export default async function TransferTripPage({ params }: PageProps) {
   const driver = booking.driver_id ? await getDriverContactInfo(booking.driver_id) : null
 
   return (
-    <div className="min-h-screen bg-[#e6e2c3] pt-16">
+    <div className="min-h-screen bg-background pt-16">
       <BookingStatusCard booking={booking} driver={driver} heading="Аяллын явц" />
     </div>
   )

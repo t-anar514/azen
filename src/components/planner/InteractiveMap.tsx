@@ -71,11 +71,11 @@ const ActivityMarker = ({ item, isHovered, onSelect }: { item: ItemType & { coor
         >
             <div className="relative group">
                 {isHovered && (
-                    <div className="absolute -inset-2 bg-[#88a47c]/40 rounded-full animate-pulse blur-sm" />
+                    <div className="absolute -inset-2 bg-muted/40 rounded-full animate-pulse blur-sm" />
                 )}
                 <div className={`
                     p-2 rounded-full shadow-lg transition-all duration-300 cursor-pointer relative z-10
-                    ${isHovered ? 'bg-[#88a47c] scale-125 ring-4 ring-[#88a47c]/30' : 'bg-[#227c70] scale-100'}
+                    ${isHovered ? 'bg-muted scale-125 ring-4 ring-border/30' : 'bg-primary scale-100'}
                     border-2 border-white
                 `}>
                     {getIcon(item.type)}
@@ -179,7 +179,7 @@ export function InteractiveMap({ items, hoveredId, onMapClick, isPicking }: Inte
                 className="z-50"
             >
                 <div className="p-2 min-w-[150px]">
-                    <h4 className="font-bold text-[#1c315e] mb-1">{selectedItem.title}</h4>
+                    <h4 className="font-bold text-foreground mb-1">{selectedItem.title}</h4>
                     <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
                         <MapPin className="w-3 h-3" /> {selectedItem.location}
                     </p>

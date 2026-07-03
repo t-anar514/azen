@@ -65,7 +65,7 @@ export function DriverDocUploadField({ label, docType, value, onChange }: Driver
     <div className="space-y-2">
       <Label>{label}</Label>
       {value ? (
-        <p className="text-sm text-[#227c70]">✓ Хуулагдсан</p>
+        <p className="text-sm text-primary">✓ Хуулагдсан</p>
       ) : (
         <p className="text-sm text-gray-500">Хараахан хуулаагүй</p>
       )}

@@ -2,127 +2,126 @@
 
 import * as React from "react"
 import NextImage from "next/image"
-// Workaround for Next.js 16 + React 19 type mismatch
 const Image = NextImage as any
-import { Link } from "@/i18n/routing"
-// Flights/Transfer aren't registered in i18n/routing.ts's `pathnames` map
-// (deliberate scope-reduction for this feature), so they use plain
-// next/link instead of the typed locale-aware Link used everywhere else.
-import NextLink from "next/link"
+import { Link, usePathname } from "@/i18n/routing"
 import { useTranslations } from "next-intl"
-
-import { Search, Menu } from "lucide-react"
+import { Menu } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { GlobalSearch } from "./GlobalSearch"
 import { AccountMenu } from "./AccountMenu"
 
+/* Primary nav — kept to 4 content links. Transfer gets its own CTA slot.
+   Essentials / Learn / Flights live in the footer. */
+const NAV_LINKS = [
+  { href: "/guides",  labelKey: "guides"  },
+  { href: "/planner", labelKey: "planner" },
+  { href: "/hacks",   labelKey: "hacks"   },
+  { href: "/flights", labelKey: "flights" },
+] as const
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = React.useState(false)
   const t = useTranslations("Navigation")
-
+  const pathname = usePathname()
 
   React.useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
+    const onScroll = () => setIsScrolled(window.scrollY > 8)
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-300",
+        "sticky top-0 z-50 w-full transition-all duration-200",
         isScrolled
-          ? "bg-background/80 backdrop-blur-md border-b shadow-sm"
+          ? "bg-card/90 backdrop-blur-md border-b border-border shadow-sm"
           : "bg-transparent"
       )}
     >
-      <div className="w-full flex h-16 md:h-20 items-center justify-between px-4 md:px-8">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-3">
-          <div className="relative h-9 w-16 md:h-12 md:w-24 overflow-hidden">
-             <Image src="/logo.png" alt="Azen Logo" fill className="object-contain" />
+      <div className="w-full flex h-14 items-center justify-between px-4 md:px-8 gap-4">
+
+        {/* ── Logo ── */}
+        <Link href="/" className="shrink-0 flex items-center">
+          <div className="relative h-8 w-14 md:h-10 md:w-20">
+            <Image src="/logo.png" alt="Azen" fill className="object-contain" />
           </div>
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-6">
-         <Link href="/guides" className="text-sm font-medium hover:text-primary transition-colors">
-            {t("guides")}
-          </Link> 
-          <Link href="/planner" className="text-sm font-medium hover:text-primary transition-colors">
-            {t("planner")}
-          </Link>
-          <Link href="/hacks" className="text-sm font-medium hover:text-primary transition-colors">
-            {t("hacks")}
-          </Link>
-          <Link href="/essentials" className="text-sm font-medium hover:text-primary transition-colors">
-            {t("essentials")}
-          </Link>
-          <Link href="/learn" className="text-sm font-medium hover:text-primary transition-colors">
-            {t("learn")}
-          </Link>
-          <NextLink href="/flights" className="text-sm font-medium hover:text-primary transition-colors">
-            {t("flights")}
-          </NextLink>
-          <NextLink href="/transfer" className="text-sm font-medium hover:text-primary transition-colors">
-            {t("transfer")}
-          </NextLink>
+        {/* ── Desktop nav (center) ── */}
+        <nav className="hidden md:flex items-center gap-1">
+          {NAV_LINKS.map(({ href, labelKey }) => (
+            <Link
+              key={href}
+              href={href}
+              className={cn(
+                "px-3 py-1.5 text-sm font-medium rounded-lg transition-colors",
+                pathname === href
+                  ? "text-primary bg-secondary"
+                  : "text-foreground/70 hover:text-foreground hover:bg-muted"
+              )}
+            >
+              {t(labelKey)}
+            </Link>
+          ))}
         </nav>
 
-        {/* Global Search + Account (kept visually apart from the content nav tabs above) */}
-        <div className="hidden md:flex items-center gap-4">
+        {/* ── Right cluster: search | account | CTA ── */}
+        <div className="hidden md:flex items-center gap-2">
           <GlobalSearch locale="mn" />
-          <div className="h-6 w-px bg-border" />
+          <div className="h-5 w-px bg-border" />
           <AccountMenu />
+
+          {/* Primary CTA — saffron/reserve = commit to booking */}
+          <Button asChild variant="reserve" size="sm" className="rounded-full px-5 font-semibold">
+            <Link href="/transfer">{t("transfer")}</Link>
+          </Button>
         </div>
 
-
-        {/* Mobile Search & Menu Toggle */}
-        <div className="flex items-center gap-4">
+        {/* ── Mobile: search + hamburger ── */}
+        <div className="flex items-center gap-1 md:hidden">
           <GlobalSearch locale="mn" className="md:hidden" />
-          
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden h-11 w-11 hover:bg-muted rounded-full">
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Menu</span>
+              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Цэс</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] rounded-l-3xl p-6">
-              <div className="flex flex-col gap-2 pt-12">
-                <Link href="/guides" className="flex items-center gap-3 rounded-lg px-3 py-3 text-lg font-semibold text-foreground transition-colors hover:bg-muted hover:text-primary">
-                  <span className="h-1.5 w-1.5 rounded-full bg-accent" /> {t("guides")}
-                </Link>
-                <Link href="/planner" className="flex items-center gap-3 rounded-lg px-3 py-3 text-lg font-semibold text-foreground transition-colors hover:bg-muted hover:text-primary">
-                  <span className="h-1.5 w-1.5 rounded-full bg-accent" /> {t("planner")}
-                </Link>
-                <Link href="/hacks" className="flex items-center gap-3 rounded-lg px-3 py-3 text-lg font-semibold text-foreground transition-colors hover:bg-muted hover:text-primary">
-                  <span className="h-1.5 w-1.5 rounded-full bg-accent" /> {t("hacks")}
-                </Link>
-                <Link href="/essentials" className="flex items-center gap-3 rounded-lg px-3 py-3 text-lg font-semibold text-foreground transition-colors hover:bg-muted hover:text-primary">
-                  <span className="h-1.5 w-1.5 rounded-full bg-accent" /> {t("essentials")}
-                </Link>
-                <Link href="/learn" className="flex items-center gap-3 rounded-lg px-3 py-3 text-lg font-semibold text-foreground transition-colors hover:bg-muted hover:text-primary">
-                  <span className="h-1.5 w-1.5 rounded-full bg-accent" /> {t("learn")}
-                </Link>
-                <NextLink href="/flights" className="flex items-center gap-3 rounded-lg px-3 py-3 text-lg font-semibold text-foreground transition-colors hover:bg-muted hover:text-primary">
-                  <span className="h-1.5 w-1.5 rounded-full bg-accent" /> {t("flights")}
-                </NextLink>
-                <NextLink href="/transfer" className="flex items-center gap-3 rounded-lg px-3 py-3 text-lg font-semibold text-foreground transition-colors hover:bg-muted hover:text-primary">
-                  <span className="h-1.5 w-1.5 rounded-full bg-accent" /> {t("transfer")}
-                </NextLink>
-                <div className="my-2 border-t border-border" />
+            <SheetContent side="right" className="w-[280px] rounded-l-2xl p-6 pt-10">
+              <div className="flex flex-col gap-1">
+                {NAV_LINKS.map(({ href, labelKey }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    className={cn(
+                      "flex items-center gap-3 rounded-xl px-3 py-3 text-base font-semibold transition-colors",
+                      pathname === href
+                        ? "text-primary bg-secondary"
+                        : "text-foreground hover:bg-muted hover:text-primary"
+                    )}
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-primary/40" />
+                    {t(labelKey)}
+                  </Link>
+                ))}
+
+                <div className="my-3 border-t border-border" />
+
+                {/* Saffron CTA in mobile sheet */}
+                <Button asChild variant="reserve" className="rounded-xl h-12 font-semibold">
+                  <Link href="/transfer">{t("transfer")}</Link>
+                </Button>
+
+                <div className="my-1 border-t border-border" />
                 <AccountMenu variant="mobile" />
               </div>
             </SheetContent>
           </Sheet>
         </div>
+
       </div>
     </header>
   )

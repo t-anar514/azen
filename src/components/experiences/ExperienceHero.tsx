@@ -11,13 +11,13 @@ export function ExperienceHero({ experience }: { experience: Experience }) {
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <Badge className="bg-[#88a47c] text-white hover:bg-[#88a47c]/90 border-none px-3 py-1 text-sm font-bold tracking-wide">
+        <Badge className="bg-muted text-white hover:bg-muted/90 border-none px-3 py-1 text-sm font-bold tracking-wide">
           {t('category')}
         </Badge>
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#1c315e] leading-tight tracking-tighter italic">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground leading-tight tracking-tighter italic">
           {t('title')}
         </h1>
-        <p className="text-xl text-[#1c315e]/70 font-medium">
+        <p className="text-xl text-foreground/70 font-medium">
           {experience.location} • {t('locationName')}
         </p>
       </div>

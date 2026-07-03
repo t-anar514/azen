@@ -25,7 +25,7 @@ export function GuideProfile({
         </Avatar>
         {guide.isVerified && (
             <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-1 shadow-md">
-                <CheckCircle2 className="w-6 h-6 text-[#227c70]" />
+                <CheckCircle2 className="w-6 h-6 text-primary" />
             </div>
         )}
       </div>
@@ -33,17 +33,17 @@ export function GuideProfile({
       <div className="flex-1 text-center md:text-left space-y-4">
         <div>
             <div className="flex items-center justify-center md:justify-start gap-2 mb-1">
-                <h3 className="text-2xl font-black text-[#1c315e]">{guide.name}</h3>
-                <span className="bg-[#227c70]/10 text-[#227c70] text-[10px] uppercase font-bold px-2 py-0.5 rounded-full tracking-tighter">{tDetail('verifiedLocal')}</span>
+                <h3 className="text-2xl font-black text-foreground">{guide.name}</h3>
+                <span className="bg-primary/10 text-primary text-[10px] uppercase font-bold px-2 py-0.5 rounded-full tracking-tighter">{tDetail('verifiedLocal')}</span>
             </div>
-            <p className="text-[#1c315e]/70 font-bold italic leading-relaxed">&quot;{tExp('guideBio')}&quot;</p>
+            <p className="text-foreground/70 font-bold italic leading-relaxed">&quot;{tExp('guideBio')}&quot;</p>
         </div>
         
         <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
-            <Button variant="outline" className="rounded-xl border-2 border-[#1c315e]/10 font-bold tracking-tight hover:bg-white flex gap-2">
+            <Button variant="outline" className="rounded-xl border-2 border-primary/10 font-bold tracking-tight hover:bg-white flex gap-2">
                 <MessageCircle className="w-4 h-4" /> {tDetail('messageGuide', { name: guide.name })}
             </Button>
-            <div className="text-xs font-black uppercase tracking-widest text-[#1c315e]/40">{tDetail('responseTime')}</div>
+            <div className="text-xs font-black uppercase tracking-widest text-foreground/40">{tDetail('responseTime')}</div>
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import "server-only"
 import { createClient } from "@/lib/supabase/server"
 import type { FlightDealRow } from "@/lib/supabase/types"
+import { AIRPORT_NAMES } from "@/lib/transfers/airports"
 
 /**
  * Flights module — single "swap point" for where flight-deal data comes from.
@@ -24,17 +25,10 @@ export async function getActiveFlightDeals(): Promise<FlightDealRow[]> {
   return data ?? []
 }
 
-// Maps a few common Japan airport IATA codes to a full pickup-location label,
-// used to prefill the transfer booking form from a flight deal's destination.
-const AIRPORT_NAMES: Record<string, string> = {
-  NRT: "Narita International Airport (NRT)",
-  HND: "Haneda Airport (HND)",
-  KIX: "Kansai International Airport (KIX)",
-  ITM: "Osaka Itami Airport (ITM)",
-  NGO: "Chubu Centrair International Airport (NGO)",
-  FUK: "Fukuoka Airport (FUK)",
-  CTS: "New Chitose Airport (CTS)",
-}
+// Re-exported for existing importers — the canonical list now lives in
+// src/lib/transfers/airports.ts (no "server-only", so it can also be used
+// from the client-side booking form's airport select).
+export { AIRPORT_NAMES }
 
 export function airportLabel(code: string | null, cityFallback: string): string {
   if (code && AIRPORT_NAMES[code]) return AIRPORT_NAMES[code]

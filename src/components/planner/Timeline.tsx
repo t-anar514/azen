@@ -143,7 +143,7 @@ export function Timeline({
                         {/* Sync Status Indicator */}
                         <div className="flex items-center gap-1.5 ml-1 shrink-0">
                             {syncStatus === 'syncing' && <RefreshCw className="h-4 w-4 text-accent animate-spin" />}
-                            {syncStatus === 'saved' && <div title="Synchronized"><Cloud className="h-4 w-4 text-[#88a47c]" /></div>}
+                            {syncStatus === 'saved' && <div title="Synchronized"><Cloud className="h-4 w-4 text-muted-foreground" /></div>}
                             {syncStatus === 'error' && <div title="Sync Failed"><AlertCircle className="h-4 w-4 text-destructive" /></div>}
                             {syncStatus === 'idle' && <div title="Offline Mode"><CloudOff className="h-4 w-4 text-muted-foreground/30" /></div>}
                         </div>

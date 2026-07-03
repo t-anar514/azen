@@ -25,7 +25,7 @@ export const CategoryGrid = () => {
           className="flex items-center gap-4 p-4 rounded-2xl bg-muted/30 hover:bg-muted/50 transition-all border border-transparent hover:border-secondary/20 text-left group"
         >
           <span className="text-2xl group-hover:scale-125 transition-transform duration-300 transform-gpu">{cat.emoji}</span>
-          <span className="font-bold text-[#1c315e] text-sm md:text-base">{t(cat.id)}</span>
+          <span className="font-bold text-foreground text-sm md:text-base">{t(cat.id)}</span>
         </button>
       ))}
     </div>

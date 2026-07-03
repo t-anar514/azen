@@ -37,6 +37,7 @@ export async function POST(request: Request) {
     timestamp,
     folder,
     apiKey: process.env.CLOUDINARY_API_KEY || "placeholder-api-key",
-    cloudName: process.env.CLOUDINARY_CLOUD_NAME || "placeholder-cloud",
+    cloudName:
+      process.env.CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "placeholder-cloud",
   })
 }

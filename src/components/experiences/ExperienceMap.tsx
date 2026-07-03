@@ -21,7 +21,7 @@ export function ExperienceMap({ meetingPoint }: { meetingPoint: Experience['meet
         >
           <NavigationControl position="top-right" />
           <Marker {...center}>
-             <div className="w-8 h-8 rounded-full bg-[#227c70] border-2 border-white shadow-lg flex items-center justify-center">
+             <div className="w-8 h-8 rounded-full bg-primary border-2 border-white shadow-lg flex items-center justify-center">
                 <div className="w-2 h-2 rounded-full bg-white animate-ping" />
              </div>
           </Marker>

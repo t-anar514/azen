@@ -119,7 +119,7 @@ export function KonbiniSimulator() {
   return (
     <div className="py-16 max-w-4xl mx-auto px-4">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-[#1c315e] mb-2">{t("title")}</h2>
+        <h2 className="text-3xl font-bold text-foreground mb-2">{t("title")}</h2>
         <p className="text-gray-600">{t("subtitle")}</p>
       </div>
 
@@ -134,7 +134,7 @@ export function KonbiniSimulator() {
                     <Store className="w-16 h-16 text-gray-300 mb-4" />
                     <button 
                         onClick={startSimulation}
-                        className="bg-[#227c70] text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-[#1c315e] transition-colors"
+                        className="bg-primary text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-primary transition-colors"
                     >
                         {t("enter")}
                     </button>
@@ -151,7 +151,7 @@ export function KonbiniSimulator() {
                     >
                         <div className={`
                             max-w-[80%] rounded-2xl p-4 shadow-sm relative
-                            ${msg.role === 'user' ? 'bg-[#227c70] text-white rounded-br-none' : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none'}
+                            ${msg.role === 'user' ? 'bg-primary text-white rounded-br-none' : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none'}
                         `}>
                             <div className="flex items-center gap-2 mb-1 opacity-75 text-xs font-bold uppercase tracking-wider">
                                 {msg.role === 'clerk' ? <Store className="w-3 h-3" /> : <User className="w-3 h-3" />}
@@ -175,7 +175,7 @@ export function KonbiniSimulator() {
              {step === 1 && (
                  <button
                     onClick={() => handleUserAction('nod', '(Silently nods)', 'nod')}
-                    className="bg-white border-2 border-[#1c315e] text-[#1c315e] px-6 py-3 rounded-xl font-bold hover:bg-[#1c315e] hover:text-white transition-colors"
+                    className="bg-white border-2 border-primary text-foreground px-6 py-3 rounded-xl font-bold hover:bg-primary hover:text-white transition-colors"
                  >
                     {t("actions.nod")}
                  </button>
@@ -191,7 +191,7 @@ export function KonbiniSimulator() {
                     </button>
                     <button
                         onClick={() => handleUserAction('yes', 'はい、あります (Hai, arimasu)', 'yes')}
-                        className="bg-[#227c70] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#1a5f56] transition-colors"
+                        className="bg-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-primary transition-colors"
                     >
                         {t("actions.pointCardYes")}
                     </button>
@@ -208,7 +208,7 @@ export function KonbiniSimulator() {
                     </button>
                     <button
                         onClick={() => handleUserAction('yes', 'はい、お願いします (Hai, onegaishimasu)', 'warmYes')}
-                        className="bg-[#227c70] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#1a5f56] transition-colors"
+                        className="bg-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-primary transition-colors"
                     >
                         {t("actions.warmYes")}
                     </button>
@@ -225,7 +225,7 @@ export function KonbiniSimulator() {
                      </button>
                      <button
                         onClick={() => handleUserAction('yes', 'はい、お願いします (Hai, onegaishimasu)', 'bagYes')}
-                        className="bg-[#227c70] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#1a5f56] transition-colors"
+                        className="bg-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-primary transition-colors"
                      >
                         {t("actions.bagYes")}
                      </button>
@@ -242,7 +242,7 @@ export function KonbiniSimulator() {
                     </button>
                     <button
                         onClick={() => handleUserAction('yes', 'はい、お願いします (Hai, onegaishimasu)', 'bagSeparateYes')}
-                        className="bg-[#227c70] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#1a5f56] transition-colors"
+                        className="bg-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-primary transition-colors"
                     >
                         {t("actions.separateYes")}
                     </button>
@@ -253,19 +253,19 @@ export function KonbiniSimulator() {
                  <>
                     <button
                         onClick={() => handleUserAction('chopsticks', 'お箸をお願いします (Ohashi wo onegaishimasu)', 'chopsticks')}
-                        className="bg-white border-2 border-[#88a47c] text-[#1c315e] px-4 py-3 rounded-xl font-bold hover:bg-[#fcfaf2] transition-colors text-sm"
+                        className="bg-white border-2 border-border text-foreground px-4 py-3 rounded-xl font-bold hover:bg-muted transition-colors text-sm"
                     >
                         {t("actions.chopsticks")}
                     </button>
                     <button
                         onClick={() => handleUserAction('spoon', 'スプーンをお願いします (Supu-n wo onegaishimasu)', 'spoon')}
-                        className="bg-white border-2 border-[#88a47c] text-[#1c315e] px-4 py-3 rounded-xl font-bold hover:bg-[#fcfaf2] transition-colors text-sm"
+                        className="bg-white border-2 border-border text-foreground px-4 py-3 rounded-xl font-bold hover:bg-muted transition-colors text-sm"
                     >
                         {t("actions.spoon")}
                     </button>
                     <button
                         onClick={() => handleUserAction('fork', 'フォークをお願いします (Fo-ku wo onegaishimasu)', 'fork')}
-                        className="bg-white border-2 border-[#88a47c] text-[#1c315e] px-4 py-3 rounded-xl font-bold hover:bg-[#fcfaf2] transition-colors text-sm"
+                        className="bg-white border-2 border-border text-foreground px-4 py-3 rounded-xl font-bold hover:bg-muted transition-colors text-sm"
                     >
                         {t("actions.fork")}
                     </button>

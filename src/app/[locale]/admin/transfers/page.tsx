@@ -69,6 +69,12 @@ export default async function AdminTransfersPage() {
                     <p>{booking.guest_phone} · {booking.guest_email}</p>
                     <p>
                       {new Intl.NumberFormat("mn-MN").format(booking.price)} {booking.currency}
+                      {booking.distance_km != null && ` · ~${booking.distance_km} km`}
+                      {booking.pricing_source === "vehicle_flat" && (
+                        <span className="ml-1 font-semibold text-amber-600">
+                          · unlisted destination, double-check price
+                        </span>
+                      )}
                     </p>
                   </div>
 

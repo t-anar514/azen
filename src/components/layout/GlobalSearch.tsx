@@ -210,7 +210,7 @@ export function GlobalSearch({ locale, className }: GlobalSearchProps) {
                                   key={item.id}
                                   className={cn(
                                     "px-4 py-4 md:py-3 rounded-2xl cursor-pointer transition-all flex flex-col gap-0.5",
-                                    isSelected ? "bg-[#227c70] text-white shadow-lg" : "hover:bg-black/5"
+                                    isSelected ? "bg-primary text-white shadow-lg" : "hover:bg-black/5"
                                   )}
                                   onMouseEnter={() => setSelectedIndex(overallIndex)}
                                   onClick={() => navigateTo(item)}

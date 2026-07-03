@@ -187,9 +187,40 @@ export interface VehicleOptionRow {
   image: string | null
   order_index: number
   is_active: boolean
+  // Distance-based rate card, added in 0006_transfer_route_pricing.sql — see
+  // src/lib/transfers/pricing.ts for how these combine with transfer_zones /
+  // route_prices to produce an actual quote. `price` above is kept as the
+  // flat starting price shown before a destination is picked, and as the
+  // last-resort fallback for destinations with no zone match at all.
+  base_fare: number
+  price_per_km: number
   created_at: string
   updated_at: string
 }
+
+export interface TransferZoneRow {
+  id: string
+  airport_code: string
+  label: string
+  distance_km: number
+  is_active: boolean
+  order_index: number
+  created_at: string
+  updated_at: string
+}
+
+export interface RoutePriceRow {
+  id: string
+  zone_id: string
+  vehicle_option_id: string
+  price: number
+  currency: string
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export type PricingSource = "route_table" | "formula" | "vehicle_flat"
 
 export type FlightDirection = "arrival" | "departure"
 
@@ -221,6 +252,10 @@ export interface BookingRow {
   status: BookingStatus
   driver_id: string | null
   notes: string | null
+  // Added in 0006_transfer_route_pricing.sql.
+  zone_id: string | null
+  distance_km: number | null
+  pricing_source: PricingSource
   created_at: string
   updated_at: string
 }
