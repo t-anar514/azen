@@ -26,6 +26,12 @@ The application requires specific environment variables to function correctly. C
 ```bash
 # Example environment variables
 NEXT_PUBLIC_SITE_URL=https://your-domain.com
+# Shared secret for the daily FX-rate refresh (/api/cron/exchange-rates).
+# Vercel Cron (see vercel.json) sends it automatically as
+# "Authorization: Bearer <CRON_SECRET>" once set in the project env vars;
+# self-hosted deploys should curl the route with the same header from a
+# system cron job instead.
+CRON_SECRET=some-long-random-string
 # Add other necessary keys here
 ```
 

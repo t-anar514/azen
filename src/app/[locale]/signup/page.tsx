@@ -24,7 +24,6 @@ export default function SignupPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [checkEmail, setCheckEmail] = useState(false)
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -37,41 +36,37 @@ export default function SignupPage() {
       password,
       options: {
         data: { full_name: fullName },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     })
 
-    setLoading(false)
-
     if (error) {
+      setLoading(false)
       setError(error.message)
       return
     }
 
-    // If email confirmation is enabled in the Supabase project, there's no
-    // session yet — show a "check your inbox" message instead of redirecting.
+    // Prefer an immediate session (Confirm email disabled in Supabase).
+    // If the project still requires confirmation, try signing in anyway —
+    // when that fails, point the user at login rather than a verify-email wall.
     if (!data.session) {
-      setCheckEmail(true)
-      return
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      setLoading(false)
+      if (signInError) {
+        setError(
+          "Account created, but email confirmation is still required in this project. " +
+            "Disable “Confirm email” under Authentication → Sign In / Providers → Email, then try logging in.",
+        )
+        return
+      }
+    } else {
+      setLoading(false)
     }
 
     router.push("/account")
     router.refresh()
-  }
-
-  if (checkEmail) {
-    return (
-      <div className="min-h-[80vh] flex items-center justify-center px-4 py-16">
-        <Card className="w-full max-w-sm">
-          <CardHeader>
-            <CardTitle className="text-2xl">Check your email</CardTitle>
-            <CardDescription>
-              We sent a confirmation link to {email}. Click it to finish creating your account.
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
-    )
   }
 
   return (

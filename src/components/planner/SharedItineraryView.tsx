@@ -22,11 +22,14 @@ import { InteractiveMap } from "./InteractiveMap"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { formatCurrency, FALLBACK_RATES, Rates } from "@/lib/currency/format"
 
 interface SharedItineraryViewProps {
   title: string
   items: ItemType[]
   currency?: "MNT" | "USD" | "JPY"
+  rates?: Rates
+  ratesFetchedAt?: string | null
 }
 
 // Mongolian weekday abbreviations, indexed to match Date#getUTCDay() (0 = Sunday).
@@ -64,19 +67,13 @@ function getIcon(type: ActivityType) {
   }
 }
 
-export function SharedItineraryView({ title, items, currency = "JPY" }: SharedItineraryViewProps) {
+export function SharedItineraryView({ title, items, currency = "JPY", rates = FALLBACK_RATES, ratesFetchedAt = null }: SharedItineraryViewProps) {
   const [viewMode, setViewMode] = useState<"list" | "map">("list")
   const [hoveredId, setHoveredId] = useState<string | null>(null)
 
   const total = useMemo(() => items.reduce((sum, i) => sum + (i.cost || 0), 0), [items])
 
-  const formatCost = (val: number) => {
-    switch (currency) {
-      case "MNT": return `₮ ${(val * 22).toLocaleString("en-US")}`
-      case "USD": return `$ ${(val / 150).toFixed(2)}`
-      default: return `¥${val.toLocaleString("en-US")}`
-    }
-  }
+  const formatCost = (val: number) => formatCurrency(val, currency, rates)
 
   const grouped = useMemo(() => {
     const byDate = new Map<string, ItemType[]>()
@@ -103,6 +100,11 @@ export function SharedItineraryView({ title, items, currency = "JPY" }: SharedIt
             <p className="text-sm text-muted-foreground">
               Нийт зардал: <span className="font-bold text-primary">{formatCost(total)}</span>
             </p>
+            {currency !== "JPY" && ratesFetchedAt && (
+              <p className="text-[10px] text-muted-foreground">
+                Ханшийн огноо: {ratesFetchedAt.slice(0, 10)}
+              </p>
+            )}
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 scrollbar-hide">

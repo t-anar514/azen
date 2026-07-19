@@ -48,6 +48,9 @@ import {
 } from "lucide-react"
 import { ItemType, ActivityType } from "./Timeline"
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
+import { formatCurrency as formatCurrencyShared, FALLBACK_RATES, Rates } from "@/lib/currency/format"
+import type { TripParticipant, CostSplit } from "@/lib/budget/splitBalances"
+import { participantInitial } from "./ParticipantChips"
 
 interface TimelineItemProps extends ItemType {
   index: number
@@ -62,6 +65,11 @@ interface TimelineItemProps extends ItemType {
   autoEdit?: boolean
   isCompact?: boolean
   currency?: "MNT" | "USD" | "JPY"
+  rates?: Rates
+  // Budget splitting — only provided for cloud trips with a participant roster.
+  participants?: TripParticipant[]
+  split?: CostSplit | null
+  onSplitChange?: (paidBy: string | null, splitBetween: string[]) => void
 }
 
 interface GeocodeFeature {
@@ -80,7 +88,11 @@ export function TimelineItem({
   onUpdate, onDelete, onHover, onLeave, 
   isPickingLocation, onStartPicking, onCancelPicking,
   isNew, autoEdit, isCompact,
-  currency = "JPY"
+  currency = "JPY",
+  rates = FALLBACK_RATES,
+  participants,
+  split = null,
+  onSplitChange
 }: TimelineItemProps) {
   const t = useTranslations("Planner.item")
   const [isEditing, setIsEditing] = useState(autoEdit || false)
@@ -91,6 +103,12 @@ export function TimelineItem({
   const [editDate, setEditDate] = useState(date)
   const [editLat, setEditLat] = useState(lat)
   const [editLng, setEditLng] = useState(lng)
+  // Split defaults: nobody marked as payer until picked; split between
+  // everyone currently on the trip.
+  const [editPaidBy, setEditPaidBy] = useState<string | null>(split?.paidBy ?? null)
+  const [editSplitBetween, setEditSplitBetween] = useState<string[]>(
+    split?.splitBetween ?? (participants ?? []).map((p) => p.id)
+  )
   
   const [searchResults, setSearchResults] = useState<GeocodeFeature[]>([])
   const [showResults, setShowResults] = useState(false)
@@ -223,6 +241,9 @@ export function TimelineItem({
       lat: editLat,
       lng: editLng
     })
+    if (onSplitChange && (participants?.length ?? 0) > 0) {
+      onSplitChange(editPaidBy, editSplitBetween)
+    }
     setIsEditing(false)
   }
 
@@ -234,16 +255,29 @@ export function TimelineItem({
     setEditDate(date)
     setEditLat(lat)
     setEditLng(lng)
+    setEditPaidBy(split?.paidBy ?? null)
+    setEditSplitBetween(split?.splitBetween ?? (participants ?? []).map((p) => p.id))
     setIsEditing(false)
   }
 
-  const formatCurrency = (value: number) => {
-    switch(currency) {
-      case "MNT": return `₮ ${(value * 22).toLocaleString()}`
-      case "USD": return `$ ${(value / 150).toFixed(2)}`
-      default: return `¥${new Intl.NumberFormat('en-US').format(value)}`
-    }
+  // Entry point for the pencil button: (re)seed split-picker state here, not
+  // just in useState — participants load async after mount, so mount-time
+  // defaults can be stale by the time editing actually starts.
+  const startEditing = () => {
+    setEditPaidBy(split?.paidBy ?? null)
+    setEditSplitBetween(split?.splitBetween ?? (participants ?? []).map((p) => p.id))
+    setIsEditing(true)
   }
+
+  const toggleSplitBetween = (participantId: string) => {
+    setEditSplitBetween((prev) =>
+      prev.includes(participantId)
+        ? prev.filter((id) => id !== participantId)
+        : [...prev, participantId]
+    )
+  }
+
+  const formatCurrency = (value: number) => formatCurrencyShared(value, currency, rates)
 
   const handleCostChange = (val: string) => {
     const numericValue = parseInt(val.replace(/,/g, ''), 10)
@@ -394,10 +428,10 @@ export function TimelineItem({
               <div className="flex items-center gap-3">
                 <div className="relative flex-1">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-xs text-muted-foreground">¥</span>
-                  <Input 
+                  <Input
                     type="text"
-                    value={formatCurrency(editCost)} 
-                    onChange={(e) => handleCostChange(e.target.value)} 
+                    value={editCost.toLocaleString("en-US")}
+                    onChange={(e) => handleCostChange(e.target.value)}
                     className="pl-7 font-mono h-10 bg-white border-muted/50 text-sm rounded-xl focus-visible:ring-accent/30"
                   />
                 </div>
@@ -415,10 +449,10 @@ export function TimelineItem({
                       +{formatCurrency(amount)}
                     </Button>
                   ))}
-                  <Button 
-                    type="button" 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
                     onClick={() => setEditCost(0)}
                     className="h-8 px-2 font-mono text-[10px] rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/5"
                   >
@@ -427,6 +461,59 @@ export function TimelineItem({
                 </div>
               </div>
             </div>
+
+            {/* Who paid / who shares — only for cloud trips with a roster */}
+            {onSplitChange && (participants?.length ?? 0) > 0 && (
+              <div className="bg-muted/20 rounded-2xl p-3 space-y-2">
+                <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Хэн төлсөн бэ</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {participants!.map((p) => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => setEditPaidBy(editPaidBy === p.id ? null : p.id)}
+                      className={`flex items-center gap-1.5 rounded-full border px-2 py-1 text-xs font-medium transition-all ${
+                        editPaidBy === p.id
+                          ? "border-accent bg-accent/10 text-accent"
+                          : "border-transparent bg-white text-muted-foreground hover:border-muted"
+                      }`}
+                    >
+                      <span
+                        className="flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-black text-white"
+                        style={{ backgroundColor: p.color ?? "#64748b" }}
+                      >
+                        {participantInitial(p.displayName)}
+                      </span>
+                      {p.displayName}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground pt-1">Хэн хуваалцах вэ</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {participants!.map((p) => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => toggleSplitBetween(p.id)}
+                      className={`flex items-center gap-1.5 rounded-full border px-2 py-1 text-xs font-medium transition-all ${
+                        editSplitBetween.includes(p.id)
+                          ? "border-accent bg-accent/10 text-accent"
+                          : "border-transparent bg-white text-muted-foreground hover:border-muted"
+                      }`}
+                    >
+                      <span
+                        className="flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-black text-white"
+                        style={{ backgroundColor: p.color ?? "#64748b" }}
+                      >
+                        {participantInitial(p.displayName)}
+                      </span>
+                      {p.displayName}
+                      {editSplitBetween.includes(p.id) && <Check className="h-3 w-3" />}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="flex gap-2 pt-2">
               <Button 
@@ -513,14 +600,14 @@ export function TimelineItem({
         <div className="flex items-center gap-1.5 md:gap-3 shrink-0">
             <div className="text-right">
                  <Badge variant="outline" className={`font-mono text-primary border-primary/20 bg-primary/5 px-1.5 md:px-2.5 ${isCompact ? 'text-[9px] py-0 h-4 md:h-5' : 'text-[10px] md:text-sm'}`}>
-                   ¥{cost.toLocaleString("en-US")}
+                   {formatCurrency(cost)}
                  </Badge>
             </div>
             
-            <Button 
-                onClick={() => setIsEditing(true)}
-                variant="ghost" 
-                size="icon" 
+            <Button
+                onClick={startEditing}
+                variant="ghost"
+                size="icon"
                 className={`rounded-full shadow-sm shrink-0 border border-muted/10 transition-all ${isCompact ? 'h-7 w-7' : 'h-9 w-9 md:h-11 md:w-11'} text-muted-foreground hover:text-accent hover:bg-accent/10`}
             >
                 <Pencil className={`${isCompact ? 'h-3.5 w-3.5' : 'h-4 w-4 md:h-5 md:w-5'} font-bold`} />

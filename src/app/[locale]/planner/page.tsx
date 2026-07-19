@@ -1,9 +1,10 @@
 "use client"
 
-import { useState, useCallback, useEffect, Suspense } from "react"
+import { useState, useCallback, useEffect, useRef, Suspense } from "react"
 import { Timeline, ItemType } from "@/components/planner/Timeline"
 import { InteractiveMap } from "@/components/planner/InteractiveMap"
 import { CostFooter } from "@/components/planner/CostFooter"
+import { SharedItineraryView } from "@/components/planner/SharedItineraryView"
 import { TripSettings } from "@/components/planner/SettingsModal"
 import { Button } from "@/components/ui/button"
 import { List, Map as MapIcon } from "lucide-react"
@@ -12,6 +13,19 @@ import { useTranslations } from "next-intl"
 import { useSearchParams } from "next/navigation"
 import { SAMPLE_ITINERARIES } from "@/data/templates"
 import { createClient } from "@/lib/supabase/client"
+import { useExchangeRates } from "@/hooks/useExchangeRates"
+import { usePlannerRealtime, ItineraryRow } from "@/hooks/usePlannerRealtime"
+import { useClaimLocalTrip } from "@/hooks/useClaimLocalTrip"
+import type { TripParticipant, CostSplit } from "@/lib/budget/splitBalances"
+
+// Avatar chip colors for budget-split participants, assigned round-robin on
+// creation (stored on the row so everyone sees the same color).
+const PARTICIPANT_COLORS = ["#0ea5e9", "#f97316", "#10b981", "#8b5cf6", "#ef4444", "#eab308"]
+
+// The current user's relationship to the loaded trip. null = still resolving
+// (treated as read-only for cloud trips until known). Local-only trips
+// (no tripId) are always editable by whoever is holding them.
+export type TripRole = "owner" | "editor" | "viewer" | null
 
 export type SyncStatus = 'idle' | 'syncing' | 'saved' | 'error'
 
@@ -19,6 +33,7 @@ function PlannerContent() {
   const t = useTranslations("Planner")
   const [supabase] = useState(() => createClient())
   const [userId, setUserId] = useState<string | null>(null)
+  const { rates, fetchedAt: ratesFetchedAt } = useExchangeRates()
 
   const searchParams = useSearchParams()
   const templateId = searchParams.get('template')
@@ -34,6 +49,25 @@ function PlannerContent() {
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle')
   const [tripId, setTripId] = useState<string | null>(searchParams.get('trip'))
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list') // Mobile toggle
+  const [role, setRole] = useState<TripRole>(null)
+
+  // Post-login bridge for a guest-built localStorage trip (Phase 3): decides
+  // whether the debounced cloud save below may create a cloud copy of it.
+  const claimDecision = useClaimLocalTrip(userId, tripId)
+
+  // Budget splitting (Phase 2) — cloud trips only, since participants and
+  // splits live in their own tables keyed by trip_id. Both stay empty when
+  // the trip is local-only or migration 0009 isn't applied yet.
+  const [participants, setParticipants] = useState<TripParticipant[]>([])
+  const [splits, setSplits] = useState<Map<string, CostSplit>>(new Map())
+
+  // True while the debounced local save is still pending — remote realtime
+  // changes are skipped during this window so they can't clobber what the
+  // user is actively typing (last-write-wins is fine; mid-edit clobber isn't).
+  const saveTimerPendingRef = useRef(false)
+  // Set when state was just replaced by a remote realtime payload, so the
+  // debounced-save effect skips one round instead of echoing it back.
+  const applyingRemoteRef = useRef(false)
 
   // Auto-set compact on mobile
   useEffect(() => {
@@ -150,6 +184,26 @@ function PlannerContent() {
         if (data.settings) setSettings(data.settings)
         calculateTotal(data.items)
         setSyncStatus('saved')
+
+        // Resolve this user's role on the trip (drives edit vs read-only UI
+        // and whether the debounced save is allowed to run).
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user && data.owner_id === user.id) {
+          setRole('owner')
+        } else if (user) {
+          const { data: collab } = await supabase
+            .from('trip_collaborators')
+            .select('role')
+            .eq('trip_id', tripId)
+            .eq('user_id', user.id)
+            .eq('status', 'accepted')
+            .maybeSingle()
+          // No accepted collaborator row (or table not migrated yet) means the
+          // trip was reachable only because it's public → read-only.
+          setRole(collab?.role === 'editor' ? 'editor' : 'viewer')
+        } else {
+          setRole('viewer')
+        }
       }
     }
 
@@ -158,10 +212,25 @@ function PlannerContent() {
 
   // CLOUD SYNC (Debounced) — only for logged-in users; guests stay on localStorage only.
   useEffect(() => {
+    // A remote realtime payload just replaced local state — consume the flag
+    // and skip one round so we don't echo the same row straight back.
+    if (applyingRemoteRef.current) {
+      applyingRemoteRef.current = false
+      return
+    }
     // skip initial load or if no items, or not logged in
     if (!items.length || !userId) return
+    // Cloud trips are only writable by the owner or an accepted editor; while
+    // the role is still resolving (null) hold off rather than risk an
+    // RLS-rejected write flashing a sync error at a viewer.
+    if (tripId && role !== 'owner' && role !== 'editor') return
+    // Don't create a cloud copy of a guest-built local trip until the user
+    // has answered the claim prompt (and never if they declined).
+    if (!tripId && (claimDecision === 'checking' || claimDecision === 'declined')) return
 
+    saveTimerPendingRef.current = true
     const timer = setTimeout(async () => {
+      saveTimerPendingRef.current = false
       setSyncStatus('syncing')
 
       const payload = {
@@ -184,26 +253,146 @@ function PlannerContent() {
           setSyncStatus('saved')
         }
       } else {
-        // Create new trip on first major change if not from template
-        const { data, error } = await supabase
+        // Create new trip on first major change if not from template.
+        // The id is generated client-side instead of read back via
+        // .insert().select() — INSERT ... RETURNING needs the SELECT policy
+        // to pass on the brand-new row, which is snapshot-sensitive (see
+        // migration 0010); a plain INSERT only needs the insert policy.
+        const newTripId = crypto.randomUUID()
+        const { error } = await supabase
           .from('itineraries')
-          .insert([{ ...payload, owner_id: userId }])
-          .select()
+          .insert([{ ...payload, id: newTripId, owner_id: userId }])
 
         if (error) {
           console.error("Cloud sync insert failed:", error)
           setSyncStatus('error')
-        } else if (data?.[0]) {
-          setTripId(data[0].id)
+        } else {
+          setTripId(newTripId)
+          setRole('owner') // we just created it
+          // The trip now lives in the account — clear the guest-era local
+          // copy so it can't come back as a duplicate on the next visit.
+          if (claimDecision === 'approved') {
+            localStorage.removeItem("azen_itinerary_items")
+            localStorage.removeItem("azen_itinerary_title")
+            localStorage.removeItem("azen_itinerary_settings")
+          }
           // Update URL without reload? For now just internal state
-          window.history.replaceState(null, '', `?trip=${data[0].id}`)
+          window.history.replaceState(null, '', `?trip=${newTripId}`)
           setSyncStatus('saved')
         }
       }
     }, 2000)
 
     return () => clearTimeout(timer)
-  }, [items, itineraryTitle, settings, tripId, userId, supabase])
+  }, [items, itineraryTitle, settings, tripId, userId, role, claimDecision, supabase])
+
+  // LIVE SYNC — apply other editors' saves within ~1s (last-write-wins at the
+  // row level; per-item merging is deliberately deferred v2 scope).
+  const handleRemoteChange = useCallback((row: ItineraryRow) => {
+    // Don't clobber what the user is actively typing; their own save will win
+    // and propagate back out to everyone else.
+    if (saveTimerPendingRef.current) return
+    applyingRemoteRef.current = true
+    const remoteItems = row.items ?? []
+    setItems(remoteItems)
+    setItineraryTitle(row.title)
+    if (row.settings) setSettings(row.settings)
+    calculateTotal(remoteItems)
+  }, [calculateTotal])
+
+  usePlannerRealtime(tripId, handleRemoteChange)
+
+  // BUDGET SPLIT DATA — roster + per-item cost assignments for cloud trips.
+  useEffect(() => {
+    if (!tripId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setParticipants([])
+      setSplits(new Map())
+      return
+    }
+    async function loadBudgetData() {
+      const { data: parts, error: partsError } = await supabase
+        .from('trip_participants')
+        .select('id, display_name, color')
+        .eq('trip_id', tripId)
+        .order('created_at', { ascending: true })
+      // Table missing (migration 0009 not applied) or unreadable → leave the
+      // splitting UI hidden rather than surfacing a broken form.
+      if (partsError || !parts) return
+      setParticipants(parts.map((p) => ({ id: p.id, displayName: p.display_name, color: p.color ?? undefined })))
+
+      const { data: splitRows } = await supabase
+        .from('item_cost_splits')
+        .select('item_id, paid_by, split_between')
+        .eq('trip_id', tripId)
+      if (splitRows) {
+        setSplits(new Map(splitRows.map((s) => [
+          s.item_id,
+          { itemId: s.item_id, paidBy: s.paid_by, splitBetween: s.split_between ?? [] },
+        ])))
+      }
+    }
+    loadBudgetData()
+  }, [tripId, supabase])
+
+  const addParticipant = async (name: string) => {
+    if (!tripId || !name.trim()) return
+    const color = PARTICIPANT_COLORS[participants.length % PARTICIPANT_COLORS.length]
+    const { data, error } = await supabase
+      .from('trip_participants')
+      .insert({ trip_id: tripId, display_name: name.trim(), color })
+      .select('id, display_name, color')
+      .single()
+    if (!error && data) {
+      setParticipants((prev) => [...prev, { id: data.id, displayName: data.display_name, color: data.color ?? undefined }])
+    }
+  }
+
+  const removeParticipant = async (participantId: string) => {
+    if (!tripId) return
+    const { error } = await supabase
+      .from('trip_participants')
+      .delete()
+      .eq('id', participantId)
+    if (error) return
+    setParticipants((prev) => prev.filter((p) => p.id !== participantId))
+    // Best-effort cleanup: drop the deleted person from any split arrays so
+    // stale ids don't linger (paid_by nulls out via FK, arrays can't).
+    const affected = Array.from(splits.values()).filter((s) => s.splitBetween.includes(participantId))
+    for (const s of affected) {
+      const nextBetween = s.splitBetween.filter((id) => id !== participantId)
+      await supabase
+        .from('item_cost_splits')
+        .update({ split_between: nextBetween })
+        .eq('trip_id', tripId)
+        .eq('item_id', s.itemId)
+    }
+    if (affected.length > 0) {
+      setSplits((prev) => {
+        const next = new Map(prev)
+        for (const s of affected) {
+          const existing = next.get(s.itemId)
+          if (existing) {
+            next.set(s.itemId, { ...existing, splitBetween: existing.splitBetween.filter((id) => id !== participantId) })
+          }
+        }
+        return next
+      })
+    }
+  }
+
+  const updateSplit = async (itemId: string, paidBy: string | null, splitBetween: string[]) => {
+    if (!tripId) return
+    const { error } = await supabase
+      .from('item_cost_splits')
+      .upsert(
+        { trip_id: tripId, item_id: itemId, paid_by: paidBy, split_between: splitBetween },
+        { onConflict: 'trip_id,item_id' }
+      )
+    if (!error) {
+      setSplits((prev) => new Map(prev).set(itemId, { itemId, paidBy, splitBetween }))
+    }
+  }
 
   const saveItinerary = () => {
     localStorage.setItem("azen_itinerary_items", JSON.stringify(items))
@@ -303,6 +492,20 @@ function PlannerContent() {
   const deleteItem = (id: string) => {
     const updatedItems = items.filter(item => item.id !== id)
     handleUpdateItems(updatedItems)
+    // Items are jsonb-array entries, not rows, so the DB can't cascade this —
+    // drop the item's cost split here to avoid orphaned split rows.
+    if (tripId && splits.has(id)) {
+      supabase.from('item_cost_splits').delete().eq('trip_id', tripId).eq('item_id', id)
+        .then(({ error }) => {
+          if (!error) {
+            setSplits(prev => {
+              const next = new Map(prev)
+              next.delete(id)
+              return next
+            })
+          }
+        })
+    }
   }
 
   const moveItem = (activeId: string, overId: string) => {
@@ -329,6 +532,22 @@ function PlannerContent() {
               setViewMode('list')
           }
       }
+  }
+
+  // Viewers (and anyone whose role hasn't resolved yet on a cloud trip they
+  // don't own) get the same read-only layout as the public share page instead
+  // of a second hand-rolled read-only mode. Realtime stays live above, so the
+  // view still follows edits made by the owner/editors.
+  if (tripId && role === 'viewer') {
+    return (
+      <SharedItineraryView
+        title={itineraryTitle}
+        items={items}
+        currency={settings.defaultCurrency}
+        rates={rates}
+        ratesFetchedAt={ratesFetchedAt}
+      />
+    )
   }
 
   return (
@@ -361,6 +580,12 @@ function PlannerContent() {
                     onToggleCompact={() => setIsCompact(!isCompact)}
                     syncStatus={syncStatus}
                     currency={settings.defaultCurrency}
+                    rates={rates}
+                    participants={tripId ? participants : undefined}
+                    onAddParticipant={tripId ? addParticipant : undefined}
+                    onRemoveParticipant={tripId ? removeParticipant : undefined}
+                    splits={splits}
+                    onSplitChange={tripId ? updateSplit : undefined}
                 />
             </div>
 
@@ -398,6 +623,12 @@ function PlannerContent() {
           onExport={handleExport}
           tripId={tripId}
           isLoggedIn={!!userId}
+          isOwner={!tripId || role === 'owner'}
+          rates={rates}
+          ratesFetchedAt={ratesFetchedAt}
+          items={items}
+          participants={participants}
+          splits={splits}
         />
     </div>
   )

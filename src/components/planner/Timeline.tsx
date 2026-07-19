@@ -18,9 +18,12 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
 import { TimelineItem } from "./TimelineItem"
+import { ParticipantChips } from "./ParticipantChips"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Cloud, CloudOff, RefreshCw, AlertCircle, Plus, Pencil, Check, X } from "lucide-react"
+import { FALLBACK_RATES, Rates } from "@/lib/currency/format"
+import type { TripParticipant, CostSplit } from "@/lib/budget/splitBalances"
 
 export type SyncStatus = 'idle' | 'syncing' | 'saved' | 'error'
 // Type definition matching TimelineItem props
@@ -63,6 +66,13 @@ interface TimelineProps {
   onToggleCompact?: () => void
   syncStatus?: SyncStatus
   currency?: "MNT" | "USD" | "JPY"
+  rates?: Rates
+  // Budget splitting — only provided for cloud trips (see planner/page.tsx).
+  participants?: TripParticipant[]
+  onAddParticipant?: (name: string) => void
+  onRemoveParticipant?: (participantId: string) => void
+  splits?: Map<string, CostSplit>
+  onSplitChange?: (itemId: string, paidBy: string | null, splitBetween: string[]) => void
 }
 
 export function Timeline({ 
@@ -81,7 +91,13 @@ export function Timeline({
     isCompact,
     onToggleCompact,
     syncStatus,
-    currency = "JPY"
+    currency = "JPY",
+    rates = FALLBACK_RATES,
+    participants,
+    onAddParticipant,
+    onRemoveParticipant,
+    splits,
+    onSplitChange
 }: TimelineProps) {
   const t = useTranslations("Planner")
   const [isEditingTitle, setIsEditingTitle] = useState(false)
@@ -171,6 +187,14 @@ export function Timeline({
             </div>
         </div>
 
+      {participants && onAddParticipant && (
+        <ParticipantChips
+          participants={participants}
+          onAdd={onAddParticipant}
+          onRemove={onRemoveParticipant}
+        />
+      )}
+
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -197,6 +221,14 @@ export function Timeline({
                 autoEdit={item.id === newItemId && !!isManualAdd}
                 isCompact={isCompact}
                 currency={currency}
+                rates={rates}
+                participants={participants}
+                split={splits?.get(item.id) ?? null}
+                onSplitChange={
+                  onSplitChange
+                    ? (paidBy, splitBetween) => onSplitChange(item.id, paidBy, splitBetween)
+                    : undefined
+                }
               />
             ))}
           </div>
