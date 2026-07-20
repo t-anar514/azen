@@ -9,17 +9,11 @@ import { PillBadge } from "@/components/ui/pill-badge"
 import { GuideQuote } from "@/components/places/GuideQuote"
 import { PlaceCard } from "@/components/places/PlaceCard"
 import { PlaceMapStatic } from "@/components/places/PlaceMapStatic"
+import { CATEGORY_LABEL } from "@/components/places/categoryLabels"
+import { SaveHeart } from "@/components/saves/SaveHeart"
 import type { CityRow, PlaceRow } from "@/lib/supabase/types"
 
 const Image = NextImage as any
-
-const CATEGORY_LABEL: Record<PlaceRow["category"], string> = {
-  things_to_do: "Үзэх зүйл",
-  places_to_eat: "Хоол",
-  nightlife: "Шөнийн амьдрал",
-  shopping: "Шопинг",
-  day_trip: "Өдрийн аялал",
-}
 
 interface Props {
   params: Promise<{ slug: string; placeSlug: string }>
@@ -95,6 +89,7 @@ export default async function PlaceDetailPage({ params }: Props) {
       <div className="mx-auto max-w-4xl px-4 md:px-6 py-10 space-y-10">
         {/* Badges + facts */}
         <div className="flex flex-wrap items-center gap-2">
+          <SaveHeart itemType="place" itemId={place.id} withSheet className="border border-border" />
           <PillBadge variant="sky">{CATEGORY_LABEL[place.category]}</PillBadge>
           {place.is_hidden_gem && (
             <PillBadge variant="saffron">

@@ -3,6 +3,7 @@ import { Clock } from "lucide-react"
 import NextImage from "next/image"
 
 import { PillBadge } from "@/components/ui/pill-badge"
+import { SaveHeart } from "@/components/saves/SaveHeart"
 import type { PostRow } from "@/lib/supabase/types"
 
 const Image = NextImage as any
@@ -38,6 +39,9 @@ export function PostCard({ post, categoryLabel }: PostCardProps) {
             {post.title[0]}
           </div>
         )}
+        <div className="absolute right-3 top-3">
+          <SaveHeart itemType="post" itemId={post.id} />
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-5">

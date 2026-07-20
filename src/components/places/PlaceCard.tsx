@@ -4,6 +4,7 @@ import { Link } from "@/i18n/routing"
 
 import { PillBadge } from "@/components/ui/pill-badge"
 import { GuideQuote } from "@/components/places/GuideQuote"
+import { SaveHeart } from "@/components/saves/SaveHeart"
 import type { PlaceRow } from "@/lib/supabase/types"
 
 const Image = NextImage as any
@@ -50,13 +51,14 @@ export function PlaceCard({ place, citySlug, rec, categoryLabel }: PlaceCardProp
             {place.subcategory ?? categoryLabel}
           </PillBadge>
         </div>
-        {place.is_hidden_gem && (
-          <div className="absolute right-3 top-3">
+        <div className="absolute right-3 top-3 flex flex-col items-end gap-2">
+          <SaveHeart itemType="place" itemId={place.id} />
+          {place.is_hidden_gem && (
             <PillBadge variant="saffron">
               <Gem /> Нуугдмал эрдэнэ
             </PillBadge>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-5">

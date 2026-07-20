@@ -28,6 +28,7 @@ export const routing = defineRouting({
     '/signup': '/signup',
     '/account': '/account',
     '/account/messages': '/account/messages',
+    '/account/saved': '/account/saved',
     '/transfer': '/transfer',
     '/transfer/history': '/transfer/history',
     '/transfer/confirmation/[id]': '/transfer/confirmation/[id]',

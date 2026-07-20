@@ -10,6 +10,7 @@ import { PlaceCard } from "@/components/places/PlaceCard"
 import { PlaceFilterBar, type PlaceFilters } from "@/components/places/PlaceFilterBar"
 import { PlaceMap } from "@/components/places/PlaceMap"
 import { MapBottomSheet } from "@/components/places/MapBottomSheet"
+import { CATEGORY_LABEL } from "@/components/places/categoryLabels"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { CityRow, PlaceRow } from "@/lib/supabase/types"
@@ -37,14 +38,6 @@ const TABS: { id: HubTab; label: string; icon: React.ElementType }[] = [
   { id: "eat", label: "Хаана хооллох", icon: UtensilsCrossed },
   { id: "nightlife", label: "Шөнийн амьдрал", icon: Martini },
 ]
-
-const CATEGORY_LABEL: Record<PlaceRow["category"], string> = {
-  things_to_do: "Үзэх зүйл",
-  places_to_eat: "Хоол",
-  nightlife: "Шөнийн амьдрал",
-  shopping: "Шопинг",
-  day_trip: "Өдрийн аялал",
-}
 
 interface CityHubProps {
   city: CityRow

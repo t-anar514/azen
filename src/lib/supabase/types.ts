@@ -126,6 +126,27 @@ export interface PlaceRecommendationRow {
   created_at: string
 }
 
+export type SaveableType = "place" | "post" | "experience" | "guide" | "city"
+
+export interface FolderRow {
+  id: string
+  user_id: string
+  itinerary_id: string | null
+  name: string
+  cover_image: string | null
+  created_at: string
+}
+
+export interface SavedItemRow {
+  id: string
+  user_id: string
+  folder_id: string | null
+  item_type: SaveableType
+  item_id: string
+  note: string | null
+  created_at: string
+}
+
 export type PostType = "article" | "hack" | "guide_story"
 
 export interface PostRow {

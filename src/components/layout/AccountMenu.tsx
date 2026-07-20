@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Link, useRouter } from "@/i18n/routing"
-import { User, LayoutDashboard, Inbox, LogOut, Car } from "lucide-react"
+import { User, LayoutDashboard, Inbox, LogOut, Car, Heart } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import {
@@ -93,6 +93,12 @@ export function AccountMenu({ className, variant = "desktop" }: AccountMenuProps
         >
           <User className="h-4 w-4 text-accent" /> Миний бүртгэл
         </Link>
+        <Link
+          href="/account/saved"
+          className="flex items-center gap-3 rounded-lg px-3 py-3 text-lg font-semibold text-foreground transition-colors hover:bg-muted hover:text-primary"
+        >
+          <Heart className="h-4 w-4 text-accent" /> Хадгалсан
+        </Link>
         {role === "guide" && (
           <Link
             href="/account/messages"
@@ -156,6 +162,11 @@ export function AccountMenu({ className, variant = "desktop" }: AccountMenuProps
         <DropdownMenuItem asChild>
           <Link href="/account" className="cursor-pointer">
             <User className="h-4 w-4" /> Миний бүртгэл
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/account/saved" className="cursor-pointer">
+            <Heart className="h-4 w-4" /> Хадгалсан
           </Link>
         </DropdownMenuItem>
         {role === "guide" && (
