@@ -83,6 +83,33 @@ export interface HackRow {
   updated_at: string
 }
 
+export type PostType = "article" | "hack" | "guide_story"
+
+export interface PostRow {
+  id: string
+  slug: string
+  type: PostType
+  title: string
+  excerpt: string | null
+  cover_image: string | null
+  body_md: string | null
+  steps: HackStepRow[]
+  pro_tip: string | null
+  trap_alternative: string | null
+  category: string | null
+  tags: string[]
+  city_id: string | null
+  author_guide_id: string | null
+  read_minutes: number | null
+  related_ids: string[]
+  published: boolean
+  published_at: string | null
+  order_index: number
+  created_by: string | null
+  created_at: string
+  updated_at: string
+}
+
 export interface GuideRow {
   id: string
   legacy_id: string | null

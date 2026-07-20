@@ -36,7 +36,7 @@ export function TrapAlert({ hack }: { hack: HackRow }) {
         )}
       </CardContent>
       <CardFooter>
-          <Link href={`/hacks/${hack.id}` as any} className="w-full">
+          <Link href={`/blog/${hack.id}` as any} className="w-full">
             <Button variant="ghost" size="sm" className="w-full justify-between hover:bg-accent/10 hover:text-accent transition-colors">
               {t("readMore")}
               <ArrowRight className="w-4 h-4 ml-2" />

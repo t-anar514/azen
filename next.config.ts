@@ -4,6 +4,16 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      { source: '/hacks', destination: '/blog', permanent: true },
+      { source: '/hacks/:id', destination: '/blog/:id', permanent: true },
+      { source: '/mn/hacks', destination: '/mn/blog', permanent: true },
+      { source: '/mn/hacks/:id', destination: '/mn/blog/:id', permanent: true },
+      { source: '/admin/hacks', destination: '/admin/blog', permanent: true },
+      { source: '/mn/admin/hacks', destination: '/mn/admin/blog', permanent: true },
+    ];
+  },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },

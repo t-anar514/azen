@@ -50,7 +50,7 @@ export function Footer() {
           <h3 className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground mb-1">
             Мэдлэг
           </h3>
-          <Link href="/hacks"      className="text-sm text-foreground/80 hover:text-primary transition-colors">{nt("hacks")}</Link>
+          <Link href="/blog"       className="text-sm text-foreground/80 hover:text-primary transition-colors">{nt("blog")}</Link>
           <Link href="/essentials" className="text-sm text-foreground/80 hover:text-primary transition-colors">{nt("essentials")}</Link>
           <Link href="/learn"      className="text-sm text-foreground/80 hover:text-primary transition-colors">{nt("learn")}</Link>
         </div>

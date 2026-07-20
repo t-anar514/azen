@@ -73,7 +73,7 @@ export const getSearchIndex = (locale: string, messages?: any): SearchItem[] => 
       title: hackTitle,
       subtitle: hackSummary,
       category: 'Hacks',
-      url: `/${locale}/hacks/${hack.id}`
+      url: `/${locale}/blog/${hack.id}`
     });
   });
 

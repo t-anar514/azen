@@ -5,9 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 async function getCounts() {
   const supabase = await createClient()
 
-  const [cities, hacks, guides, learn] = await Promise.all([
+  const [cities, posts, guides, learn] = await Promise.all([
     supabase.from("cities").select("id, published", { count: "exact" }),
-    supabase.from("hacks").select("id, published", { count: "exact" }),
+    supabase.from("posts").select("id, published", { count: "exact" }),
     supabase.from("guides").select("id, is_active", { count: "exact" }),
     supabase.from("phrase_collections").select("id, published", { count: "exact" }),
   ])
@@ -20,7 +20,7 @@ async function getCounts() {
 
   return {
     cities: summarize(cities.data),
-    hacks: summarize(hacks.data),
+    posts: summarize(posts.data),
     guides: summarize(guides.data),
     learn: summarize(learn.data),
   }
@@ -31,7 +31,7 @@ export default async function AdminDashboardPage() {
 
   const cards = [
     { title: "Essentials (Cities)", href: "/admin/cities", ...counts.cities },
-    { title: "Hacks", href: "/admin/hacks", ...counts.hacks },
+    { title: "Blog", href: "/admin/blog", ...counts.posts },
     { title: "Guides", href: "/admin/guides", ...counts.guides },
     { title: "Learn collections", href: "/admin/learn", ...counts.learn },
   ]

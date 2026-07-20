@@ -21,8 +21,8 @@ export default async function Home({
   const tItineraries = await getTranslations("SampleItineraries");
 
   const supabase = await createClient();
-  const [{ data: hacks }, { data: cities }, { data: guides }] = await Promise.all([
-    supabase.from("hacks").select("*").eq("published", true).order("order_index", { ascending: true }).limit(8),
+  const [{ data: posts }, { data: cities }, { data: guides }] = await Promise.all([
+    supabase.from("posts").select("*").eq("published", true).order("order_index", { ascending: true }).limit(8),
     supabase.from("cities").select("*").eq("published", true).order("order_index", { ascending: true }).limit(8),
     supabase.from("guides").select("*").eq("is_active", true).order("rating", { ascending: false }).limit(3),
   ]);
@@ -38,14 +38,16 @@ export default async function Home({
     footerRight: `¥${item.basePrice.toLocaleString()}`
   }));
 
-  const hackItems = (hacks ?? []).map(hack => ({
-    id: hack.id,
-    image: hack.cover_image,
-    title: hack.title,
-    description: hack.summary,
-    badge: tHacks(`categories.${hack.category}`),
-    category: hack.category,
-    link: `/hacks/${hack.id}`
+  const hackItems = (posts ?? []).map(post => ({
+    id: post.id,
+    image: post.cover_image,
+    title: post.title,
+    description: post.excerpt,
+    badge: post.category && tHacks.has(`categories.${post.category}`)
+      ? tHacks(`categories.${post.category}`)
+      : post.category ?? undefined,
+    category: post.category,
+    link: `/blog/${post.slug}`
   }));
 
   const cityItems = (cities ?? []).map(city => ({

@@ -16,7 +16,7 @@ export function HackRowActions({ id, published }: HackRowActionsProps) {
 
   async function togglePublished() {
     setBusy(true)
-    await fetch(`/api/admin/hacks/${id}`, {
+    await fetch(`/api/admin/blog/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ published: !published }),
@@ -28,7 +28,7 @@ export function HackRowActions({ id, published }: HackRowActionsProps) {
   async function handleDelete() {
     if (!confirm(`Delete "${id}"? This can't be undone.`)) return
     setBusy(true)
-    await fetch(`/api/admin/hacks/${id}`, { method: "DELETE" })
+    await fetch(`/api/admin/blog/${id}`, { method: "DELETE" })
     setBusy(false)
     router.refresh()
   }
@@ -36,7 +36,7 @@ export function HackRowActions({ id, published }: HackRowActionsProps) {
   return (
     <div className="flex items-center gap-2">
       <Button asChild variant="outline" size="sm">
-        <Link href={`/admin/hacks/${id}/edit`}>Edit</Link>
+        <Link href={`/admin/blog/${id}/edit`}>Edit</Link>
       </Button>
       <Button variant="outline" size="sm" disabled={busy} onClick={togglePublished}>
         {published ? "Unpublish" : "Publish"}

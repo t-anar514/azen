@@ -85,7 +85,7 @@ export function HackForm({ hack }: HackFormProps) {
 
     try {
       const res = await fetch(
-        isEditing ? `/api/admin/hacks/${hack!.id}` : "/api/admin/hacks",
+        isEditing ? `/api/admin/blog/${hack!.id}` : "/api/admin/blog",
         {
           method: isEditing ? "PATCH" : "POST",
           headers: { "Content-Type": "application/json" },
@@ -98,7 +98,7 @@ export function HackForm({ hack }: HackFormProps) {
         throw new Error(json?.error || "Failed to save hack.")
       }
 
-      router.push("/admin/hacks")
+      router.push("/admin/blog")
       router.refresh()
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save hack.")
@@ -283,7 +283,7 @@ export function HackForm({ hack }: HackFormProps) {
         <Button type="submit" disabled={saving}>
           {saving ? "Saving…" : isEditing ? "Save changes" : "Create hack"}
         </Button>
-        <Button type="button" variant="outline" onClick={() => router.push("/admin/hacks")}>
+        <Button type="button" variant="outline" onClick={() => router.push("/admin/blog")}>
           Cancel
         </Button>
       </div>

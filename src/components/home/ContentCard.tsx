@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
 interface ContentCardProps {
-  image: string
+  image: string | null
   title: string
   description?: string
   badge?: string
@@ -44,13 +44,19 @@ export function ContentCard({
         className
       )}>
         <div className="overflow-hidden rounded-xl bg-white">
-          <div className={cn("relative w-full overflow-hidden", aspectClass)}>
-            <Image
-              src={image}
-              alt={title}
-              fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-            />
+          <div className={cn("relative w-full overflow-hidden bg-muted", aspectClass)}>
+            {image ? (
+              <Image
+                src={image}
+                alt={title}
+                fill
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-4xl font-display font-bold text-primary/20">
+                {title[0]}
+              </div>
+            )}
             {badge && (
               <div className="absolute top-4 left-4 z-10">
                 <Badge className={cn("text-white border-none px-3 py-1", badgeColor)}>

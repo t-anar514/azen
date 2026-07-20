@@ -35,11 +35,11 @@ export const HackHero = ({ title, category, coverImage }: HackHeroProps) => {
         </motion.div>
       </div>
       <Link
-        href="/hacks"
+        href="/blog"
         className="absolute top-6 left-6 flex items-center gap-2 py-2 px-4 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/30 transition-all z-10 text-sm font-medium"
       >
         <ArrowLeft className="w-4 h-4" />
-        Back to Hacks
+        Блог руу буцах
       </Link>
     </div>
   );

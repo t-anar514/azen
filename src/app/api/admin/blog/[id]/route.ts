@@ -11,7 +11,7 @@ export async function GET(_request: Request, { params }: Params) {
   const { supabase } = guard
   const { id } = await params
 
-  const { data, error } = await supabase.from("hacks").select("*").eq("id", id).single()
+  const { data, error } = await supabase.from("posts").select("*").eq("id", id).single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 404 })
   return NextResponse.json({ data })
@@ -29,7 +29,6 @@ export async function PATCH(request: Request, { params }: Params) {
   const allowed = [
     "title",
     "category",
-    "summary",
     "steps",
     "pro_tip",
     "cover_image",
@@ -37,15 +36,22 @@ export async function PATCH(request: Request, { params }: Params) {
     "trap_alternative",
     "published",
     "order_index",
+    "slug",
+    "type",
+    "excerpt",
+    "body_md",
   ] as const
 
   const update: Record<string, unknown> = {}
   for (const key of allowed) {
     if (key in body) update[key] = body[key]
   }
+  // the form still speaks "summary"; posts stores it as excerpt
+  if ("summary" in body) update.excerpt = body.summary
+  if (update.published === true) update.published_at = new Date().toISOString()
 
   const { data, error } = await supabase
-    .from("hacks")
+    .from("posts")
     .update(update)
     .eq("id", id)
     .select()
@@ -61,7 +67,7 @@ export async function DELETE(_request: Request, { params }: Params) {
   const { supabase } = guard
   const { id } = await params
 
-  const { error } = await supabase.from("hacks").delete().eq("id", id)
+  const { error } = await supabase.from("posts").delete().eq("id", id)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ ok: true })

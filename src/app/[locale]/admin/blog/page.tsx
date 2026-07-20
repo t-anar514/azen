@@ -3,55 +3,55 @@ import { createClient } from "@/lib/supabase/server"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { HackRowActions } from "@/components/admin/HackRowActions"
-import type { HackRow } from "@/lib/supabase/types"
+import type { PostRow } from "@/lib/supabase/types"
 
-async function getHacks(): Promise<HackRow[]> {
+async function getPosts(): Promise<PostRow[]> {
   const supabase = await createClient()
   const { data } = await supabase
-    .from("hacks")
+    .from("posts")
     .select("*")
     .order("order_index", { ascending: true })
   return data ?? []
 }
 
-export default async function AdminHacksPage() {
-  const hacks = await getHacks()
+export default async function AdminBlogPage() {
+  const posts = await getPosts()
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-black uppercase italic tracking-tight">Hacks</h1>
-          <p className="text-muted-foreground">Manage the travel hacks shown on /hacks.</p>
+          <h1 className="text-2xl font-black uppercase italic tracking-tight">Blog</h1>
+          <p className="text-muted-foreground">Manage the posts shown on /blog.</p>
         </div>
         <Button asChild>
-          <Link href="/admin/hacks/new">+ New hack</Link>
+          <Link href="/admin/blog/new">+ New post</Link>
         </Button>
       </div>
 
-      {hacks.length === 0 ? (
+      {posts.length === 0 ? (
         <Card>
           <CardContent className="pt-6 text-muted-foreground">
-            No hacks yet. Create your first one.
+            No posts yet. Create your first one.
           </CardContent>
         </Card>
       ) : (
         <div className="space-y-3">
-          {hacks.map((hack) => (
-            <Card key={hack.id}>
+          {posts.map((post) => (
+            <Card key={post.id}>
               <CardContent className="flex flex-wrap items-center justify-between gap-4 pt-6">
                 <div>
                   <p className="font-semibold">
-                    {hack.title}{" "}
+                    {post.title}{" "}
                     <span className="text-xs font-normal text-muted-foreground">
-                      ({hack.category})
+                      ({post.type}{post.category ? ` · ${post.category}` : ""})
                     </span>
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    {hack.published ? "Published" : "Draft"} · order {hack.order_index}
+                    {post.published ? "Published" : "Draft"} · order {post.order_index}
                   </p>
                 </div>
-                <HackRowActions id={hack.id} published={hack.published} />
+                <HackRowActions id={post.id} published={post.published} />
               </CardContent>
             </Card>
           ))}

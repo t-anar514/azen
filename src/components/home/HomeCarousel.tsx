@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 
 interface CarouselItem {
   id: string
-  image: string
+  image: string | null
   title: string
   description?: string
   badge?: string
@@ -37,6 +37,8 @@ export function HomeCarousel({
 }: HomeCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const fadeFrom = sectionClassName?.includes("muted") ? "from-muted/30" : "from-background"
+
+  if (items.length === 0) return null
 
   function scrollByAmount(direction: "left" | "right") {
     const el = scrollRef.current

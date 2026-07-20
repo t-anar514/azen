@@ -17,7 +17,7 @@ import { AccountMenu } from "./AccountMenu"
 const NAV_LINKS = [
   { href: "/guides",  labelKey: "guides"  },
   { href: "/planner", labelKey: "planner" },
-  { href: "/hacks",   labelKey: "hacks"   },
+  { href: "/blog",    labelKey: "blog"    },
   { href: "/flights", labelKey: "flights" },
 ] as const
 
@@ -74,8 +74,8 @@ export function Navbar() {
           <div className="h-5 w-px bg-border" />
           <AccountMenu />
 
-          {/* Primary CTA — saffron/reserve = commit to booking */}
-          <Button asChild variant="reserve" size="sm" className="rounded-full px-5 font-semibold">
+          {/* Nav CTA — outlined pill; solid saffron is reserved for in-page Book/Request/Confirm */}
+          <Button asChild variant="outline" size="sm" className="rounded-full px-5 font-semibold">
             <Link href="/transfer">{t("transfer")}</Link>
           </Button>
         </div>
@@ -110,8 +110,8 @@ export function Navbar() {
 
                 <div className="my-3 border-t border-border" />
 
-                {/* Saffron CTA in mobile sheet */}
-                <Button asChild variant="reserve" className="rounded-xl h-12 font-semibold">
+                {/* Nav CTA in mobile sheet — outlined, matching the no-solid-buttons-in-nav policy */}
+                <Button asChild variant="outline" className="rounded-full h-12 font-semibold">
                   <Link href="/transfer">{t("transfer")}</Link>
                 </Button>
 
