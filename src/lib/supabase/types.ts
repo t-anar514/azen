@@ -34,6 +34,7 @@ export interface CityDistrict {
 
 export interface CityRow {
   id: string
+  slug: string | null
   name: string
   hero_image: string | null
   teaser: string | null
@@ -81,6 +82,48 @@ export interface HackRow {
   created_by: string | null
   created_at: string
   updated_at: string
+}
+
+export type PlaceCategory =
+  | "things_to_do"
+  | "places_to_eat"
+  | "nightlife"
+  | "shopping"
+  | "day_trip"
+
+export interface PlaceRow {
+  id: string
+  city_id: string
+  slug: string
+  name: string
+  category: PlaceCategory
+  subcategory: string | null
+  neighborhood: string | null
+  lat: number | null
+  lng: number | null
+  address: string | null
+  cover_image: string | null
+  gallery: string[]
+  short_desc: string | null
+  long_desc: string | null
+  price_band: number | null
+  hours: Record<string, string>
+  booking_url: string | null
+  google_place_id: string | null
+  tags: string[]
+  is_hidden_gem: boolean
+  published: boolean
+  order_index: number
+  created_at: string
+  updated_at: string
+}
+
+export interface PlaceRecommendationRow {
+  id: string
+  place_id: string
+  guide_id: string
+  quote: string
+  created_at: string
 }
 
 export type PostType = "article" | "hack" | "guide_story"

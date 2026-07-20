@@ -56,7 +56,7 @@ export default async function Home({
     title: city.name,
     description: city.teaser,
     badge: "Хот",
-    link: `/essentials/${city.id}`
+    link: `/city/${city.slug ?? city.id}`
   }));
 
   return (
