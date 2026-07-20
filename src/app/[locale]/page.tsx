@@ -1,11 +1,16 @@
 import { Hero } from "@/components/home/Hero";
 import { FeatureBlock } from "@/components/home/Features";
+import { CustomTourSplit } from "@/components/home/CustomTourSplit";
+import { HowItWorks } from "@/components/home/HowItWorks";
+import { CitiesGrid } from "@/components/home/CitiesGrid";
+import { GuidesMosaic } from "@/components/home/GuidesMosaic";
+import { FromTheBlog } from "@/components/home/FromTheBlog";
 import { HomeCarousel } from "@/components/home/HomeCarousel";
-import { FeaturedGuides } from "@/components/home/FeaturedGuides";
 import { LearnSection } from "@/components/home/LearnSection";
 import { SAMPLE_ITINERARIES } from "@/data/templates";
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { createClient } from "@/lib/supabase/server";
+import type { CityRow, PlaceRow, PostRow } from "@/lib/supabase/types";
 
 export default async function Home({
   params
@@ -15,17 +20,21 @@ export default async function Home({
   const {locale} = await params;
   setRequestLocale(locale);
 
-  const tHacks = await getTranslations("Hacks");
-  const tEssentials = await getTranslations("Essentials");
-  const tLearn = await getTranslations("Learn");
   const tItineraries = await getTranslations("SampleItineraries");
 
   const supabase = await createClient();
-  const [{ data: posts }, { data: cities }, { data: guides }] = await Promise.all([
-    supabase.from("posts").select("*").eq("published", true).order("order_index", { ascending: true }).limit(8),
+  const [{ data: posts }, { data: cities }, { data: guides }, { data: places }] = await Promise.all([
+    supabase.from("posts").select("*").eq("published", true).order("published_at", { ascending: false }).limit(3),
     supabase.from("cities").select("*").eq("published", true).order("order_index", { ascending: true }).limit(8),
-    supabase.from("guides").select("*").eq("is_active", true).order("rating", { ascending: false }).limit(3),
+    supabase.from("guides").select("*").eq("is_active", true).order("rating", { ascending: false }).limit(6),
+    supabase.from("places").select("id, city_id").eq("published", true),
   ]);
+
+  // "12 газар" chips on the city cards
+  const placeCountByCity: Record<string, number> = {};
+  for (const place of (places ?? []) as Pick<PlaceRow, "id" | "city_id">[]) {
+    placeCountByCity[place.city_id] = (placeCountByCity[place.city_id] ?? 0) + 1;
+  }
 
   const itineraryItems = SAMPLE_ITINERARIES.map(item => ({
     id: item.id,
@@ -38,37 +47,28 @@ export default async function Home({
     footerRight: `¥${item.basePrice.toLocaleString()}`
   }));
 
-  const hackItems = (posts ?? []).map(post => ({
-    id: post.id,
-    image: post.cover_image,
-    title: post.title,
-    description: post.excerpt,
-    badge: post.category && tHacks.has(`categories.${post.category}`)
-      ? tHacks(`categories.${post.category}`)
-      : post.category ?? undefined,
-    category: post.category,
-    link: `/blog/${post.slug}`
-  }));
-
-  const cityItems = (cities ?? []).map(city => ({
-    id: city.id,
-    image: city.hero_image,
-    title: city.name,
-    description: city.teaser,
-    badge: "Хот",
-    link: `/city/${city.slug ?? city.id}`
-  }));
-
   return (
     <div className="flex flex-col min-h-screen">
+      {/* 1 — hero */}
       <Hero />
+
+      {/* 2 — discover / book / plan */}
       <FeatureBlock />
 
-      {/* Featured Guides — spotlight from /guides */}
-      <FeaturedGuides guides={guides ?? []} />
+      {/* 3 — custom tour wizard shop window */}
+      <CustomTourSplit />
 
-      {/* Sample Itineraries Carousel */}
-      <HomeCarousel 
+      {/* 4 — 01 · 02 · 03 */}
+      <HowItWorks />
+
+      {/* 5 — cities, now pointing at the /city hubs */}
+      <CitiesGrid cities={(cities ?? []) as CityRow[]} placeCountByCity={placeCountByCity} />
+
+      {/* 6 — who our guides are + supply funnel */}
+      <GuidesMosaic guides={guides ?? []} />
+
+      {/* Sample itineraries — feeds the planner */}
+      <HomeCarousel
         title={tItineraries("title")}
         description={tItineraries("description")}
         items={itineraryItems}
@@ -76,27 +76,11 @@ export default async function Home({
         sectionClassName="bg-muted/30"
       />
 
-      {/* Travel Hacks Carousel */}
-      <HomeCarousel 
-        title={tHacks("title")}
-        description={tHacks("description")}
-        items={hackItems}
-        aspectRatio="video"
-      />
+      {/* 7 — latest posts */}
+      <FromTheBlog posts={(posts ?? []) as PostRow[]} />
 
-      {/* City Essentials Carousel */}
-      <HomeCarousel 
-        title={tEssentials("title")}
-        description={tEssentials("description")}
-        items={cityItems}
-        aspectRatio="portrait"
-        cardWidth="w-[240px] md:w-[300px] lg:w-[350px]"
-        sectionClassName="bg-muted/30"
-      />
-
-      {/* Interactive Japanese Hub Preview */}
+      {/* Japanese hub preview */}
       <LearnSection />
     </div>
   );
 }
-

@@ -5,6 +5,7 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import { Heart } from "lucide-react"
 
 import { createClient } from "@/lib/supabase/client"
+import { track } from "@/lib/analytics"
 import { SaveToFolderSheet } from "@/components/saves/SaveToFolderSheet"
 import { cn } from "@/lib/utils"
 import type { SaveableType } from "@/lib/supabase/types"
@@ -86,8 +87,9 @@ export function SaveHeart({ itemType, itemId, withSheet = false, className }: Sa
         .insert({ user_id: user.id, item_type: itemType, item_id: itemId })
       if (error) {
         setSaved(false)
-      } else if (withSheet) {
-        setSheetOpen(true)
+      } else {
+        track("place_saved", { item_type: itemType, item_id: itemId })
+        if (withSheet) setSheetOpen(true)
       }
     }
     busy.current = false

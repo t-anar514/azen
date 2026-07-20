@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { CityHub, type PlaceRec } from "@/components/places/CityHub"
+import { TrackView } from "@/components/analytics/TrackView"
 import type { CityRow, PlaceRow } from "@/lib/supabase/types"
 
 interface Props {
@@ -42,10 +43,13 @@ export default async function CityHubPage({ params }: Props) {
     : { data: [] }
 
   return (
-    <CityHub
-      city={city}
-      places={places ?? []}
-      recs={(recs ?? []) as unknown as PlaceRec[]}
-    />
+    <>
+      <TrackView event="city_hub_viewed" props={{ city_id: city.id }} />
+      <CityHub
+        city={city}
+        places={places ?? []}
+        recs={(recs ?? []) as unknown as PlaceRec[]}
+      />
+    </>
   )
 }

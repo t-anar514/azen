@@ -4,6 +4,7 @@ import * as React from "react"
 import { Folder, FolderPlus, Check } from "lucide-react"
 
 import { createClient } from "@/lib/supabase/client"
+import { track } from "@/lib/analytics"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -93,6 +94,7 @@ export function SaveToFolderSheet({ open, onOpenChange, itemType, itemId }: Save
       .from("folders")
       .insert({ id, user_id: user.id, name })
     if (!error) {
+      track("folder_created", {})
       setNewName("")
       setFolders((prev) => [...prev, {
         id, user_id: user.id, itinerary_id: null, name,

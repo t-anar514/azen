@@ -11,6 +11,7 @@ import { PlaceCard } from "@/components/places/PlaceCard"
 import { PlaceMapStatic } from "@/components/places/PlaceMapStatic"
 import { CATEGORY_LABEL } from "@/components/places/categoryLabels"
 import { SaveHeart } from "@/components/saves/SaveHeart"
+import { TrackView } from "@/components/analytics/TrackView"
 import type { CityRow, PlaceRow } from "@/lib/supabase/types"
 
 const Image = NextImage as any
@@ -61,6 +62,10 @@ export default async function PlaceDetailPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-background">
+      <TrackView
+        event="place_viewed"
+        props={{ place_id: place.id, city_id: city.id, category: place.category }}
+      />
       {/* Hero */}
       <div className="relative h-[36vh] md:h-[46vh] overflow-hidden bg-muted">
         {place.cover_image && (

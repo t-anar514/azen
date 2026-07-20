@@ -6,6 +6,7 @@ import { StepGuide } from "@/components/blog/StepGuide";
 import { ProTip } from "@/components/blog/ProTip";
 import { PostBody } from "@/components/blog/PostBody";
 import { RelatedPosts } from "@/components/blog/RelatedPosts";
+import { TrackView } from "@/components/analytics/TrackView";
 import type { PostRow } from "@/lib/supabase/types";
 
 interface Props {
@@ -35,6 +36,7 @@ export default async function PostDetailPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-background">
+      <TrackView event="post_read" props={{ slug: post.slug, type: post.type }} />
       <HackHero
         title={post.title}
         category={post.category ?? ""}

@@ -5,6 +5,7 @@ import Link from "next/link"
 import { CalendarPlus, Check, Plus } from "lucide-react"
 
 import { createClient } from "@/lib/supabase/client"
+import { track } from "@/lib/analytics"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -100,7 +101,10 @@ export function AddFolderToTripDialog({ folderName, places }: AddFolderToTripDia
           updated_at: new Date().toISOString(),
         })
         .eq("id", trip.id)
-      if (!error) setDone({ tripId: trip.id, added: newItems.length })
+      if (!error) {
+        track("folder_added_to_trip", { trip_id: trip.id, added: newItems.length, new_trip: false })
+        setDone({ tripId: trip.id, added: newItems.length })
+      }
     } else {
       // new trip: client-generated id, plain INSERT (see migration 0010 note)
       const newTripId = crypto.randomUUID()
@@ -108,7 +112,10 @@ export function AddFolderToTripDialog({ folderName, places }: AddFolderToTripDia
       const { error } = await supabase
         .from("itineraries")
         .insert([{ id: newTripId, title: folderName, items: newItems, owner_id: user.id }])
-      if (!error) setDone({ tripId: newTripId, added: newItems.length })
+      if (!error) {
+        track("folder_added_to_trip", { trip_id: newTripId, added: newItems.length, new_trip: true })
+        setDone({ tripId: newTripId, added: newItems.length })
+      }
     }
     setBusy(false)
   }

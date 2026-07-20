@@ -39,10 +39,11 @@ export function Footer() {
           <h3 className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground mb-1">
             {t("platform")}
           </h3>
-          <Link href="/transfer"  className="text-sm text-foreground/80 hover:text-primary transition-colors">{nt("transfer")}</Link>
-          <Link href="/guides"    className="text-sm text-foreground/80 hover:text-primary transition-colors">{nt("guides")}</Link>
-          <Link href="/planner"   className="text-sm text-foreground/80 hover:text-primary transition-colors">{nt("planner")}</Link>
-          <Link href="/flights"   className="text-sm text-foreground/80 hover:text-primary transition-colors">{nt("flights")}</Link>
+          <Link href="/transfer"     className="text-sm text-foreground/80 hover:text-primary transition-colors">{nt("transfer")}</Link>
+          <Link href="/guides"       className="text-sm text-foreground/80 hover:text-primary transition-colors">{nt("guides")}</Link>
+          <Link href="/planner"      className="text-sm text-foreground/80 hover:text-primary transition-colors">{nt("planner")}</Link>
+          <Link href="/tours/custom" className="text-sm text-foreground/80 hover:text-primary transition-colors">Захиалгат аялал</Link>
+          <Link href="/flights"      className="text-sm text-foreground/80 hover:text-primary transition-colors">{nt("flights")}</Link>
         </div>
 
         {/* Discover — content / learning */}
@@ -60,9 +61,11 @@ export function Footer() {
           <h3 className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground mb-1">
             {t("company")}
           </h3>
-          <Link href="/about"   className="text-sm text-foreground/80 hover:text-primary transition-colors">{t("about")}</Link>
-          <Link href="/contact" className="text-sm text-foreground/80 hover:text-primary transition-colors">{nt("contact")}</Link>
-          <Link href="/privacy" className="text-sm text-foreground/80 hover:text-primary transition-colors">{t("privacy")}</Link>
+          <Link href="/about"        className="text-sm text-foreground/80 hover:text-primary transition-colors">{t("about")}</Link>
+          <Link href="/contact"      className="text-sm text-foreground/80 hover:text-primary transition-colors">{nt("contact")}</Link>
+          <Link href="/guides/apply" className="text-sm text-foreground/80 hover:text-primary transition-colors">Хөтөч болох</Link>
+          <Link href="/driver/apply" className="text-sm text-foreground/80 hover:text-primary transition-colors">Жолооч болох</Link>
+          <Link href="/privacy"      className="text-sm text-foreground/80 hover:text-primary transition-colors">{t("privacy")}</Link>
         </div>
 
       </div>

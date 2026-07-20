@@ -126,6 +126,41 @@ export interface PlaceRecommendationRow {
   created_at: string
 }
 
+export type TourPace = "relaxed" | "balanced" | "packed"
+export type BudgetBand = "budget" | "mid" | "premium"
+export type TourRequestStatus = "draft" | "requested" | "matched" | "confirmed" | "declined"
+
+export interface TourPrefs {
+  pace: TourPace
+  interests: string[]
+  group_size: number
+  date_from: string | null
+  date_to: string | null
+  budget_band: BudgetBand
+}
+
+export interface TourItineraryStop {
+  order: number
+  place_id: string
+  title: string
+  note: string
+  duration_min: number
+}
+
+export interface TourRequestRow {
+  id: string
+  user_id: string | null
+  city_id: string | null
+  contact_email: string | null
+  contact_name: string | null
+  prefs: TourPrefs
+  generated_itinerary: TourItineraryStop[]
+  matched_guide_id: string | null
+  status: TourRequestStatus
+  created_at: string
+  updated_at: string
+}
+
 export type SaveableType = "place" | "post" | "experience" | "guide" | "city"
 
 export interface FolderRow {

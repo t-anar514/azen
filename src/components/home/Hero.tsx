@@ -15,13 +15,12 @@ export function Hero() {
           </div>
         </div>
 
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground mb-4 font-display">
+        {/* signature device: ink weight-800 + italic accent in brand blue */}
+        <h1 className="text-display text-foreground mb-4 font-display">
           {t("title")} <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-sky-500">
-            {t("subtitle")}
-          </span>
+          <span className="italic text-primary">{t("subtitle")}</span>
         </h1>
-        <p className="max-w-[580px] mx-auto text-base md:text-lg text-muted-foreground mb-2">
+        <p className="max-w-[580px] mx-auto text-lead mb-2">
           {t("description")}
         </p>
 
