@@ -3,9 +3,22 @@
 import * as React from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import NextImage from "next/image"
-import { Compass, Gem, LayoutGrid, Map as MapIcon, Martini, UtensilsCrossed, BookOpen } from "lucide-react"
+import {
+  ArrowLeft,
+  BookOpen,
+  Compass,
+  Gem,
+  Info,
+  LayoutGrid,
+  Map as MapIcon,
+  MapPin,
+  Martini,
+  Train,
+  UtensilsCrossed,
+} from "lucide-react"
 
-import { CityDetailTabs } from "@/components/essentials/CityDetailTabs"
+import { Link } from "@/i18n/routing"
+import { CityInfoPanels, type InfoPanel } from "@/components/places/CityInfoPanels"
 import { PlaceCard } from "@/components/places/PlaceCard"
 import { PlaceFilterBar, type PlaceFilters } from "@/components/places/PlaceFilterBar"
 import { PlaceMap } from "@/components/places/PlaceMap"
@@ -24,19 +37,34 @@ export interface PlaceRec {
   guides: { id: string; name: string; image: string | null } | null
 }
 
-type HubTab = "overview" | "do" | "eat" | "nightlife"
+/**
+ * One hero, one tab bar (design doc, Screen 02 — "✓ Fix: нэг hero, нэг таб мөр").
+ * Place tabs and encyclopedia tabs are siblings in a single row rather than the
+ * old nested arrangement.
+ */
+type HubTab = "overview" | "do" | "eat" | "nightlife" | "districts" | "transport" | "info"
 
-const TAB_CATEGORIES: Record<Exclude<HubTab, "overview">, PlaceRow["category"][]> = {
+const PLACE_TABS: Partial<Record<HubTab, PlaceRow["category"][]>> = {
   do: ["things_to_do", "shopping", "day_trip"],
   eat: ["places_to_eat"],
   nightlife: ["nightlife"],
 }
 
+const INFO_TABS: Partial<Record<HubTab, InfoPanel>> = {
+  overview: "overview",
+  districts: "districts",
+  transport: "transport",
+  info: "understand",
+}
+
 const TABS: { id: HubTab; label: string; icon: React.ElementType }[] = [
   { id: "overview", label: "Тойм", icon: BookOpen },
-  { id: "do", label: "Юу хийх вэ", icon: Compass },
+  { id: "do", label: "Юу үзэх", icon: Compass },
   { id: "eat", label: "Хаана хооллох", icon: UtensilsCrossed },
   { id: "nightlife", label: "Шөнийн амьдрал", icon: Martini },
+  { id: "districts", label: "Дүүргүүд", icon: MapPin },
+  { id: "transport", label: "Тээвэр", icon: Train },
+  { id: "info", label: "Мэдээлэл", icon: Info },
 ]
 
 interface CityHubProps {
@@ -75,8 +103,8 @@ export function CityHub({ city, places, recs }: CityHubProps) {
   }
 
   const tabPlaces = React.useMemo(() => {
-    if (tab === "overview") return []
-    const categories = TAB_CATEGORIES[tab]
+    const categories = PLACE_TABS[tab]
+    if (!categories) return []
     return places.filter((p) => categories.includes(p.category))
   }, [tab, places])
 
@@ -99,26 +127,47 @@ export function CityHub({ city, places, recs }: CityHubProps) {
   )
 
   const gemCount = filtered.filter((p) => p.is_hidden_gem).length
+  const infoPanel = INFO_TABS[tab]
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero */}
-      <div className="relative h-[32vh] md:h-[40vh] overflow-hidden bg-muted">
+      {/* ── SINGLE HERO ── */}
+      <div className="relative h-[38vh] md:h-[46vh] overflow-hidden bg-muted">
         {city.hero_image && (
           <Image src={city.hero_image} alt={city.name} fill className="object-cover" priority />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 px-4 md:px-6 pb-6">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10" />
+
+        <Link
+          href="/essentials"
+          className="absolute left-6 top-6 z-10 inline-flex items-center gap-2 rounded-pill bg-white/20 px-4 py-2 text-sm font-medium text-white backdrop-blur-md transition-all hover:bg-white/30"
+        >
+          <ArrowLeft className="size-4" /> Хотууд руу буцах
+        </Link>
+
+        <div className="absolute inset-x-0 bottom-0 px-4 pb-7 md:px-6">
           <div className="mx-auto max-w-content">
-            <h1 className="font-display text-4xl md:text-6xl font-extrabold tracking-tight text-white">
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              {city.slug && (
+                <span className="rounded-pill bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                  {city.name}
+                </span>
+              )}
+              <span className="rounded-pill bg-white/90 px-3 py-1 text-xs font-bold text-foreground">
+                {places.length} газар
+              </span>
+            </div>
+            <h1 className="font-display text-4xl font-extrabold tracking-tight text-white md:text-6xl">
               {city.name}
             </h1>
-            {city.teaser && <p className="mt-1 max-w-xl text-white/85">{city.teaser}</p>}
+            {city.teaser && (
+              <p className="mt-1.5 max-w-2xl text-white/85">{city.teaser}</p>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Tab bar — underline-active, synced to ?tab= */}
+      {/* ── ONE UNIFIED TAB BAR ── */}
       <div className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto max-w-content px-4 md:px-6">
           <nav className="flex gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -141,9 +190,9 @@ export function CityHub({ city, places, recs }: CityHubProps) {
         </div>
       </div>
 
-      <div className="mx-auto max-w-content px-4 md:px-6 py-8">
-        {tab === "overview" ? (
-          <CityDetailTabs city={city} />
+      <div className="mx-auto max-w-content px-4 py-8 md:px-6">
+        {infoPanel ? (
+          <CityInfoPanels city={city} panel={infoPanel} />
         ) : (
           <div className="space-y-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -162,7 +211,7 @@ export function CityHub({ city, places, recs }: CityHubProps) {
                   type="button"
                   variant={view === "grid" ? "secondary" : "ghost"}
                   size="sm"
-                  className="rounded-pill h-7 px-3"
+                  className="h-7 rounded-pill px-3"
                   onClick={() => setView("grid")}
                 >
                   <LayoutGrid className="size-4" /> Жагсаалт
@@ -171,7 +220,7 @@ export function CityHub({ city, places, recs }: CityHubProps) {
                   type="button"
                   variant={view === "map" ? "secondary" : "ghost"}
                   size="sm"
-                  className="rounded-pill h-7 px-3"
+                  className="h-7 rounded-pill px-3"
                   onClick={() => setView("map")}
                 >
                   <MapIcon className="size-4" /> Газрын зураг
