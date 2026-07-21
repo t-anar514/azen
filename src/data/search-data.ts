@@ -3,7 +3,7 @@ import { HACKS } from "./hacks";
 import { EXPERIENCES } from "./experiences";
 import { phraseCollections } from "./japanese-course";
 
-export type SearchCategory = 'Cities' | 'Hacks' | 'Experiences' | 'Phrases';
+export type SearchCategory = 'Cities' | 'Hacks' | 'Experiences' | 'Phrases' | 'Places' | 'Posts' | 'Tours';
 
 export interface SearchItem {
   id: string;
@@ -89,6 +89,23 @@ export const getSearchIndex = (locale: string, messages?: any): SearchItem[] => 
       category: 'Experiences',
       url: `/${locale}/experiences/${exp.id}`
     });
+  });
+
+  // Static destinations for the newer feature pages (the items they list —
+  // places, posts — are DB-backed and merged in client-side via /api/search).
+  index.push({
+    id: 'tours-custom',
+    title: 'Захиалгат аялал',
+    subtitle: '4 асуултаар хувийн өдрийн төлөвлөгөө',
+    category: 'Tours',
+    url: `/${locale}/tours/custom`
+  });
+  index.push({
+    id: 'guides-apply',
+    title: 'Хөтөч болох',
+    subtitle: 'Нутгийн хөтөчөөр бүртгүүлэх',
+    category: 'Tours',
+    url: `/${locale}/guides/apply`
   });
 
   // Add Phrases

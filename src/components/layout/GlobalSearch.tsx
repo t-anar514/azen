@@ -32,14 +32,35 @@ export function GlobalSearch({ locale, className }: GlobalSearchProps) {
 
   // Initialize Fuse
   useEffect(() => {
-    const data = getSearchIndex(locale, messages)
-    setSearchIndex(data)
-    setFuse(new Fuse(data, {
-      keys: ['title', 'subtitle'],
-      threshold: 0.3,
-      distance: 100,
-      includeMatches: true
-    }))
+    const staticData = getSearchIndex(locale, messages)
+
+    const build = (data: SearchItem[]) => {
+      setSearchIndex(data)
+      setFuse(new Fuse(data, {
+        keys: ['title', 'subtitle'],
+        threshold: 0.3,
+        distance: 100,
+        includeMatches: true
+      }))
+    }
+
+    // Show static results immediately, then merge DB-backed places/posts.
+    build(staticData)
+    let cancelled = false
+    fetch("/api/search")
+      .then((r) => (r.ok ? r.json() : { items: [] }))
+      .then((json) => {
+        if (cancelled) return
+        const dbItems: SearchItem[] = (json.items ?? []).map((it: any) => ({
+          ...it,
+          url: `/${locale}${it.url}`,
+        }))
+        if (dbItems.length) build([...staticData, ...dbItems])
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
   }, [locale, messages])
 
   const handleSearch = useCallback((val: string) => {
@@ -110,8 +131,11 @@ export function GlobalSearch({ locale, className }: GlobalSearchProps) {
   const getIcon = (category: SearchCategory) => {
     switch (category) {
       case 'Cities': return <MapPin className="h-4 w-4" />
+      case 'Places': return <MapPin className="h-4 w-4" />
       case 'Hacks': return <Zap className="h-4 w-4" />
+      case 'Posts': return <Zap className="h-4 w-4" />
       case 'Experiences': return <Compass className="h-4 w-4" />
+      case 'Tours': return <Compass className="h-4 w-4" />
       case 'Phrases': return <Languages className="h-4 w-4" />
     }
   }
