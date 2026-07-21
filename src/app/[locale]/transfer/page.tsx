@@ -56,26 +56,30 @@ export default async function TransferPage({ searchParams }: PageProps) {
 
   return (
     <div className="min-h-screen bg-background pb-10">
-      <section className="px-4 pt-16 pb-8 text-center">
-        <div className="mx-auto flex w-fit items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold text-primary">
-          <Car className="h-4 w-4" /> Хүргэх/Тосох
+      <div className="mx-auto max-w-content px-4 md:px-6 pt-12">
+        <section className="max-w-2xl">
+          <span className="inline-flex items-center gap-1.5 text-eyebrow">
+            <Car className="size-3.5" /> Хаалганаас хаалга хүртэл
+          </span>
+          <h1 className="mt-2 text-section text-foreground">
+            Нисэх буудлын хүргэлт захиалах
+          </h1>
+          <p className="mt-3 text-lead">
+            Тогтмол үнэ, нэмэлт төлбөргүй. Нислэгийн дугаараа өгөхөд бид таны буух цагт тохируулна.
+          </p>
+
+          {/* State B — guests who lost their link can recover it here. */}
+          {!user && (
+            <div className="mt-6">
+              <GuestBookingLookup />
+            </div>
+          )}
+        </section>
+
+        <div className="mt-8">
+          <TransferBookingForm vehicleOptions={vehicleOptions} />
         </div>
-        <h1 className="mt-4 font-display text-4xl font-bold tracking-tight text-foreground md:text-5xl">
-          Хүргэх болон тосох үйлчилгээг захиалаарай
-        </h1>
-        <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
-          Тогтмол үнэ, нэмэлт төлбөргүй. Нислэгийн дугаараа өгөхөд бид таны буух цагт тохируулна.
-        </p>
-
-        {/* State B — guests who lost their link can recover it here. */}
-        {!user && (
-          <div className="mt-6">
-            <GuestBookingLookup />
-          </div>
-        )}
-      </section>
-
-      <TransferBookingForm vehicleOptions={vehicleOptions} />
+      </div>
     </div>
   )
 }
