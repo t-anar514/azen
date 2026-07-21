@@ -1,19 +1,17 @@
 import { Hero } from "@/components/home/Hero";
 import { CategoryRail } from "@/components/home/CategoryRail";
-import { FeatureBlock } from "@/components/home/Features";
 import { CitiesGrid } from "@/components/home/CitiesGrid";
-import { CustomTourSplit } from "@/components/home/CustomTourSplit";
+import { WhyAzen } from "@/components/home/WhyAzen";
+import { FeaturedItinerary } from "@/components/home/FeaturedItinerary";
 import { DiscoverGrid } from "@/components/home/DiscoverGrid";
-import { GuidesMosaic } from "@/components/home/GuidesMosaic";
+import { MeetGuides } from "@/components/home/MeetGuides";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { NewsletterBand } from "@/components/home/NewsletterBand";
-import { FromTheBlog } from "@/components/home/FromTheBlog";
-import { HomeCarousel } from "@/components/home/HomeCarousel";
-import { SAMPLE_ITINERARIES } from "@/data/templates";
-import { setRequestLocale, getTranslations } from 'next-intl/server';
+import { SupplyBanner } from "@/components/home/SupplyBanner";
+import { setRequestLocale } from 'next-intl/server';
 import { createClient } from "@/lib/supabase/server";
 import type { PlaceRec } from "@/components/places/CityHub";
-import type { CityRow, PlaceRow, PostRow } from "@/lib/supabase/types";
+import type { CityRow, GuideRow, PlaceRow } from "@/lib/supabase/types";
 
 export default async function Home({
   params
@@ -23,11 +21,8 @@ export default async function Home({
   const {locale} = await params;
   setRequestLocale(locale);
 
-  const tItineraries = await getTranslations("SampleItineraries");
-
   const supabase = await createClient();
-  const [{ data: posts }, { data: cities }, { data: guides }, { data: places }] = await Promise.all([
-    supabase.from("posts").select("*").eq("published", true).order("published_at", { ascending: false }).limit(3),
+  const [{ data: cities }, { data: guides }, { data: places }] = await Promise.all([
     supabase.from("cities").select("*").eq("published", true).order("order_index", { ascending: true }).limit(8),
     supabase.from("guides").select("*").eq("is_active", true).order("rating", { ascending: false }).limit(6),
     supabase.from("places").select("*").eq("published", true).order("order_index", { ascending: true }),
@@ -35,15 +30,14 @@ export default async function Home({
 
   const allPlaces = (places ?? []) as PlaceRow[];
   const cityRows = (cities ?? []) as CityRow[];
+  const guideRows = (guides ?? []) as GuideRow[];
 
-  // "N газар" chips on the city tiles
   const placeCountByCity: Record<string, number> = {};
   for (const place of allPlaces) {
     placeCountByCity[place.city_id] = (placeCountByCity[place.city_id] ?? 0) + 1;
   }
   const citySlugById = Object.fromEntries(cityRows.map((c) => [c.id, c.slug ?? c.id]));
 
-  // discover rail: hidden gems first, then curated order
   const featuredPlaces = [...allPlaces]
     .sort((a, b) => Number(b.is_hidden_gem) - Number(a.is_hidden_gem) || a.order_index - b.order_index)
     .slice(0, 8);
@@ -55,43 +49,26 @@ export default async function Home({
         .in("place_id", featuredPlaces.map((p) => p.id))
     : { data: [] };
 
-  const itineraryItems = SAMPLE_ITINERARIES.map(item => ({
-    id: item.id,
-    image: item.heroImage,
-    title: tItineraries(`${item.id}.title`),
-    description: tItineraries(`${item.id}.summary`),
-    badge: `${item.duration} ${item.duration === 1 ? tItineraries('day') : tItineraries('days')}`,
-    link: { pathname: '/planner', query: { template: item.id } },
-    footerLeft: tItineraries('estimatedFrom'),
-    footerRight: `¥${item.basePrice.toLocaleString()}`
-  }));
-
   return (
     <div className="flex flex-col min-h-screen">
-      {/* 1 — dual-path hero (no flight search) */}
+      {/* 1 — dark dual-path hero */}
       <Hero
         placeCount={allPlaces.length}
-        guideCount={(guides ?? []).length}
+        guideCount={guideRows.length}
         cityCount={cityRows.length}
       />
 
       {/* 2 — category chips */}
       <CategoryRail />
 
-      {/* 3 — cities mosaic */}
+      {/* 3 — featured cities mosaic */}
       <CitiesGrid cities={cityRows} placeCountByCity={placeCountByCity} />
 
-      {/* 4 — why azen */}
-      <FeatureBlock />
+      {/* 4 — why azen (4 cards, dark 4th) */}
+      <WhyAzen />
 
-      {/* 5 — featured itineraries */}
-      <HomeCarousel
-        title={tItineraries("title")}
-        description={tItineraries("description")}
-        items={itineraryItems}
-        aspectRatio="video"
-        sectionClassName="bg-muted/30"
-      />
+      {/* 5 — featured itinerary banner */}
+      <FeaturedItinerary />
 
       {/* 6 — discover grid */}
       <DiscoverGrid
@@ -100,20 +77,17 @@ export default async function Home({
         citySlugById={citySlugById}
       />
 
-      {/* 7 — guides + supply funnel */}
-      <GuidesMosaic guides={guides ?? []} />
+      {/* 7 — meet guides */}
+      <MeetGuides guides={guideRows} />
 
-      {/* 8 — custom tour wizard */}
-      <CustomTourSplit />
-
-      {/* 9 — 01 · 02 · 03 */}
+      {/* 8 — how it works (dark process row) */}
       <HowItWorks />
 
-      {/* 10 — latest posts */}
-      <FromTheBlog posts={(posts ?? []) as PostRow[]} />
-
-      {/* 11 — newsletter */}
+      {/* 9 — green newsletter */}
       <NewsletterBand />
+
+      {/* 10 — supply banners */}
+      <SupplyBanner />
     </div>
   );
 }

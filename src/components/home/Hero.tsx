@@ -1,10 +1,8 @@
 "use client"
 
-import { Compass, Map, Search } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import { Link } from "@/i18n/routing"
-import { RouteLine } from "@/components/ui/route-line"
 
 interface HeroProps {
   placeCount: number
@@ -13,9 +11,9 @@ interface HeroProps {
 }
 
 /**
- * Dual-path hero (design doc, Screen 01). Flight search is deliberately gone:
- * discovery and planning are the two pillars, so the hero asks which one you
- * want rather than assuming you've already decided to book a flight.
+ * Dark hero (design doc, Screen 01): navy radial gradient, atmospheric glows
+ * (Fuji-dawn saffron + Tokyo-tower blue), a faint skyline silhouette, and a
+ * white floating panel holding the universal search + the two path cards.
  */
 export function Hero({ placeCount, guideCount, cityCount }: HeroProps) {
   const t = useTranslations("Hero")
@@ -28,109 +26,151 @@ export function Hero({ placeCount, guideCount, cityCount }: HeroProps) {
   }
 
   return (
-    <section className="relative flex flex-col items-center justify-center py-16 md:py-24 text-center overflow-hidden">
-      <div className="container relative z-10 px-4 md:px-6 max-w-3xl">
-        {/* Route eyebrow */}
-        <div className="flex justify-center mb-8">
-          <div className="w-48 md:w-64">
-            <RouteLine from="Улаанбаатар" to="Токио" />
-          </div>
+    <section
+      className="relative overflow-hidden px-4 md:px-8 pt-16 pb-24"
+      style={{
+        background:
+          "radial-gradient(130% 120% at 78% 8%, #0F3B6B 0%, #123456 42%, #0C2036 100%)",
+      }}
+    >
+      {/* atmospheric glows */}
+      <div
+        className="pointer-events-none absolute -top-16 right-[8%] h-[420px] w-[420px] rounded-full blur-[14px]"
+        style={{ background: "radial-gradient(circle, rgba(222,140,46,.42), transparent 62%)" }}
+      />
+      <div
+        className="pointer-events-none absolute -bottom-32 -left-10 h-[520px] w-[520px] rounded-full"
+        style={{ background: "radial-gradient(circle, rgba(45,125,210,.35), transparent 65%)" }}
+      />
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{ background: "linear-gradient(180deg, transparent 55%, rgba(12,32,54,.6))" }}
+      />
+
+      {/* faint skyline silhouette */}
+      <svg
+        width="100%"
+        height="120"
+        viewBox="0 0 1440 120"
+        preserveAspectRatio="none"
+        className="pointer-events-none absolute bottom-0 left-0 opacity-50"
+        aria-hidden
+      >
+        <path
+          d="M0 120 L0 80 L40 80 L40 60 L80 60 L80 90 L130 90 L130 40 L150 30 L170 40 L170 85 L230 85 L230 65 L280 65 L280 95 L340 95 L340 55 L360 45 L370 20 L380 45 L400 55 L400 90 L470 90 L470 70 L520 70 L520 100 L600 100 L600 60 L650 60 L650 85 L720 85 L720 50 L760 50 L760 88 L840 88 L840 68 L900 68 L900 95 L980 95 L980 58 L1010 46 L1030 58 L1030 90 L1110 90 L1110 72 L1170 72 L1170 100 L1260 100 L1260 62 L1310 62 L1310 88 L1380 88 L1380 78 L1440 78 L1440 120 Z"
+          fill="#0A1B2E"
+        />
+      </svg>
+
+      <div className="relative z-[2] mx-auto max-w-5xl text-center">
+        {/* route eyebrow */}
+        <div className="mb-6 inline-flex items-center gap-2.5 text-[13px] font-semibold tracking-[0.04em] text-white/70">
+          Улаанбаатар
+          <svg className="az-route" width="70" height="16" viewBox="0 0 70 16" fill="none" aria-hidden>
+            <path d="M4 12 Q35 -2 66 8" stroke="#DE8C2E" strokeWidth="1.6" />
+            <circle cx="4" cy="12" r="3" fill="#DE8C2E" />
+            <circle cx="66" cy="8" r="3" fill="#fff" />
+          </svg>
+          Токио
         </div>
 
-        {/* signature device: ink weight-800 + italic accent in brand blue */}
-        <h1 className="text-display text-foreground mb-4 font-display">
-          {t("title")} <br />
-          <span className="italic text-primary">{t("subtitle")}</span>
+        <h1 className="font-display text-[clamp(40px,5vw,62px)] font-extrabold leading-[1.04] tracking-[-0.02em] text-white">
+          {t("title")}
+          <br />
+          <span className="italic" style={{ color: "#8FC0F0" }}>
+            {t("subtitle")}
+          </span>
         </h1>
-        <p className="max-w-[620px] mx-auto text-lead">
+        <p className="mx-auto mt-5 max-w-[600px] text-lg leading-relaxed text-white/80">
           Нутгийн хөтчүүдийн санал болгосон газраар аялж, ухаалаг төлөвлөгчөөр өдрөө угсар.
           Нэг платформ дээр — нээ, төлөвлө, захиал.
         </p>
 
-        {/* floating action panel: universal search + the two paths */}
-        <div className="mt-10 rounded-card border border-border bg-card/80 p-3 shadow-lg backdrop-blur-sm">
+        {/* floating action panel */}
+        <div className="mx-auto mt-9 max-w-[760px] rounded-[24px] bg-white p-4 shadow-[0_30px_60px_-24px_rgba(0,0,0,.5)]">
           <button
             type="button"
             onClick={openSearch}
-            className="flex w-full items-center gap-3 rounded-pill border border-border bg-background px-5 py-3.5 text-left transition-colors hover:bg-muted"
+            className="flex w-full items-center gap-3 rounded-2xl border border-[#E2E8F0] bg-[#F6F8FB] px-[18px] py-3.5 text-left transition-colors hover:bg-[#EEF2F7]"
           >
-            <Search className="size-4 shrink-0 text-muted-foreground" />
-            <span className="flex-1 truncate text-sm text-muted-foreground">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1A4E8A" strokeWidth="2" aria-hidden>
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.5-3.5" />
+            </svg>
+            <span className="flex-1 truncate text-[15.5px] text-[#94A3B8]">
               Хот, газар, нутгийн хөтөч хайх…
             </span>
-            <kbd className="hidden shrink-0 rounded-md border border-border bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground sm:block">
+            <span className="rounded-lg bg-[#EAF2FB] px-2.5 py-[5px] text-xs font-semibold text-[#1A4E8A]">
               ⌘K
-            </kbd>
+            </span>
           </button>
 
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            <PathCard
+            {/* Explore guide — blue gradient */}
+            <Link
               href="/essentials"
-              icon={Compass}
-              tint="bg-tint-sky"
-              title="Аялах хөтөч үзэх"
-              description="Хот, газар, нутгийн хөтчөөр аяллаа эхлүүл"
-            />
-            <PathCard
+              className="group relative overflow-hidden rounded-2xl p-[18px_20px] text-left text-white transition-transform hover:-translate-y-0.5"
+              style={{ background: "linear-gradient(135deg, #1A4E8A, #2D7DD2)" }}
+            >
+              <div className="mb-3 flex size-[42px] items-center justify-center rounded-xl bg-white/[.16]">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" aria-hidden>
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="m15.5 8.5-2 5-5 2 2-5z" fill="#fff" stroke="none" />
+                </svg>
+              </div>
+              <div className="font-display text-lg font-bold">Аялах хөтөч үзэх</div>
+              <div className="mt-[3px] text-[13.5px] text-white/80">
+                Хот, газар, нутгийн хөтчөөр аяллаа эхлүүл
+              </div>
+              <svg
+                width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"
+                className="absolute right-5 top-5 transition-transform group-hover:translate-x-0.5" aria-hidden
+              >
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </Link>
+
+            {/* Plan — cream */}
+            <Link
               href="/planner"
-              icon={Map}
-              tint="bg-tint-saffron"
-              title="Аялал төлөвлөх"
-              description="Өдрийн төлөвлөгөө, төсөв, найзуудтайгаа"
-            />
+              className="group relative overflow-hidden rounded-2xl border border-[#F1DEBE] bg-[#FCF2E3] p-[18px_20px] text-left transition-transform hover:-translate-y-0.5"
+            >
+              <div className="mb-3 flex size-[42px] items-center justify-center rounded-xl bg-[#DE8C2E]">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" aria-hidden>
+                  <circle cx="6" cy="19" r="2.5" />
+                  <circle cx="18" cy="5" r="2.5" />
+                  <path d="M8 19h6a3 3 0 0 0 3-3V8" />
+                </svg>
+              </div>
+              <div className="font-display text-lg font-bold text-[#16202B]">Аялал төлөвлөх</div>
+              <div className="mt-[3px] text-[13.5px] text-[#8A6A38]">
+                Өдрийн төлөвлөгөө, төсөв, найзуудтайгаа
+              </div>
+              <svg
+                width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C9761E" strokeWidth="2.5"
+                className="absolute right-5 top-5 transition-transform group-hover:translate-x-0.5" aria-hidden
+              >
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </Link>
           </div>
         </div>
 
-        {/* live counts — no invented numbers */}
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+        {/* stats */}
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-7 gap-y-1 text-[13.5px] font-medium text-white/[.78]">
           <span>
-            <b className="font-semibold text-foreground">{placeCount}+</b> газар
+            <b className="font-display text-white">{placeCount}+</b> газар
           </span>
-          <span aria-hidden>·</span>
+          <span className="opacity-40">·</span>
           <span>
-            <b className="font-semibold text-foreground">{guideCount}</b> нутгийн хөтөч
+            <b className="font-display text-white">{guideCount}</b> нутгийн хөтөч
           </span>
-          <span aria-hidden>·</span>
+          <span className="opacity-40">·</span>
           <span>
-            <b className="font-semibold text-foreground">{cityCount}</b> хот
+            <b className="font-display text-white">{cityCount}</b> хот
           </span>
         </div>
       </div>
-
-      {/* Background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-primary/4 rounded-full blur-3xl -z-10" />
-      <div className="absolute top-0 right-0 w-[350px] h-[350px] bg-sky-500/5 rounded-full blur-3xl -z-10" />
     </section>
-  )
-}
-
-function PathCard({
-  href,
-  icon: Icon,
-  tint,
-  title,
-  description,
-}: {
-  href: string
-  icon: React.ElementType
-  tint: string
-  title: string
-  description: string
-}) {
-  return (
-    <Link
-      href={href as any}
-      className="group flex items-start gap-3 rounded-thumb border border-border bg-background p-4 text-left transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
-    >
-      <span className={`flex size-10 shrink-0 items-center justify-center rounded-well ${tint}`}>
-        <Icon className="size-5 text-foreground/70" />
-      </span>
-      <span className="min-w-0">
-        <span className="block font-display font-bold text-foreground group-hover:text-primary transition-colors">
-          {title}
-        </span>
-        <span className="block text-xs text-muted-foreground">{description}</span>
-      </span>
-    </Link>
   )
 }

@@ -46,10 +46,13 @@ export function AdminSidebar({ userInitial, userName }: AdminSidebarProps) {
 
   return (
     <aside className="md:w-60 shrink-0">
-      <div className="md:sticky md:top-6 flex flex-col gap-1 rounded-card border border-border bg-card p-4">
+      <div
+        className="md:sticky md:top-6 flex flex-col gap-1 rounded-card p-4 text-white"
+        style={{ background: "#0C1826" }}
+      >
         <div className="px-2 pb-3">
-          <span className="font-display text-lg font-extrabold tracking-tight text-foreground">
-            Azen <span className="text-primary">Admin</span>
+          <span className="font-display text-lg font-extrabold tracking-tight text-white">
+            Azen <span style={{ color: "#8FC0F0" }}>Admin</span>
           </span>
         </div>
 
@@ -64,24 +67,29 @@ export function AdminSidebar({ userInitial, userName }: AdminSidebarProps) {
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                   active
-                    ? "bg-secondary text-primary"
-                    : "text-foreground/70 hover:bg-muted hover:text-foreground"
+                    ? "bg-white/10 text-white"
+                    : "text-white/60 hover:bg-white/[.06] hover:text-white"
                 )}
               >
-                <item.icon className="size-4 shrink-0" />
+                <item.icon
+                  className={cn("size-4 shrink-0", active ? "text-[#8FC0F0]" : "")}
+                />
                 {item.label}
               </Link>
             )
           })}
         </nav>
 
-        <div className="mt-3 flex items-center gap-3 border-t border-border px-2 pt-4">
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
+        <div className="mt-3 flex items-center gap-3 border-t border-white/10 px-2 pt-4">
+          <span
+            className="flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
+            style={{ background: "#DE8C2E" }}
+          >
             {userInitial}
           </span>
           <div className="min-w-0">
-            <div className="truncate text-sm font-semibold text-foreground">{userName}</div>
-            <div className="text-xs text-muted-foreground">Админ</div>
+            <div className="truncate text-sm font-semibold text-white">{userName}</div>
+            <div className="text-xs text-white/50">Админ</div>
           </div>
         </div>
       </div>
