@@ -1,6 +1,6 @@
-import { Plane } from "lucide-react"
 import { getActiveFlightDeals } from "@/lib/flights/provider"
-import { FlightDealCard } from "@/components/flights/FlightDealCard"
+import { FlightsDirectory } from "@/components/flights/FlightsDirectory"
+import { PageHeader } from "@/components/ui/page-header"
 
 export const metadata = {
   title: "Хямд нислэг Японд | Azen",
@@ -11,27 +11,22 @@ export default async function FlightsPage() {
   const deals = await getActiveFlightDeals()
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      <section className="px-4 pt-16 pb-10 text-center">
-        <div className="mx-auto flex w-fit items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold text-primary">
-          <Plane className="h-4 w-4" /> Хямд нислэгийн саналууд
-        </div>
-        <h1 className="mt-4 text-4xl font-black text-foreground md:text-5xl">Японд хямд нисье</h1>
-        <p className="mx-auto mt-3 max-w-xl text-gray-600">
-          Бид олсон хамгийн сайн нислэгийн саналуудыг доор жагсаав. Тийзээ нислэгийн компани эсвэл агентын
-          сайт дээр шууд авна, дараа нь буух нисэх онгоцны буудлаасаа хүргэлтээ нэг товчоор захиалаарай.
-        </p>
-      </section>
+    <div className="min-h-screen bg-background py-12 px-4 md:px-6">
+      <div className="mx-auto max-w-content space-y-10">
+        <PageHeader
+          eyebrow="Улаанбаатараас"
+          title="Хямд нислэгийн санал"
+          lead="Тийзээ нислэгийн компани эсвэл агентын сайтаас шууд аваад, буух буудлаасаа хүргэлтээ нэг товчоор нэмээрэй."
+        />
 
-      <section className="mx-auto grid max-w-5xl gap-4 px-4 sm:grid-cols-2">
         {deals.length === 0 ? (
-          <p className="col-span-full text-center text-gray-500">
+          <p className="rounded-card border border-dashed border-border p-12 text-center text-muted-foreground">
             Одоогоор санал алга байна. Удахгүй шинэ саналууд нэмэгдэх болно.
           </p>
         ) : (
-          deals.map((deal) => <FlightDealCard key={deal.id} deal={deal} />)
+          <FlightsDirectory deals={deals} />
         )}
-      </section>
+      </div>
     </div>
   )
 }
