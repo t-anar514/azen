@@ -49,33 +49,33 @@ export function Phrasebook({ collections }: PhrasebookProps) {
   const totalPhrases = collections.reduce((acc, col) => acc + col.phrases.length, 0)
 
   return (
-    <div className="py-12 max-w-6xl mx-auto px-4">
+    <div className="py-12 max-w-content mx-auto px-4 md:px-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
-          <h2 className="text-3xl font-bold text-foreground flex items-center gap-2">
+          <h2 className="flex items-center gap-2 font-display text-section text-foreground">
             <Sparkles className="text-primary" />
             {t("title")}
           </h2>
-          <p className="text-gray-600 mt-1">{t("subtitle")}</p>
+          <p className="text-muted-foreground mt-1">{t("subtitle")}</p>
         </div>
 
-        <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm border border-border/30">
-          <Trophy className="w-5 h-5 text-yellow-500" />
+        <div className="flex items-center gap-3 rounded-pill border border-border bg-card px-4 py-2 shadow-sm">
+          <Trophy className="w-5 h-5 text-saffron-600" />
           <span className="font-bold text-foreground">{t("learned", { learned: learnedCount, total: totalPhrases })}</span>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex overflow-x-auto pb-4 mb-6 scrollbar-hide gap-2 md:gap-4 sticky top-20 z-30 bg-background py-2 -mx-4 px-4 md:static md:bg-transparent">
+      {/* Category tabs */}
+      <div className="flex overflow-x-auto pb-4 mb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden gap-2 sticky top-16 z-30 bg-background/95 backdrop-blur py-2 -mx-4 px-4 md:static md:bg-transparent">
         {collections.map((collection, idx) => (
           <button
             key={collection.id}
             onClick={() => setActiveTab(idx)}
             className={`
-              whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-bold transition-all
+              whitespace-nowrap rounded-pill border px-5 py-2 text-sm font-semibold transition-all
               ${activeTab === idx
-                ? "bg-primary text-white shadow-md transform scale-105"
-                : "bg-white text-gray-600 hover:bg-white/80 hover:text-foreground"}
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-border bg-card text-foreground hover:bg-muted"}
             `}
           >
             {collection.title}

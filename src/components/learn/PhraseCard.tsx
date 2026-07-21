@@ -28,20 +28,20 @@ export function PhraseCard({ phrase, onToggleLearned, isLearned }: PhraseCardPro
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       className={`
-        bg-white rounded-xl shadow-sm border transition-colors p-6 flex flex-col gap-4 relative overflow-hidden
-        ${isLearned ? "border-primary bg-primary/5" : "border-border/20 hover:border-primary"}
+        rounded-card border bg-card shadow-sm transition-colors p-6 flex flex-col gap-4 relative overflow-hidden
+        ${isLearned ? "border-primary bg-tint-sky/40" : "border-border hover:border-primary/50"}
       `}
     >
       <div className="flex justify-between items-start">
         <div>
-          <h3 className="text-2xl font-bold text-foreground mb-1 font-sans-jp">{phrase.japanese}</h3>
-          <p className="text-sm text-gray-500 uppercase tracking-wide font-medium">{phrase.romaji}</p>
+          <h3 className="font-display text-2xl font-bold text-foreground mb-1">{phrase.japanese}</h3>
+          <p className="text-sm text-muted-foreground uppercase tracking-wide font-medium">{phrase.romaji}</p>
         </div>
         <button
           onClick={handlePlay}
           className={`
             p-4 md:p-3 rounded-full transition-all relative shrink-0
-            ${isSpeaking ? "bg-primary text-white" : "bg-gray-100 text-gray-600 hover:bg-primary hover:text-white"}
+            ${isSpeaking ? "bg-primary text-white" : "bg-muted text-muted-foreground hover:bg-primary hover:text-white"}
           `}
           aria-label="Play audio"
         >
@@ -53,28 +53,28 @@ export function PhraseCard({ phrase, onToggleLearned, isLearned }: PhraseCardPro
       </div>
 
       <div className="flex-1">
-        <p className="text-lg text-gray-800 font-medium mb-2">{phrase.english}</p>
+        <p className="text-lg text-foreground font-medium mb-2">{phrase.english}</p>
 
         {phrase.context && (
-          <div className="inline-flex items-center gap-2 bg-muted text-white text-xs font-bold px-3 py-1 rounded-full">
+          <div className="inline-flex items-center gap-2 rounded-pill bg-tint-saffron px-3 py-1 text-xs font-bold text-saffron-600">
             <span>Azen Tip</span>
-            <span className="font-normal opacity-90 border-l border-white/30 pl-2 ml-1">{phrase.context}</span>
+            <span className="font-normal border-l border-saffron-600/30 pl-2 ml-1">{phrase.context}</span>
           </div>
         )}
       </div>
 
-       <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+       <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
           <label className="flex items-center gap-3 cursor-pointer group select-none">
             <div
               className={`
                 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors
-                ${isLearned ? "bg-primary border-primary text-white" : "border-gray-300 group-hover:border-primary text-transparent"}
+                ${isLearned ? "bg-primary border-primary text-white" : "border-border group-hover:border-primary text-transparent"}
               `}
               onClick={() => onToggleLearned(!isLearned)}
             >
               <Check className="w-4 h-4" />
             </div>
-            <span className={`text-sm font-medium transition-colors ${isLearned ? "text-primary" : "text-gray-500 group-hover:text-primary"}`}>
+            <span className={`text-sm font-medium transition-colors ${isLearned ? "text-primary" : "text-muted-foreground group-hover:text-primary"}`}>
               {isLearned ? tCommon("learnedState.learned") : tCommon("learnedState.markAsLearned")}
             </span>
           </label>
