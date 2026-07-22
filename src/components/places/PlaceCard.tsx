@@ -9,7 +9,7 @@ import type { PlaceRow } from "@/lib/supabase/types"
 
 const Image = NextImage as any
 
-const CATEGORY_TINT: Record<PlaceRow["category"], "sky" | "saffron" | "sage" | "lilac"> = {
+export const CATEGORY_TINT: Record<PlaceRow["category"], "sky" | "saffron" | "sage" | "lilac"> = {
   things_to_do: "sky",
   places_to_eat: "saffron",
   nightlife: "lilac",
