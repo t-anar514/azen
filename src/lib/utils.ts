@@ -4,3 +4,13 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+
+/** Up-to-two-letter avatar fallback ("Anar Tamir" → "AT"), for the avatar-or-initial pattern. */
+export function initials(name: string) {
+  return name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase()
+}

@@ -14,7 +14,7 @@ import {
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
-import { cn } from "@/lib/utils"
+import { cn, initials } from "@/lib/utils"
 import type { GuideRow } from "@/lib/supabase/types"
 
 /** Counts sourced from the (studio) layout's server data (see layout.tsx) —
@@ -42,15 +42,6 @@ interface NavItem {
   /** saffron-tinted badge instead of the neutral muted one (Захиалга = pending, actionable). */
   urgent?: boolean
   dot?: boolean
-}
-
-function initials(name: string) {
-  return name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase()
 }
 
 /**
