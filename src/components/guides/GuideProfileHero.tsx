@@ -7,8 +7,6 @@ import { MessageModal } from "@/components/guides/MessageModal"
 import { cn } from "@/lib/utils"
 import type { GuideRow } from "@/lib/supabase/types"
 
-const TAG_TINTS = ["sky", "saffron", "sage", "lilac"] as const
-
 function initials(name: string) {
   return name
     .split(/\s+/)
@@ -16,6 +14,16 @@ function initials(name: string) {
     .map((w) => w[0])
     .join("")
     .toUpperCase()
+}
+
+/** Cover fill: the guide's own photo when set, else the Eternal Sky navy gradient. */
+function CoverBackground({ guide, gradient }: { guide: GuideRow; gradient: string }) {
+  return guide.cover_image ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={guide.cover_image} alt="" className="absolute inset-0 size-full object-cover" />
+  ) : (
+    <div className="absolute inset-0" style={{ background: gradient }} />
+  )
 }
 
 function GuideAvatar({ guide, className }: { guide: GuideRow; className?: string }) {
@@ -40,8 +48,10 @@ function GuideAvatar({ guide, className }: { guide: GuideRow; className?: string
 function StatBox({ value, label }: { value: string | number; label: string }) {
   return (
     <div className="flex-1 rounded-[14px] bg-muted px-2 py-3 text-center">
-      <div className="font-display text-[19px] font-extrabold text-foreground">{value}</div>
-      <div className="text-[10.5px] text-muted-foreground">{label}</div>
+      <div className="font-display text-[16px] font-extrabold text-foreground md:text-[19px]">
+        {value}
+      </div>
+      <div className="text-[10px] text-muted-foreground md:text-[10.5px]">{label}</div>
     </div>
   )
 }
@@ -60,15 +70,17 @@ interface GuideProfileHeroProps {
  */
 export function GuideProfileHero({ guide, recCount, tripCount }: GuideProfileHeroProps) {
   const ratingLabel = guide.rating.toFixed(1)
+  const price = guide.price ?? 0
 
   return (
     <>
       {/* ── Mobile (Screen 13 — MOBILE GUIDE PROFILE) ── */}
       <div className="md:hidden">
-        <div
-          className="relative h-[150px] overflow-hidden"
-          style={{ background: "radial-gradient(130% 150% at 75% 0%,#0F3B6B,#123456 50%,#0A1B2E)" }}
-        >
+        <div className="relative h-[150px] overflow-hidden">
+          <CoverBackground
+            guide={guide}
+            gradient="radial-gradient(130% 150% at 75% 0%,#0F3B6B,#123456 50%,#0A1B2E)"
+          />
           <div
             className="pointer-events-none absolute -top-5 right-[30px] size-[140px] rounded-full"
             style={{ background: "radial-gradient(circle, rgba(222,140,46,.32), transparent 62%)" }}
@@ -103,17 +115,24 @@ export function GuideProfileHero({ guide, recCount, tripCount }: GuideProfileHer
             <StatBox value={recCount} label="Зөвлөмж" />
           </div>
 
-          <div className="flex gap-2.5">
-            <div className="flex-1">
-              <BookGuideDialog guide={guide} />
+          <div className="flex gap-[9px]">
+            <div className="flex-[1.5]">
+              <BookGuideDialog
+                guide={guide}
+                trigger={
+                  <Button variant="reserve" className="h-auto w-full rounded-[12px] p-[11px] text-[13px]">
+                    Захиалах · ¥{price.toLocaleString()}
+                  </Button>
+                }
+              />
             </div>
             <div className="flex-1">
               <MessageModal
                 guideId={guide.id}
                 guideName={guide.name}
                 trigger={
-                  <Button variant="outline" className="h-auto w-full gap-1.5 rounded-[14px] p-[11px] text-[13px]">
-                    <MessageCircle className="size-[15px]" /> Зурвас илгээх
+                  <Button variant="outline" className="h-auto w-full rounded-[12px] p-[11px] text-[13px]">
+                    Зурвас
                   </Button>
                 }
               />
@@ -124,10 +143,11 @@ export function GuideProfileHero({ guide, recCount, tripCount }: GuideProfileHer
 
       {/* ── Desktop (Screen 12) ── */}
       <div className="hidden md:block">
-        <div
-          className="relative h-[210px] overflow-hidden"
-          style={{ background: "radial-gradient(120% 180% at 75% 0%,#0F3B6B,#123456 50%,#0A1B2E)" }}
-        >
+        <div className="relative h-[210px] overflow-hidden">
+          <CoverBackground
+            guide={guide}
+            gradient="radial-gradient(120% 180% at 75% 0%,#0F3B6B,#123456 50%,#0A1B2E)"
+          />
           <div
             className="pointer-events-none absolute -top-10 right-[120px] size-[280px] rounded-full"
             style={{ background: "radial-gradient(circle, rgba(222,140,46,.32), transparent 62%)" }}
@@ -165,8 +185,8 @@ export function GuideProfileHero({ guide, recCount, tripCount }: GuideProfileHer
 
               {guide.tags.length > 0 && (
                 <div className="mt-3.5 flex flex-wrap gap-2">
-                  {guide.tags.map((tag, i) => (
-                    <PillBadge key={tag} variant={TAG_TINTS[i % TAG_TINTS.length]}>
+                  {guide.tags.map((tag) => (
+                    <PillBadge key={tag} variant="sky">
                       {tag}
                     </PillBadge>
                   ))}

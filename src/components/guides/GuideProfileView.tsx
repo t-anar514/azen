@@ -16,8 +16,6 @@ export type GuideRecPlace = PlaceRow & {
   place_recommendations: { quote: string; guide_id: string }[]
 }
 
-const TAG_TINTS = ["sky", "saffron", "sage", "lilac"] as const
-
 type TabId = "recs" | "posts" | "reviews" | "about"
 
 const TABS: { id: TabId; label: string }[] = [
@@ -178,8 +176,8 @@ export function GuideProfileView({ guide, recs, posts, reviews, citySlugById }: 
             )}
             {guide.tags.length > 0 && (
               <div className="flex flex-wrap gap-2">
-                {guide.tags.map((tag, i) => (
-                  <PillBadge key={tag} variant={TAG_TINTS[i % TAG_TINTS.length]}>
+                {guide.tags.map((tag) => (
+                  <PillBadge key={tag} variant="sky">
                     {tag}
                   </PillBadge>
                 ))}

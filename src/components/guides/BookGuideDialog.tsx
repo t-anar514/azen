@@ -20,10 +20,12 @@ import type { GuideRow } from "@/lib/supabase/types"
 
 interface BookGuideDialogProps {
   guide: GuideRow
+  /** Custom trigger (e.g. the mobile compact CTA). Defaults to the full-copy saffron button. */
+  trigger?: React.ReactNode
 }
 
 /** Booking request dialog (design doc, Screen 12 — saffron "Хөтөч захиалах" CTA). */
-export function BookGuideDialog({ guide }: BookGuideDialogProps) {
+export function BookGuideDialog({ guide, trigger }: BookGuideDialogProps) {
   const router = useRouter()
   const [city, setCity] = React.useState(guide.location ?? "")
   const [tripDate, setTripDate] = React.useState("")
@@ -89,9 +91,11 @@ export function BookGuideDialog({ guide }: BookGuideDialogProps) {
   return (
     <Dialog onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="reserve" className="h-auto w-full rounded-[14px] p-[13px] text-[14.5px]">
-          Хөтөч захиалах · ¥{price.toLocaleString()}/цаг
-        </Button>
+        {trigger ?? (
+          <Button variant="reserve" className="h-auto w-full rounded-[14px] p-[13px] text-[14.5px]">
+            Хөтөч захиалах · ¥{price.toLocaleString()}/цаг
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[440px]">
         <DialogHeader>
