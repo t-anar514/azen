@@ -23,8 +23,11 @@ export function CompletenessCard({ pct, items }: CompletenessCardProps) {
         <span className="font-display text-[15px] font-extrabold text-success">{pct}%</span>
       </div>
       <div className="mb-3.5 h-2 overflow-hidden rounded-pill bg-muted">
+        {/* mockup (design-full.html:1593) is green→sky, not sky→saffron — success
+            token has an exact match; the sky stop (#5AA0E0) doesn't map to any
+            defined light-mode token, so it stays a literal value. */}
         <div
-          className="h-full rounded-pill bg-gradient-to-r from-primary to-accent"
+          className="h-full rounded-pill bg-gradient-to-r from-success to-[#5AA0E0]"
           style={{ width: `${pct}%` }}
         />
       </div>

@@ -5,12 +5,12 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-/** Up-to-two-letter avatar fallback ("Anar Tamir" → "AT"), for the avatar-or-initial pattern. */
+/** Up-to-two-letter avatar fallback ("Anar Tamir" → "AT", " Anar Tamir" → "AT"), for the avatar-or-initial pattern. */
 export function initials(name: string) {
   return name
+    .trim()
     .split(/\s+/)
     .slice(0, 2)
-    .map((w) => w[0])
+    .map((part) => part.charAt(0).toUpperCase())
     .join("")
-    .toUpperCase()
 }

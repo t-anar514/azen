@@ -54,8 +54,9 @@ export default async function StudioDashboard() {
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-8 md:px-8">
-      <header className="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row">
+      <header className="mb-6 flex items-center justify-between gap-4 md:items-start">
         <div>
+          <p className="text-xs font-bold text-saffron md:hidden">Azen Studio</p>
           <h1 className="font-display text-2xl font-extrabold md:text-3xl">Сайн уу, {firstName} 👋</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Энэ 7 хоногт таны профайлыг{" "}
@@ -67,20 +68,35 @@ export default async function StudioDashboard() {
               }.`}
           </p>
         </div>
-        {/* header actions are desktop-only — mobile relies on StudioTabBar's saffron FAB instead */}
-        <div className="hidden shrink-0 gap-2.5 md:flex">
-          <Button asChild variant="outline" className="rounded-pill border-primary text-primary hover:bg-secondary">
-            <Link href="/studio/new">
-              <FileText className="size-[15px]" />
-              Нийтлэл бичих
-            </Link>
-          </Button>
-          <Button asChild variant="message" className="rounded-pill">
-            <Link href="/studio/new">
-              <Plus className="size-[15px]" strokeWidth={2.4} />
-              Шинэ зөвлөмж
-            </Link>
-          </Button>
+
+        {/* mobile: top-right avatar chip. desktop: action buttons (mobile relies on
+            StudioTabBar's saffron FAB instead — the two are mutually exclusive by breakpoint). */}
+        <div className="flex shrink-0 items-center gap-2.5">
+          {guide.image ? (
+            <img
+              src={guide.image}
+              alt={guide.name}
+              className="size-[38px] rounded-full object-cover md:hidden"
+            />
+          ) : (
+            <span className="flex size-[38px] items-center justify-center rounded-full bg-gradient-to-br from-primary to-sky-500 text-[13px] font-bold text-white md:hidden">
+              {initials(guide.name)}
+            </span>
+          )}
+          <div className="hidden gap-2.5 md:flex">
+            <Button asChild variant="outline" className="rounded-pill border-primary text-primary hover:bg-secondary">
+              <Link href="/studio/new">
+                <FileText className="size-[15px]" />
+                Нийтлэл бичих
+              </Link>
+            </Button>
+            <Button asChild variant="message" className="rounded-pill">
+              <Link href="/studio/new">
+                <Plus className="size-[15px]" strokeWidth={2.4} />
+                Шинэ зөвлөмж
+              </Link>
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -164,7 +180,10 @@ export default async function StudioDashboard() {
           <div className="rounded-thumb border border-[#F1DEBE] bg-saffron-50 p-3.5">
             <div className="mb-2.5 flex items-center gap-2">
               <span className="font-display text-sm font-bold text-foreground">Шинэ хүсэлт</span>
-              <Badge variant="rating">{requests.length}</Badge>
+              {/* solid saffron + white — distinct from the desktop panel's light-tint "N шинэ" pill */}
+              <span className="rounded-pill bg-saffron px-2 py-0.5 text-[10px] font-bold text-white">
+                {requests.length}
+              </span>
             </div>
             <div className="flex items-center gap-2.5">
               <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-sky-500 text-xs font-bold text-white">

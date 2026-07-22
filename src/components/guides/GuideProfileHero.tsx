@@ -4,17 +4,8 @@ import { Button } from "@/components/ui/button"
 import { PillBadge } from "@/components/ui/pill-badge"
 import { BookGuideDialog } from "@/components/guides/BookGuideDialog"
 import { MessageModal } from "@/components/guides/MessageModal"
-import { cn } from "@/lib/utils"
+import { cn, initials } from "@/lib/utils"
 import type { GuideRow } from "@/lib/supabase/types"
-
-function initials(name: string) {
-  return name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase()
-}
 
 /** Cover fill: the guide's own photo when set, else the Eternal Sky navy gradient. */
 function CoverBackground({ guide, gradient }: { guide: GuideRow; gradient: string }) {

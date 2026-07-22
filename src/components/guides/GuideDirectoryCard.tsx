@@ -10,20 +10,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { useMounted } from "@/hooks/useMounted"
+import { initials } from "@/lib/utils"
 import { BookingModal } from "./BookingModal"
 import { MessageModal } from "./MessageModal"
 import type { GuideRow } from "@/lib/supabase/types"
 
 const TAG_TINTS = ["sky", "saffron", "sage", "lilac"] as const
-
-function initials(name: string) {
-  return name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase()
-}
 
 /** Compact directory card (design doc, Screen 04) — booking + message preserved. */
 export function GuideDirectoryCard({ guide }: { guide: GuideRow }) {
