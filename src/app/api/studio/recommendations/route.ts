@@ -80,9 +80,10 @@ export async function PATCH(req: Request) {
   }
 
   if ("quote" in b) {
-    const { error } = await supabase.from("place_recommendations")
-      .update({ quote: b.quote }).eq("place_id", b.id)
+    const { data, error } = await supabase.from("place_recommendations")
+      .update({ quote: b.quote }).eq("place_id", b.id).select("place_id")
     if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+    if (!data?.length) return NextResponse.json({ error: "not found" }, { status: 404 })
   }
 
   return NextResponse.json({ ok: true })
