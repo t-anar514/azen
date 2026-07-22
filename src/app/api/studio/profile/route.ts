@@ -34,7 +34,8 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: "invalid" }, { status: 400 })
 
   // RLS guides_update_own ensures a guide can only update their own row
-  const { error } = await supabase.from("guides").update(update).eq("id", guide.id)
+  const { data, error } = await supabase.from("guides").update(update).eq("id", guide.id).select("id")
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+  if (!data?.length) return NextResponse.json({ error: "not found" }, { status: 404 })
   return NextResponse.json({ ok: true })
 }

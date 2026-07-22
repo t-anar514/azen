@@ -36,8 +36,10 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: "invalid" }, { status: 400 })
 
   // RLS gb_guide_update ensures only the owning guide can update
-  const { error } = await supabase.from("guide_bookings")
+  const { data, error } = await supabase.from("guide_bookings")
     .update({ status, updated_at: new Date().toISOString() }).eq("id", id)
+    .select("id")
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+  if (!data?.length) return NextResponse.json({ error: "not found" }, { status: 404 })
   return NextResponse.json({ ok: true })
 }

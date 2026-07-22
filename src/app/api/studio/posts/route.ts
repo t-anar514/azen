@@ -74,7 +74,8 @@ export async function PATCH(req: Request) {
   if (update.published === true) update.published_at = new Date().toISOString()
 
   // RLS posts_guide_manage_own ensures only the authoring guide can update
-  const { error } = await supabase.from("posts").update(update).eq("id", b.id)
+  const { data, error } = await supabase.from("posts").update(update).eq("id", b.id).select("id")
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+  if (!data?.length) return NextResponse.json({ error: "not found" }, { status: 404 })
   return NextResponse.json({ ok: true })
 }

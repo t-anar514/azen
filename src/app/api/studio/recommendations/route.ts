@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: "auth" }, { status: 401 })
   const { data: guide } = await supabase
-    .from("guides").select("id,name").eq("profile_id", user.id).single()
+    .from("guides").select("id").eq("profile_id", user.id).single()
   if (!guide) return NextResponse.json({ error: "not a guide" }, { status: 403 })
 
   const b = await req.json().catch(() => ({}))
@@ -28,7 +28,11 @@ export async function POST(req: Request) {
 
   const { error: rErr } = await supabase.from("place_recommendations")
     .insert({ place_id: id, guide_id: guide.id, quote: b.quote })
-  if (rErr) return NextResponse.json({ error: rErr.message }, { status: 400 })
+  if (rErr) {
+    // roll back the just-created places row so a retry doesn't collide on the PK
+    await supabase.from("places").delete().eq("id", id)
+    return NextResponse.json({ error: rErr.message }, { status: 400 })
+  }
   return NextResponse.json({ id })
 }
 
@@ -69,8 +73,10 @@ export async function PATCH(req: Request) {
   }
 
   if (Object.keys(placeUpdate).length) {
-    const { error } = await supabase.from("places").update(placeUpdate).eq("id", b.id)
+    const { data, error } = await supabase.from("places")
+      .update(placeUpdate).eq("id", b.id).select("id")
     if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+    if (!data?.length) return NextResponse.json({ error: "not found" }, { status: 404 })
   }
 
   if ("quote" in b) {

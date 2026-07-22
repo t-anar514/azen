@@ -1,13 +1,11 @@
 import type { SupabaseClient } from "@supabase/supabase-js"
+import { createAdminClient } from "@/lib/supabase/admin"
 import { weekDeltaPct, sumCompleted } from "./statsMath"
 
-// ⚠ Client contract: pass the SERVICE-ROLE client (`createAdminClient()`)
-// from server code only, with a guideId taken from an RLS-verified session
-// (`requireGuide()`). The views/saves counts read `analytics_events` (RLS:
-// admin-only SELECT, 0015) and `saved_items` (RLS: own rows only, 0013) — a
-// session-scoped client silently counts 0 there. These helpers only ever
-// return aggregate counts scoped to that verified guide, never rows, which
-// is the same trust boundary as /api/analytics (service-role writes).
+// Session client in, aggregates out. The admin client is constructed
+// internally, used only for the analytics_events/saved_items counts (RLS:
+// admin-only / own-rows-only) — same trust boundary as /api/analytics.
+// guideId must come from an RLS-verified session (requireGuide()).
 
 const WEEK = 7 * 24 * 60 * 60 * 1000
 
@@ -20,9 +18,9 @@ export interface GuideStats {
 }
 
 async function countEvents(
-  s: SupabaseClient, name: string, guideId: string, since?: string, until?: string,
+  admin: SupabaseClient, name: string, guideId: string, since?: string, until?: string,
 ) {
-  let q = s.from("analytics_events").select("id", { count: "exact", head: true })
+  let q = admin.from("analytics_events").select("id", { count: "exact", head: true })
     .eq("name", name).eq("props->>guide_id", guideId)
   if (since) q = q.gte("created_at", since)
   if (until) q = q.lt("created_at", until)
@@ -33,15 +31,16 @@ async function countEvents(
 export async function loadGuideStats(
   s: SupabaseClient, guideId: string,
 ): Promise<GuideStats> {
+  const admin = createAdminClient()
   const now = Date.now()
   const wk1 = new Date(now - WEEK).toISOString()
   const wk2 = new Date(now - 2 * WEEK).toISOString()
 
   // profile views (all-time + weekly windows)
   const [viewsTotal, viewsThis, viewsPrev] = await Promise.all([
-    countEvents(s, "guide_profile_viewed", guideId),
-    countEvents(s, "guide_profile_viewed", guideId, wk1),
-    countEvents(s, "guide_profile_viewed", guideId, wk2, wk1),
+    countEvents(admin, "guide_profile_viewed", guideId),
+    countEvents(admin, "guide_profile_viewed", guideId, wk1),
+    countEvents(admin, "guide_profile_viewed", guideId, wk2, wk1),
   ])
 
   // the guide's published place ids (for saves attribution)
@@ -51,7 +50,7 @@ export async function loadGuideStats(
 
   let savesTotal = 0, savesThis = 0, savesPrev = 0
   if (placeIds.length) {
-    const base = () => s.from("saved_items")
+    const base = () => admin.from("saved_items")
       .select("id", { count: "exact", head: true })
       .eq("item_type", "place").in("item_id", placeIds)
     const [{ count: t }, { count: a }, { count: b }] = await Promise.all([
@@ -85,6 +84,7 @@ export interface GuideRecRow {
 export async function loadGuideRecRows(
   s: SupabaseClient, guideId: string,
 ): Promise<GuideRecRow[]> {
+  const admin = createAdminClient()
   const { data: places } = await s.from("places")
     .select("id,name,city_id,category,published")
     .eq("created_by_guide_id", guideId)
@@ -92,9 +92,9 @@ export async function loadGuideRecRows(
   const rows = places ?? []
   return Promise.all(rows.map(async (p) => {
     const [{ count: views }, { count: saves }] = await Promise.all([
-      s.from("analytics_events").select("id", { count: "exact", head: true })
+      admin.from("analytics_events").select("id", { count: "exact", head: true })
         .eq("name", "place_viewed").eq("props->>place_id", p.id),
-      s.from("saved_items").select("id", { count: "exact", head: true })
+      admin.from("saved_items").select("id", { count: "exact", head: true })
         .eq("item_type", "place").eq("item_id", p.id),
     ])
     return { id: p.id, name: p.name, city_id: p.city_id, category: p.category,
