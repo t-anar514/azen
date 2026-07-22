@@ -1100,6 +1100,7 @@ export default async function StudioLayout({ children }: { children: React.React
 ```tsx
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
+import { createAdminClient } from "@/lib/supabase/admin"
 import { getCurrentGuide } from "@/lib/guides/current"
 import { loadGuideStats, loadGuideRecRows } from "@/lib/guides/stats"
 import { profileCompleteness } from "@/lib/guides/completeness"
@@ -1114,10 +1115,15 @@ export default async function StudioDashboard() {
   if (!ctx) redirect("/guides/apply")
   const { guide } = ctx
   const supabase = await createClient()
+  // Stats loaders REQUIRE the service-role client: analytics_events SELECT is
+  // admin-only and saved_items SELECT is own-rows-only, so a session client
+  // silently counts 0. guide.id comes from the RLS-verified session and the
+  // loaders return only aggregates — same trust boundary as /api/analytics.
+  const admin = createAdminClient()
 
   const [stats, recRows, { data: requests }] = await Promise.all([
-    loadGuideStats(supabase, guide.id),
-    loadGuideRecRows(supabase, guide.id),
+    loadGuideStats(admin, guide.id),
+    loadGuideRecRows(admin, guide.id),
     supabase.from("guide_bookings")
       .select("*").eq("guide_id", guide.id).eq("status", "pending")
       .order("created_at", { ascending: false }),

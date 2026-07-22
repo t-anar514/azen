@@ -1,6 +1,14 @@
 import type { SupabaseClient } from "@supabase/supabase-js"
 import { weekDeltaPct, sumCompleted } from "./statsMath"
 
+// ⚠ Client contract: pass the SERVICE-ROLE client (`createAdminClient()`)
+// from server code only, with a guideId taken from an RLS-verified session
+// (`requireGuide()`). The views/saves counts read `analytics_events` (RLS:
+// admin-only SELECT, 0015) and `saved_items` (RLS: own rows only, 0013) — a
+// session-scoped client silently counts 0 there. These helpers only ever
+// return aggregate counts scoped to that verified guide, never rows, which
+// is the same trust boundary as /api/analytics (service-role writes).
+
 const WEEK = 7 * 24 * 60 * 60 * 1000
 
 export interface GuideStats {
