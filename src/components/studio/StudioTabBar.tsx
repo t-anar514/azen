@@ -34,6 +34,12 @@ export function StudioTabBar() {
   const pathname = usePathname()
   const path = pathname.replace(/^\/[a-z]{2}(?=\/|$)/, "") || "/"
 
+  // /studio/new (Task 4.6) has its own mobile sticky action bar (Ноорог |
+  // Нийтлэх) at the same fixed-bottom position — per the design doc's
+  // mobile Create screen, that bar replaces this nav entirely rather than
+  // stacking with it.
+  if (path === "/studio/new") return null
+
   function isActive(href: string, exact?: boolean) {
     return exact ? path === href : path === href || path.startsWith(`${href}/`)
   }
