@@ -114,6 +114,7 @@ export interface PlaceRow {
   is_hidden_gem: boolean
   published: boolean
   order_index: number
+  created_by_guide_id: string | null
   created_at: string
   updated_at: string
 }
@@ -225,8 +226,37 @@ export interface GuideRow {
   image: string | null
   image_public_id: string | null
   video_url: string | null
+  slug: string | null
+  cover_image: string | null
   created_at: string
   updated_at: string
+}
+
+export type GuideBookingStatus =
+  | "pending" | "confirmed" | "completed" | "declined" | "cancelled"
+
+export interface GuideBookingRow {
+  id: string
+  guide_id: string
+  traveler_id: string
+  city: string | null
+  trip_date: string
+  hours: number
+  amount: number
+  status: GuideBookingStatus
+  note: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface GuideReviewRow {
+  id: string
+  guide_id: string
+  reviewer_id: string
+  booking_id: string | null
+  rating: number
+  body: string | null
+  created_at: string
 }
 
 export interface PhraseRow {
