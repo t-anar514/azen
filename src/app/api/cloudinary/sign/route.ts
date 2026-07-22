@@ -4,8 +4,9 @@ import { cloudinary } from "@/lib/cloudinary"
 
 // Issues a short-lived signature for a direct browser -> Cloudinary upload.
 // The browser never sees the API secret; it only gets back enough to perform
-// one signed upload call itself. Restricted to admins, since this is only
-// used from the admin dashboard's image fields.
+// one signed upload call itself. Restricted to admins and guides, since this
+// is used from the admin dashboard's image fields and from the guide Studio
+// (recommendation/post cover images, profile avatar/cover, etc).
 export async function POST(request: Request) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -20,8 +21,8 @@ export async function POST(request: Request) {
     .eq("id", user.id)
     .single()
 
-  if (profile?.role !== "admin") {
-    return NextResponse.json({ error: "Admins only" }, { status: 403 })
+  if (profile?.role !== "admin" && profile?.role !== "guide") {
+    return NextResponse.json({ error: "Not allowed" }, { status: 403 })
   }
 
   const body = await request.json().catch(() => ({}))
