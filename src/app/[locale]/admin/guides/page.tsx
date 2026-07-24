@@ -59,7 +59,7 @@ export default async function AdminGuidesPage() {
   return (
     /* Mobile is a full-bleed dark screen (design "Админ — Admin"); desktop keeps
        the light content area beside the dark sidebar (design Screen 14). */
-    <div className="-mx-4 -mt-5 min-h-screen bg-[#0C1826] px-4 pb-10 pt-5 text-white md:mx-0 md:mt-0 md:min-h-0 md:bg-transparent md:p-0 md:text-foreground">
+    <div className="-mx-4 -mb-24 -mt-5 min-h-screen bg-[#0C1826] px-4 pb-28 pt-5 text-white md:m-0 md:min-h-0 md:bg-transparent md:p-0 md:text-foreground">
       {/* ── Header ── */}
       <div className="flex items-start justify-between gap-4">
         <div>

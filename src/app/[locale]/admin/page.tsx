@@ -49,31 +49,42 @@ export default async function AdminDashboardPage() {
   ]
 
   return (
-    <div className="space-y-8">
+    /* Mobile is the dark admin screen (design Screen 13) with a compact
+       2-up stat grid — one card per row made six numbers a six-screen scroll.
+       Desktop keeps the light content area beside the dark sidebar. */
+    <div className="-mx-4 -mb-24 -mt-5 min-h-screen bg-[#0C1826] px-4 pb-28 pt-5 text-white md:m-0 md:min-h-0 md:bg-transparent md:p-0 md:text-foreground">
       <div>
-        <h1 className="font-display text-3xl font-extrabold tracking-tight text-foreground">
+        <h1 className="font-display text-[22px] font-extrabold tracking-tight text-white md:text-3xl md:text-foreground">
           Хянах самбар
         </h1>
-        <p className="text-muted-foreground">Azen дээр яг одоо юу нийтлэгдсэнийг нэг дороос.</p>
+        <p className="mt-1 text-[13px] text-white/55 md:text-base md:text-muted-foreground">
+          Azen дээр яг одоо юу нийтлэгдсэнийг нэг дороос.
+        </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-4 grid grid-cols-2 gap-3 md:mt-8 md:gap-4 lg:grid-cols-3">
         {stats.map((stat) => (
           <Link
             key={stat.label}
             href={stat.href}
-            className="group flex flex-col gap-3 rounded-card border border-border bg-card p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+            className="group flex flex-col gap-2 rounded-2xl border border-white/10 bg-white/[.04] p-3.5 transition-colors hover:bg-white/[.08] md:gap-3 md:rounded-card md:border-border md:bg-card md:p-5 md:shadow-sm md:transition-all md:hover:-translate-y-0.5 md:hover:bg-card md:hover:shadow-md"
           >
             <div className="flex items-center justify-between">
-              <span className="flex size-9 items-center justify-center rounded-well bg-tint-sky text-primary">
+              <span className="flex size-8 items-center justify-center rounded-well bg-white/10 text-[#8FC0F0] md:size-9 md:bg-tint-sky md:text-primary">
                 <stat.icon className="size-4" />
               </span>
-              <ArrowRight className="size-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+              <ArrowRight className="hidden size-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 md:block" />
             </div>
             <div>
-              <div className="font-display text-3xl font-extrabold text-foreground">{stat.value}</div>
-              <div className="text-sm font-semibold text-foreground">{stat.label}</div>
-              <div className="text-xs text-muted-foreground">{stat.sub}</div>
+              <div className="font-display text-2xl font-extrabold leading-tight text-white md:text-3xl md:text-foreground">
+                {stat.value}
+              </div>
+              <div className="text-[12.5px] font-semibold leading-snug text-white md:text-sm md:text-foreground">
+                {stat.label}
+              </div>
+              <div className="text-[11px] leading-snug text-white/50 md:text-xs md:text-muted-foreground">
+                {stat.sub}
+              </div>
             </div>
           </Link>
         ))}
