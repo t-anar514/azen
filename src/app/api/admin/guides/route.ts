@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { requireAdmin } from "@/lib/supabase/requireAdmin"
+import { guideSlug } from "@/lib/guides/slug"
 
 export async function GET() {
   const guard = await requireAdmin()
@@ -25,12 +26,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "name is required" }, { status: 400 })
   }
 
+  // Every guide needs a slug or their public /guides/[slug] profile 404s.
+  const { data: existing } = await supabase.from("guides").select("slug")
+  const taken = new Set(
+    (existing ?? []).map((g: { slug: string | null }) => g.slug).filter(Boolean) as string[]
+  )
+
   const { data, error } = await supabase
     .from("guides")
     .insert({
       legacy_id: body.legacy_id ?? null,
       profile_id: body.profile_id ?? null,
       name: body.name,
+      slug: body.slug ?? guideSlug(body.name, taken),
       location: body.location ?? null,
       tags: body.tags ?? [],
       rating: body.rating ?? 5.0,
