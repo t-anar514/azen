@@ -437,6 +437,7 @@ export function CreateRecommendationForm({
           category={chip.value}
           categoryLabel={CATEGORY_LABEL[chip.value] ?? chip.label}
           cityName={cityName}
+          neighborhood={neighborhood}
           priceBand={priceBand}
           coverImage={images[0]}
           quote={quote}

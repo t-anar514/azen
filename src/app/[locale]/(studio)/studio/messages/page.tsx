@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { getCurrentGuide } from "@/lib/guides/current"
 import { Badge } from "@/components/ui/badge"
+import { MarkReadButton } from "@/components/account/MarkReadButton"
 import { initials } from "@/lib/utils"
 import type { MessageRow } from "@/lib/supabase/types"
 
@@ -78,6 +79,11 @@ export default async function StudioMessagesPage() {
                     {m.interest && m.trip_date ? " · " : ""}
                     {m.trip_date}
                   </p>
+                )}
+                {m.status === "new" && (
+                  <div className="mt-2.5">
+                    <MarkReadButton messageId={m.id} />
+                  </div>
                 )}
               </div>
             </div>

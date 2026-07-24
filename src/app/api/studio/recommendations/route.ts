@@ -71,6 +71,9 @@ export async function PATCH(req: Request) {
   for (const [key, column] of Object.entries(FIELD_MAP)) {
     if (key in b) placeUpdate[column] = b[key]
   }
+  // The card renders the recommendation quote, but places.short_desc mirrors
+  // it (set on create) — keep them in sync when the quote is edited.
+  if ("quote" in b) placeUpdate.short_desc = String(b.quote ?? "").slice(0, 240)
 
   if (Object.keys(placeUpdate).length) {
     const { data, error } = await supabase.from("places")

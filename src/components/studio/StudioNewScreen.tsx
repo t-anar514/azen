@@ -53,13 +53,13 @@ export function StudioNewScreen({ cities, guideName, guideImage, initialTab, ini
 
   function handleRecSaved(result: { id: string; published: boolean }) {
     setError(null)
-    setNote(result.published ? "Нийтэлгдлээ." : "Ноорог хадгалагдлаа.")
+    setNote(result.published ? "Нийтлэгдлээ." : "Ноорог хадгалагдлаа.")
     router.replace(`/studio/new?id=${result.id}`)
   }
 
   function handlePostSaved(result: { published: boolean }) {
     setError(null)
-    setNote(result.published ? "Нийтэлгдлээ." : "Ноорог хадгалагдлаа.")
+    setNote(result.published ? "Нийтлэгдлээ." : "Ноорог хадгалагдлаа.")
   }
 
   return (

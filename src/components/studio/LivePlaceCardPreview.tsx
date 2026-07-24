@@ -10,6 +10,7 @@ interface LivePlaceCardPreviewProps {
   category: PlaceCategory
   categoryLabel: string
   cityName: string
+  neighborhood?: string | null
   priceBand: number
   coverImage: string | null
   quote: string
@@ -29,6 +30,7 @@ export function LivePlaceCardPreview({
   category,
   categoryLabel,
   cityName,
+  neighborhood,
   priceBand,
   coverImage,
   quote,
@@ -67,7 +69,7 @@ export function LivePlaceCardPreview({
         </h3>
         <p className="flex items-center gap-1.5 text-[12.5px] text-muted-foreground">
           <span className="inline-flex items-center gap-1">
-            <MapPin className="size-[13px]" /> {cityName || "Хот"}
+            <MapPin className="size-[13px]" /> {neighborhood || cityName || "Хот"}
           </span>
           <span aria-hidden>·</span>
           <span className="font-bold text-foreground/80">{"¥".repeat(Math.min(3, Math.max(1, priceBand)))}</span>
