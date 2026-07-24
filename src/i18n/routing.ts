@@ -20,6 +20,7 @@ export const routing = defineRouting({
     '/experiences/[id]': '/experiences/[id]',
     '/flights': '/flights',
     '/guides': '/guides',
+    '/guides/[slug]': '/guides/[slug]',
     '/blog': '/blog',
     '/blog/[slug]': '/blog/[slug]',
     '/learn': '/learn',

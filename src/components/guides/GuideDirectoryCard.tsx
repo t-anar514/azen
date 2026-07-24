@@ -2,6 +2,7 @@
 
 import { CheckCircle2, PlayCircle, Star } from "lucide-react"
 
+import { Link } from "@/i18n/routing"
 import { Button } from "@/components/ui/button"
 import { PillBadge } from "@/components/ui/pill-badge"
 import {
@@ -80,7 +81,16 @@ export function GuideDirectoryCard({ guide }: { guide: GuideRow }) {
         {/* name + meta */}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
-            <h3 className="truncate font-display text-lg font-bold text-foreground">{guide.name}</h3>
+            {guide.slug ? (
+              <Link
+                href={{ pathname: "/guides/[slug]", params: { slug: guide.slug } }}
+                className="truncate font-display text-lg font-bold text-foreground hover:text-primary hover:underline"
+              >
+                {guide.name}
+              </Link>
+            ) : (
+              <h3 className="truncate font-display text-lg font-bold text-foreground">{guide.name}</h3>
+            )}
             {guide.is_verified && <CheckCircle2 className="size-4 shrink-0 text-success" />}
           </div>
           <div className="mt-0.5 flex items-center gap-1 text-sm text-muted-foreground">
