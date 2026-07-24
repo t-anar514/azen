@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { MoreHorizontal } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { CATEGORY_LABEL } from "@/components/places/categoryLabels"
@@ -50,17 +51,18 @@ export function RecsTable({ rows, cityNameById }: RecsTableProps) {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-[1.8fr_.7fr_.7fr_.7fr] gap-2 border-b border-border bg-muted/40 px-5 py-2.5 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+          <div className="grid grid-cols-[1.8fr_.7fr_.7fr_.7fr_auto] gap-2 border-b border-border bg-muted/40 px-5 py-2.5 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
             <span>Газар</span>
             <span className="text-right">Үзэлт</span>
             <span className="text-right">Хадгалсан</span>
             <span className="text-center">Төлөв</span>
+            <span className="sr-only">Үйлдэл</span>
           </div>
           <div>
             {rows.map((r, i) => (
               <div
                 key={r.id}
-                className="grid grid-cols-[1.8fr_.7fr_.7fr_.7fr] items-center gap-2 border-b border-border/60 px-5 py-3 text-[13.5px] last:border-b-0"
+                className="grid grid-cols-[1.8fr_.7fr_.7fr_.7fr_auto] items-center gap-2 border-b border-border/60 px-5 py-3 text-[13.5px] last:border-b-0"
               >
                 <span className="flex min-w-0 items-center gap-2.5">
                   <span
@@ -87,6 +89,13 @@ export function RecsTable({ rows, cityNameById }: RecsTableProps) {
                     {r.published ? "Нийтэлсэн" : "Ноорог"}
                   </Badge>
                 </span>
+                <Link
+                  href={`/studio/new?id=${r.id}`}
+                  aria-label={`${r.name} — засах`}
+                  className="flex size-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                >
+                  <MoreHorizontal className="size-[18px]" />
+                </Link>
               </div>
             ))}
           </div>
