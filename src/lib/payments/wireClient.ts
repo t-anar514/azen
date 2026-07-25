@@ -29,14 +29,15 @@ export class WireError extends Error {
 }
 
 function apiKey(): string {
-  const key = process.env.WIRE_API_KEY
-  if (!key) throw new Error("WIRE_API_KEY is not set")
+  const key = process.env.WIRE_API_KEY ?? process.env.WIRE_SECRET_KEY
+  if (!key) throw new Error("WIRE_API_KEY or WIRE_SECRET_KEY is not set")
   return key
 }
 
 /** Test keys route to the built-in `sandbox` operator and never move money. */
 export function isTestMode(): boolean {
-  return (process.env.WIRE_API_KEY ?? "").startsWith("sk_test_")
+  const key = process.env.WIRE_API_KEY ?? process.env.WIRE_SECRET_KEY ?? ""
+  return key.startsWith("sk_test_")
 }
 
 /**

@@ -1,28 +1,19 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
+import {
+  generateBookingCode,
+  INTEREST_OPTIONS,
+  NOTE_MAX_LENGTH,
+} from "@/lib/guides/booking"
+import { isDateBookable } from "@/lib/guides/availabilityData"
 
 export async function POST(req: Request) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: "auth" }, { status: 401 })
-
-  const { guideId, tripDate, hours, city, note } = await req.json().catch(() => ({}))
-  const h = Number(hours)
-  if (!guideId || !tripDate || !h || h <= 0)
-    return NextResponse.json({ error: "invalid" }, { status: 400 })
-
-  const { data: guide } = await supabase
-    .from("guides").select("price").eq("id", guideId).single()
-  if (!guide) return NextResponse.json({ error: "no guide" }, { status: 404 })
-  const amount = Number(guide.price ?? 0) * h
-
-  // traveler can read own rows → select-after-insert is safe here
-  const { data, error } = await supabase.from("guide_bookings")
-    .insert({ guide_id: guideId, traveler_id: user.id, trip_date: tripDate,
-              hours: h, city: city ?? null, note: note ?? null, amount })
-    .select("id,status").single()
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 })
-  return NextResponse.json(data)
+  // Payment is required. Direct clients to POST /api/bookings/checkout instead,
+  // which takes a hold and returns a Wire checkout URL.
+  return NextResponse.json(
+    { error: "use POST /api/bookings/checkout for payment" },
+    { status: 405 }
+  )
 }
 
 export async function PATCH(req: Request) {
