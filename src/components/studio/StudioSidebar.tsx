@@ -7,6 +7,7 @@ import {
   MapPin,
   FileText,
   Calendar,
+  CalendarDays,
   MessageCircle,
   DollarSign,
   Eye,
@@ -59,6 +60,7 @@ export function StudioSidebar({ guide, counts }: StudioSidebarProps) {
     { href: "/studio/recommendations", label: "Миний зөвлөмж", icon: MapPin, count: counts.recommendations },
     { href: "/studio/posts", label: "Нийтлэл", icon: FileText, count: counts.posts },
     { href: "/studio/bookings", label: "Захиалга", icon: Calendar, count: counts.pendingBookings, urgent: true },
+    { href: "/studio/availability", label: "Боломжит өдөр", icon: CalendarDays },
     { href: "/studio/messages", label: "Зурвас", icon: MessageCircle, dot: counts.hasUnreadMessages },
     { href: "/studio/earnings", label: "Орлого", icon: DollarSign },
   ]

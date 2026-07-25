@@ -1,6 +1,15 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { Eye, Heart, Calendar, Star, FileText, Plus } from "lucide-react"
+import {
+  Eye,
+  Heart,
+  Calendar,
+  CalendarDays,
+  ChevronRight,
+  Star,
+  FileText,
+  Plus,
+} from "lucide-react"
 
 import { createClient } from "@/lib/supabase/server"
 import { getCurrentGuide } from "@/lib/guides/current"
@@ -175,6 +184,25 @@ export default async function StudioDashboard() {
             iconClassName="text-saffron-600"
           />
         </div>
+
+        {/* The mobile tab bar is a fixed 2 + FAB + 2 layout from the design, so
+            availability has no tab. Without this row the page would be
+            unreachable on a phone — the sidebar carrying it is md:block. */}
+        <Link
+          href="/studio/availability"
+          className="flex items-center gap-3 rounded-thumb border border-border bg-card px-3.5 py-3"
+        >
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-tint-sky">
+            <CalendarDays className="size-4 text-sky-600" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-semibold text-foreground">Боломжит өдөр</span>
+            <span className="block text-xs text-muted-foreground">
+              Ажиллах боломжгүй өдрөө хаах
+            </span>
+          </span>
+          <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
+        </Link>
 
         {requests.length > 0 && (
           <div className="rounded-thumb border border-[#F1DEBE] bg-saffron-50 p-3.5">
