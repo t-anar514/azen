@@ -165,7 +165,8 @@ export async function POST(req: Request) {
     const origin = new URL(req.url).origin
     const session = await createCheckoutSession({
       paymentIntentId: intent.id,
-      successUrl: `${origin}/booking/${bookingId}`,
+      // The confirmation page waits for the webhook to confirm the payment
+      successUrl: `${origin}/mn/booking/${bookingId}`,
       idempotencyKey: `sess-${bookingId}`,
     })
 
