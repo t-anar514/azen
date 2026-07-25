@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest"
-import { resolveDayState, toDateKey, isValidDateKey } from "./availability"
+import {
+  resolveDayState,
+  toDateKey,
+  isValidDateKey,
+  occupiesDate,
+} from "./availability"
 
 const opts = (blocked: string[] = [], booked: string[] = []) => ({
   today: "2026-07-25",
@@ -66,5 +71,42 @@ describe("isValidDateKey", () => {
   })
   it("rejects a SQL-injection-shaped string", () => {
     expect(isValidDateKey("2026-08-01'; drop table guides;--")).toBe(false)
+  })
+})
+
+describe("occupiesDate", () => {
+  const NOW = Date.parse("2026-07-25T12:00:00Z")
+  const future = new Date(NOW + 10 * 60_000).toISOString()
+  const past = new Date(NOW - 10 * 60_000).toISOString()
+
+  it("counts confirmed and completed bookings", () => {
+    expect(occupiesDate({ status: "confirmed" }, NOW)).toBe(true)
+    expect(occupiesDate({ status: "completed" }, NOW)).toBe(true)
+  })
+
+  it("ignores statuses that freed the date", () => {
+    expect(occupiesDate({ status: "declined" }, NOW)).toBe(false)
+    expect(occupiesDate({ status: "cancelled" }, NOW)).toBe(false)
+    expect(occupiesDate({ status: "expired" }, NOW)).toBe(false)
+    // legacy pre-payment rows never locked a date and must not start now
+    expect(occupiesDate({ status: "pending" }, NOW)).toBe(false)
+  })
+
+  it("counts an unexpired hold", () => {
+    expect(occupiesDate({ status: "awaiting_payment", hold_expires_at: future }, NOW)).toBe(true)
+  })
+
+  // The whole point of a hold: an abandoned checkout must free the date.
+  it("ignores an expired hold", () => {
+    expect(occupiesDate({ status: "awaiting_payment", hold_expires_at: past }, NOW)).toBe(false)
+  })
+
+  it("treats a hold with no expiry as not occupying, rather than forever", () => {
+    expect(occupiesDate({ status: "awaiting_payment", hold_expires_at: null }, NOW)).toBe(false)
+    expect(occupiesDate({ status: "awaiting_payment" }, NOW)).toBe(false)
+  })
+
+  it("ignores an unparseable expiry instead of locking the date", () => {
+    expect(occupiesDate({ status: "awaiting_payment", hold_expires_at: "nonsense" }, NOW)).toBe(false)
   })
 })

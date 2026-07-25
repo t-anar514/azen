@@ -51,3 +51,29 @@ export function resolveDayState(
   if (opts.blocked.has(date)) return "blocked"
   return "available"
 }
+
+/** Booking statuses that take a date off the market, mirroring the predicate on
+ *  `uq_gb_guide_date_active` (migration 0024). Kept in sync deliberately: if the
+ *  index and this list disagree, the calendar shows a date the database will
+ *  then refuse to sell. */
+const OCCUPYING_STATUSES = new Set(["confirmed", "completed", "awaiting_payment"])
+
+/**
+ * Whether a booking row currently occupies its `trip_date`.
+ *
+ * An `awaiting_payment` hold counts only until it expires. That is what lets a
+ * date be reserved during checkout without one traveller who never pays holding
+ * a guide's day hostage — the earlier design avoided that by ignoring unpaid
+ * rows entirely, which is no longer safe now that payment is what confirms a
+ * booking.
+ */
+export function occupiesDate(
+  row: { status: string; hold_expires_at?: string | null },
+  nowMs: number = Date.now()
+): boolean {
+  if (!OCCUPYING_STATUSES.has(row.status)) return false
+  if (row.status !== "awaiting_payment") return true
+  if (!row.hold_expires_at) return false
+  const expiry = new Date(row.hold_expires_at).getTime()
+  return Number.isFinite(expiry) && expiry > nowMs
+}

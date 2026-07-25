@@ -1,14 +1,18 @@
 import "server-only"
 import { createClient } from "@/lib/supabase/server"
-import { resolveDayState, toDateKey } from "@/lib/guides/availability"
+import { occupiesDate, resolveDayState, toDateKey } from "@/lib/guides/availability"
 
 /**
  * Blocked + booked date keys for one guide inside an inclusive window.
  *
- * `booked` is derived from confirmed guide_bookings rather than stored, so
- * accepting a trip closes the day with no extra write and declining reopens it.
- * Pending requests deliberately do not appear — otherwise one traveller who
- * never pays could hold a guide's day hostage.
+ * `booked` is derived from guide_bookings rather than stored, so a sale closes
+ * the day with no extra write.
+ *
+ * Unpaid holds are included while they last. That reverses the earlier rule
+ * here — pending rows used to be ignored so nobody could squat a guide's day —
+ * because payment is now what confirms a booking, and a date has to be reserved
+ * for the minutes a traveller spends at checkout. The squatting problem is
+ * handled by the hold expiring instead (see `occupiesDate`).
  */
 export async function loadAvailability(
   guideId: string,
@@ -26,16 +30,25 @@ export async function loadAvailability(
       .lte("date", to),
     supabase
       .from("guide_bookings")
-      .select("trip_date")
+      .select("trip_date, status, hold_expires_at")
       .eq("guide_id", guideId)
-      .eq("status", "confirmed")
+      .in("status", ["confirmed", "completed", "awaiting_payment"])
       .gte("trip_date", from)
       .lte("trip_date", to),
   ])
 
+  // Expiry is filtered here rather than in the query so the rule for which rows
+  // occupy a date lives in one tested place alongside resolveDayState.
+  const now = Date.now()
+  const booked = (bookedRows ?? [])
+    .filter((r: { status: string; hold_expires_at: string | null }) =>
+      occupiesDate(r, now)
+    )
+    .map((r: { trip_date: string }) => r.trip_date)
+
   return {
     blocked: (blockedRows ?? []).map((r: { date: string }) => r.date),
-    booked: (bookedRows ?? []).map((r: { trip_date: string }) => r.trip_date),
+    booked,
   }
 }
 
