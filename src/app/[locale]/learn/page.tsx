@@ -1,7 +1,7 @@
 import React from "react"
 import { SonicHero } from "@/components/learn/SonicHero"
 import { Phrasebook } from "@/components/learn/Phrasebook"
-import { KonbiniSimulator } from "@/components/learn/KonbiniSimulator"
+import { KonbiniPractice } from "@/components/learn/KonbiniPractice"
 import { createClient } from "@/lib/supabase/server"
 
 export const metadata = {
@@ -23,10 +23,10 @@ export default async function LearnPage() {
   const collections = await getCollections()
 
   return (
-    <div className="bg-background min-h-screen pb-20">
+    <div className="min-h-screen bg-background pb-16">
       <SonicHero />
       <Phrasebook collections={collections} />
-      <KonbiniSimulator />
+      <KonbiniPractice />
     </div>
   )
 }

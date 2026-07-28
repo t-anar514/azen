@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js"
 
 import { createClient } from "@/lib/supabase/server"
 import { getCurrentGuide } from "@/lib/guides/current"
+import { guideFallbackPath } from "@/lib/studio/context"
 import { StudioNewScreen } from "@/components/studio/StudioNewScreen"
 import type { RecommendationInitial } from "@/components/studio/CreateRecommendationForm"
 import type { PlaceCategory } from "@/lib/supabase/types"
@@ -63,7 +64,7 @@ async function loadInitialRec(
 export default async function StudioNewPage({ searchParams }: PageProps) {
   const { id, tab } = await searchParams
   const ctx = await getCurrentGuide()
-  if (!ctx) redirect("/guides/apply")
+  if (!ctx) redirect(await guideFallbackPath())
   const { guide } = ctx
   const supabase = await createClient()
 

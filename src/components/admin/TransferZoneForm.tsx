@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AIRPORTS } from "@/lib/transfers/airports"
+import { formatTransferPrice } from "@/lib/transfers/format"
 import type { TransferZoneRow, VehicleOptionRow } from "@/lib/supabase/types"
 
 type FormState = {
@@ -193,7 +194,7 @@ export function TransferZoneForm({ zone, vehicles, initialPrices = {} }: Transfe
                     id={`price-${vehicle.id}`}
                     type="number"
                     min="0"
-                    placeholder={`Formula: ${formulaPrice.toLocaleString()} ${vehicle.currency}`}
+                    placeholder={`Formula: ${formatTransferPrice(formulaPrice, vehicle.currency)}`}
                     value={form.prices[vehicle.id] ?? ""}
                     onChange={(e) => updatePrice(vehicle.id, e.target.value)}
                   />

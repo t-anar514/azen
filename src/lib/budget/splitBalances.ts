@@ -15,6 +15,10 @@ export interface TripParticipant {
   id: string
   displayName: string
   color?: string
+  // Linked Azen account, when this participant is a real user (the trip owner
+  // or an accepted collaborator — kept in sync by the 0018 triggers). Ghost
+  // participants (a name the owner typed) have no userId.
+  userId?: string | null
 }
 
 export interface CostSplit {

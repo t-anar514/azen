@@ -4,6 +4,7 @@ import { Plus } from "lucide-react"
 
 import { createClient } from "@/lib/supabase/server"
 import { getCurrentGuide } from "@/lib/guides/current"
+import { guideFallbackPath } from "@/lib/studio/context"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 
@@ -18,7 +19,7 @@ interface PostListRow {
 /** `/studio/posts` (Нийтлэл) — the guide's blog posts, published + drafts. */
 export default async function StudioPostsPage() {
   const ctx = await getCurrentGuide()
-  if (!ctx) redirect("/guides/apply")
+  if (!ctx) redirect(await guideFallbackPath())
   const { guide } = ctx
   const supabase = await createClient()
 

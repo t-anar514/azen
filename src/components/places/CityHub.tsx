@@ -168,7 +168,7 @@ export function CityHub({ city, places, recs }: CityHubProps) {
       </div>
 
       {/* ── ONE UNIFIED TAB BAR ── */}
-      <div className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur">
+      <div className="sticky top-14 z-20 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto max-w-content px-4 md:px-6">
           <nav className="flex gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {TABS.map(({ id, label, icon: Icon }) => (

@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
-import { Heart } from "lucide-react"
+import { Bookmark, Heart } from "lucide-react"
 
 import { createClient } from "@/lib/supabase/client"
 import { track } from "@/lib/analytics"
@@ -15,12 +15,20 @@ interface SaveHeartProps {
   itemId: string
   /** Open the folder picker after saving (detail pages); cards keep quick-save */
   withSheet?: boolean
+  /** Articles bookmark rather than "like" — same save, different affordance. */
+  icon?: "heart" | "bookmark"
   className?: string
 }
 
 // Optimistic save toggle. Logged out → /login with a return path.
 // A save starts unfiled (folder_id null); the sheet files it into a folder.
-export function SaveHeart({ itemType, itemId, withSheet = false, className }: SaveHeartProps) {
+export function SaveHeart({
+  itemType,
+  itemId,
+  withSheet = false,
+  icon = "heart",
+  className,
+}: SaveHeartProps) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -107,12 +115,21 @@ export function SaveHeart({ itemType, itemId, withSheet = false, className }: Sa
           className
         )}
       >
-        <Heart
-          className={cn(
-            "size-4.5 transition-colors",
-            saved ? "fill-destructive text-destructive" : "text-foreground/70"
-          )}
-        />
+        {icon === "bookmark" ? (
+          <Bookmark
+            className={cn(
+              "size-4.5 transition-colors",
+              saved ? "fill-primary text-primary" : "text-foreground/70"
+            )}
+          />
+        ) : (
+          <Heart
+            className={cn(
+              "size-4.5 transition-colors",
+              saved ? "fill-destructive text-destructive" : "text-foreground/70"
+            )}
+          />
+        )}
       </button>
       {withSheet && (
         <SaveToFolderSheet

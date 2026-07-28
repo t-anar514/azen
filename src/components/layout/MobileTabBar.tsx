@@ -72,12 +72,23 @@ const HIDDEN_PREFIXES = [
   "/auth",
 ]
 
+/**
+ * A blog *article* is a focused reading view with its own sticky "ask the
+ * author" bar, so it follows the same rule as planner/transfer. The blog
+ * *index* keeps the tab bar, hence the depth check rather than a prefix.
+ */
+function isArticleRoute(pathname: string) {
+  return /^\/blog\/[^/]+$/.test(pathname)
+}
+
 export function MobileTabBar() {
   const pathname = usePathname()
 
   if (HIDDEN_PREFIXES.some((r) => pathname === r || pathname.startsWith(`${r}/`))) {
     return null
   }
+
+  if (isArticleRoute(pathname)) return null
 
   return (
     <>

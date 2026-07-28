@@ -1,133 +1,65 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import type { PhraseCollectionRow } from "@/lib/supabase/types"
-import { PhraseCard } from "./PhraseCard"
-import { Sparkles, Trophy } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { PhraseCard, CARD_ACCENTS } from "./PhraseCard"
 
 interface PhrasebookProps {
   collections: PhraseCollectionRow[]
 }
 
 export function Phrasebook({ collections }: PhrasebookProps) {
-  const t = useTranslations("Learn.phrasebook");
   const [activeTab, setActiveTab] = useState(0)
-  const [learnedPhrases, setLearnedPhrases] = useState<Record<string, boolean>>({})
-
-  // Load learned state from localStorage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem("azen-learned-phrases")
-    if (saved) {
-      try {
-        setLearnedPhrases(JSON.parse(saved))
-      } catch (e) {
-        console.error("Failed to parse learned phrases", e)
-      }
-    }
-  }, [])
-
-  // Save to localStorage whenever learned state changes
-  useEffect(() => {
-    localStorage.setItem("azen-learned-phrases", JSON.stringify(learnedPhrases))
-  }, [learnedPhrases])
-
-  const toggleLearned = (phraseKey: string, isLearned: boolean) => {
-    setLearnedPhrases(prev => ({
-      ...prev,
-      [phraseKey]: isLearned
-    }))
-  }
 
   if (collections.length === 0) {
     return null
   }
 
-  const currentCollection = collections[activeTab]
-  const learnedCount = Object.values(learnedPhrases).filter(Boolean).length
-  const totalPhrases = collections.reduce((acc, col) => acc + col.phrases.length, 0)
+  const currentCollection = collections[Math.min(activeTab, collections.length - 1)]
 
   return (
-    <div className="py-12 max-w-content mx-auto px-4 md:px-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-        <div>
-          <h2 className="flex items-center gap-2 font-display text-section text-foreground">
-            <Sparkles className="text-primary" />
-            {t("title")}
-          </h2>
-          <p className="text-muted-foreground mt-1">{t("subtitle")}</p>
-        </div>
-
-        <div className="flex items-center gap-3 rounded-pill border border-border bg-card px-4 py-2 shadow-sm">
-          <Trophy className="w-5 h-5 text-saffron-600" />
-          <span className="font-bold text-foreground">{t("learned", { learned: learnedCount, total: totalPhrases })}</span>
-        </div>
-      </div>
-
-      {/* Category tabs */}
-      <div className="flex overflow-x-auto pb-4 mb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden gap-2 sticky top-16 z-30 bg-background/95 backdrop-blur py-2 -mx-4 px-4 md:static md:bg-transparent">
-        {collections.map((collection, idx) => (
-          <button
-            key={collection.id}
-            onClick={() => setActiveTab(idx)}
-            className={`
-              whitespace-nowrap rounded-pill border px-5 py-2 text-sm font-semibold transition-all
-              ${activeTab === idx
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-border bg-card text-foreground hover:bg-muted"}
-            `}
-          >
-            {collection.title}
-          </button>
-        ))}
-      </div>
-
-      {/* Content */}
-      <div className="min-h-[400px]">
-         <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
+    <div className="mx-auto max-w-content px-4 py-10 md:px-6 md:py-12">
+      {/* Category pills */}
+      <div className="mb-8 flex flex-wrap gap-2.5">
+        {collections.map((collection, idx) => {
+          const active = activeTab === idx
+          return (
+            <button
+              key={collection.id}
+              type="button"
+              onClick={() => setActiveTab(idx)}
+              className={`rounded-pill border px-5 py-2 text-sm font-semibold transition-colors ${
+                active
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border bg-card text-foreground hover:bg-muted"
+              }`}
             >
-              <div className="mb-6">
-                <h3 className="text-xl font-bold text-foreground">{currentCollection.title}</h3>
-                <p className="text-gray-600">{currentCollection.description}</p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
-                {currentCollection.phrases.map((phrase) => {
-                  const phraseKey = `${phrase.romaji}-${currentCollection.title}`
-                  return (
-                    <motion.div
-                      key={phraseKey}
-                      initial={{ opacity: 1 }}
-                      drag="x"
-                      dragConstraints={{ left: 0, right: 0 }}
-                      onDragEnd={(e, info) => {
-                        if (info.offset.x < -100 && activeTab < collections.length - 1) {
-                          setActiveTab(prev => prev + 1)
-                        } else if (info.offset.x > 100 && activeTab > 0) {
-                          setActiveTab(prev => prev - 1)
-                        }
-                      }}
-                      className="touch-pan-y"
-                    >
-                      <PhraseCard
-                        phrase={phrase}
-                        isLearned={!!learnedPhrases[phraseKey]}
-                        onToggleLearned={(val) => toggleLearned(phraseKey, val)}
-                      />
-                    </motion.div>
-                  )
-                })}
-              </div>
-            </motion.div>
-         </AnimatePresence>
+              {collection.title}
+            </button>
+          )
+        })}
       </div>
+
+      {/* Phrase grid */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentCollection.id}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -12 }}
+          transition={{ duration: 0.25 }}
+          className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"
+        >
+          {currentCollection.phrases.map((phrase, idx) => (
+            <PhraseCard
+              key={`${phrase.romaji}-${idx}`}
+              phrase={phrase}
+              accent={CARD_ACCENTS[idx % CARD_ACCENTS.length]}
+            />
+          ))}
+        </motion.div>
+      </AnimatePresence>
     </div>
   )
 }

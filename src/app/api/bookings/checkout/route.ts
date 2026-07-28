@@ -6,6 +6,7 @@ import {
   generateBookingCode,
   INTEREST_OPTIONS,
   NOTE_MAX_LENGTH,
+  quoteBooking,
 } from "@/lib/guides/booking"
 import { FALLBACK_RATES } from "@/lib/currency/format"
 import { isUsableRate, jpyToTogrog, toWireAmount } from "@/lib/payments/money"
@@ -13,7 +14,6 @@ import {
   WireError,
   createCheckoutSession,
   createPaymentIntent,
-  resolveOperators,
 } from "@/lib/payments/wireClient"
 
 /**
@@ -67,8 +67,16 @@ export async function POST(req: Request) {
     .single()
   if (!guide) return NextResponse.json({ error: "no guide" }, { status: 404 })
 
-  const amountJpy = Number(guide.price ?? 0) * h
-  if (amountJpy <= 0) {
+  // Two different numbers, and mixing them up is why the service fee used to be
+  // given away: `subtotal` is the guide's payout (what /studio's earnings sum),
+  // `total` is what the traveler is charged and what the dialog quotes them.
+  // 0024 spells out the same split — "amount stays the JPY guide payout,
+  // amount_mnt is what Wire actually charges".
+  const { subtotal: payoutJpy, total: chargeJpy } = quoteBooking(
+    Number(guide.price ?? 0),
+    h
+  )
+  if (payoutJpy <= 0) {
     return NextResponse.json({ error: "guide has no price set" }, { status: 409 })
   }
 
@@ -86,17 +94,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "exchange rate unavailable" }, { status: 503 })
   }
 
-  const amountMnt = jpyToTogrog(amountJpy, fxRate)
-  const wireAmount = toWireAmount(amountMnt)
-
-  if (resolveOperators().length === 0) {
-    // Live mode with no activated operator: Wire would reject the intent with a
-    // less obvious error, so fail here with something actionable.
-    return NextResponse.json(
-      { error: "no payment operator configured" },
-      { status: 503 }
-    )
-  }
+  // Only the charge is converted — the payout stays in JPY on the booking row.
+  const chargeMnt = jpyToTogrog(chargeJpy, fxRate)
+  const wireAmount = toWireAmount(chargeMnt)
 
   // Service role: create_booking_hold is not callable by `authenticated`, by
   // design — see 0024. The verified user id is passed rather than trusted from
@@ -107,8 +107,8 @@ export async function POST(req: Request) {
     p_traveler_id: user.id,
     p_trip_date: tripDate,
     p_hours: h,
-    p_amount: amountJpy,
-    p_amount_mnt: amountMnt,
+    p_amount: payoutJpy,
+    p_amount_mnt: chargeMnt,
     p_fx_rate: fxRate,
     p_code: generateBookingCode(),
     p_city: city ?? null,
@@ -174,8 +174,8 @@ export async function POST(req: Request) {
     // from any client (0024).
     const { error: payErr } = await admin.from("payments").insert({
       guide_booking_id: bookingId,
-      amount: amountJpy,
-      amount_mnt: amountMnt,
+      amount: chargeJpy,
+      amount_mnt: chargeMnt,
       currency: "MNT",
       provider: "wire",
       status: "pending",
@@ -193,7 +193,7 @@ export async function POST(req: Request) {
       url: session.url,
       bookingId,
       code: booking.code,
-      amountMnt,
+      amountMnt: chargeMnt,
     })
   } catch (e) {
     await releaseHold()

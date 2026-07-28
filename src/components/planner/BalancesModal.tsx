@@ -23,11 +23,14 @@ interface BalancesModalProps {
   splits: Map<string, CostSplit>
   currency: Currency
   rates: Rates
+  // Custom trigger element (e.g. the labeled footer pill); falls back to the
+  // plain icon button.
+  trigger?: React.ReactNode
 }
 
 // "Who owes whom" panel: per-person net balances, a Splitwise-style simplified
 // settle-up list, and a per-category cost breakdown of the whole trip.
-export function BalancesModal({ items, participants, splits, currency, rates }: BalancesModalProps) {
+export function BalancesModal({ items, participants, splits, currency, rates, trigger }: BalancesModalProps) {
   const fmt = (val: number) => formatCurrency(val, currency, rates)
 
   const participantById = useMemo(
@@ -66,9 +69,11 @@ export function BalancesModal({ items, participants, splits, currency, rates }: 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-full" title="Тооцоо">
-          <Wallet className="h-5 w-5" />
-        </Button>
+        {trigger || (
+          <Button variant="ghost" size="icon" className="rounded-full" title="Тооцоо">
+            <Wallet className="h-5 w-5" />
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[450px] max-h-[85vh] overflow-y-auto">
         <DialogHeader>

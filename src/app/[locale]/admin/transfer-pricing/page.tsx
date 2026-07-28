@@ -3,7 +3,9 @@ import { createClient } from "@/lib/supabase/server"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { TransferZoneRowActions } from "@/components/admin/TransferZoneRowActions"
+import { VehicleRateForm } from "@/components/admin/VehicleRateForm"
 import { AIRPORT_NAMES } from "@/lib/transfers/airports"
+import { formatTransferPrice } from "@/lib/transfers/format"
 import type { TransferZoneRow, RoutePriceRow, VehicleOptionRow } from "@/lib/supabase/types"
 
 async function getData() {
@@ -21,10 +23,6 @@ async function getData() {
   }
 }
 
-function formatPrice(price: number, currency: string) {
-  return `${new Intl.NumberFormat("mn-MN").format(price)} ${currency}`
-}
-
 export default async function AdminTransferPricingPage() {
   const { zones, routePrices, vehicles } = await getData()
   const activeVehicles = vehicles.filter((v) => v.is_active)
@@ -35,24 +33,41 @@ export default async function AdminTransferPricingPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-2xl font-black uppercase italic tracking-tight">Transfer pricing</h1>
+        <p className="text-muted-foreground">
+          Set the per-km rate card below. Every fare is <strong>base fare + price/km × distance</strong>,
+          so the price/km you set here drives every quote — unless a destination zone has a curated
+          override.
+        </p>
+      </div>
+
+      {/* ── Per-km rate card (drives the distance formula) ── */}
+      <section className="space-y-3">
         <div>
-          <h1 className="text-2xl font-black uppercase italic tracking-tight">Transfer pricing</h1>
-          <p className="text-muted-foreground">
-            Destination zones per airport, with a curated price per vehicle where you&apos;ve set one.
-            Anything left blank falls back to that vehicle&apos;s base fare + per-km rate × the zone&apos;s
-            distance — edit those rates on the{" "}
-            <Link href="/admin/transfers" className="underline">
-              Transfers
-            </Link>{" "}
-            page&apos;s vehicle options, or directly in Supabase for now.
+          <h2 className="text-lg font-bold">Vehicle rate card (price per km)</h2>
+          <p className="text-sm text-muted-foreground">
+            Edit each tier&apos;s base fare and per-km rate. Changes apply live to the /transfer quote.
           </p>
         </div>
-        <Button asChild>
-          <Link href="/admin/transfer-pricing/new">+ New zone</Link>
-        </Button>
-      </div>
+        <VehicleRateForm vehicles={vehicles} />
+      </section>
+
+      {/* ── Destination zones + curated overrides ── */}
+      <section className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-bold">Destination zones</h2>
+            <p className="text-sm text-muted-foreground">
+              A distance per airport route. Prices fall back to the formula above unless you curate an
+              exact override per vehicle.
+            </p>
+          </div>
+          <Button asChild>
+            <Link href="/admin/transfer-pricing/new">+ New zone</Link>
+          </Button>
+        </div>
 
       {zones.length === 0 ? (
         <Card>
@@ -95,10 +110,12 @@ export default async function AdminTransferPricingPage() {
                         <div key={vehicle.id} className="rounded-md border border-border/40 px-3 py-2">
                           <p className="text-xs text-muted-foreground">{vehicle.name}</p>
                           {override ? (
-                            <p className="font-semibold">{formatPrice(override.price, override.currency)}</p>
+                            <p className="font-semibold">
+                              {formatTransferPrice(override.price, override.currency)}
+                            </p>
                           ) : (
                             <p className="font-semibold text-muted-foreground">
-                              {formatPrice(Math.round(formulaPrice / 500) * 500, vehicle.currency)}{" "}
+                              {formatTransferPrice(Math.round(formulaPrice / 500) * 500, vehicle.currency)}{" "}
                               <span className="text-xs font-normal">(formula)</span>
                             </p>
                           )}
@@ -112,6 +129,7 @@ export default async function AdminTransferPricingPage() {
           })}
         </div>
       )}
+      </section>
     </div>
   )
 }

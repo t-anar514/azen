@@ -17,6 +17,9 @@ interface RouteMapProps {
   to: Point
   routeGeometry: { type: "LineString"; coordinates: [number, number][] } | null
   onDestinationDragEnd?: (lat: number, lng: number) => void
+  // Tailwind height classes for the map container. Defaults to the tall form
+  // map; the /transfer summary sidebar passes a shorter one.
+  heightClass?: string
 }
 
 // Keeps the viewport framed on whatever we currently have — both pins if a
@@ -111,9 +114,15 @@ function ResizeOnMount() {
   return null
 }
 
-export function RouteMap({ from, to, routeGeometry, onDestinationDragEnd }: RouteMapProps) {
+export function RouteMap({
+  from,
+  to,
+  routeGeometry,
+  onDestinationDragEnd,
+  heightClass = "h-[320px] md:h-[380px]",
+}: RouteMapProps) {
   return (
-    <div className="h-[320px] w-full overflow-hidden rounded-xl border border-border md:h-[380px]">
+    <div className={`${heightClass} w-full overflow-hidden rounded-xl border border-border`}>
       <Map
         initialViewState={{
           latitude: from?.lat ?? DEFAULT_CENTER.lat,

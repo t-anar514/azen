@@ -1,11 +1,12 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { BookingStatusCard } from "@/components/transfer/BookingStatusCard"
+import type { DriverContactInfo } from "@/lib/bookings"
 import type { BookingRow } from "@/lib/supabase/types"
 
 interface ActiveBookingBannerProps {
   booking: BookingRow
-  driver: { full_name: string; phone: string } | null
+  driver: DriverContactInfo | null
 }
 
 // State A — a logged-in user already has a transfer in flight, so /transfer
@@ -17,7 +18,7 @@ export function ActiveBookingBanner({ booking, driver }: ActiveBookingBannerProp
   return (
     <div className="min-h-screen bg-background pt-16">
       <BookingStatusCard booking={booking} driver={driver} heading="Таны идэвхтэй хүргэлт" />
-      <div className="mx-auto flex max-w-2xl flex-wrap items-center justify-center gap-3 px-4 pb-16">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-3 px-4 pb-16">
         <Button asChild variant="outline">
           <Link href={`/transfer/trip/${booking.id}`}>Аяллын явцыг харах</Link>
         </Button>

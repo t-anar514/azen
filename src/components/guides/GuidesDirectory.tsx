@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { SlidersHorizontal } from "lucide-react"
+import { Search, SlidersHorizontal } from "lucide-react"
 
 import { GuideDirectoryCard } from "@/components/guides/GuideDirectoryCard"
 import { cn } from "@/lib/utils"
@@ -25,6 +25,7 @@ export function GuidesDirectory({ guides }: GuidesDirectoryProps) {
   const [specialty, setSpecialty] = React.useState<string>("all")
   const [maxPrice, setMaxPrice] = React.useState<number>(6000)
   const [sort, setSort] = React.useState<SortKey>("rating")
+  const [query, setQuery] = React.useState("")
 
   const locations = React.useMemo(
     () => [...new Set(guides.map((g) => g.location).filter(Boolean))] as string[],
@@ -36,10 +37,15 @@ export function GuidesDirectory({ guides }: GuidesDirectoryProps) {
   )
 
   const results = React.useMemo(() => {
+    const q = query.trim().toLowerCase()
     const filtered = guides.filter((g) => {
       if (location !== "all" && g.location !== location) return false
       if (specialty !== "all" && !g.tags.includes(specialty)) return false
       if ((g.price ?? 0) > maxPrice) return false
+      if (q) {
+        const haystack = `${g.name} ${g.location ?? ""} ${g.bio ?? ""} ${g.tags.join(" ")}`.toLowerCase()
+        if (!haystack.includes(q)) return false
+      }
       return true
     })
     return filtered.sort((a, b) => {
@@ -47,12 +53,42 @@ export function GuidesDirectory({ guides }: GuidesDirectoryProps) {
       if (sort === "price_low") return (a.price ?? 0) - (b.price ?? 0)
       return (b.price ?? 0) - (a.price ?? 0)
     })
-  }, [guides, location, specialty, maxPrice, sort])
+  }, [guides, location, specialty, maxPrice, sort, query])
 
   return (
     <div className="grid gap-8 lg:grid-cols-[260px_1fr]">
+      {/* ── Mobile: search + location chips (design doc, Screen 13) ── */}
+      <div className="space-y-3 lg:hidden">
+        <div className="flex items-center gap-2.5 rounded-well border border-border bg-card px-3.5 py-2.5">
+          <Search className="size-4 shrink-0 text-muted-foreground" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Хот, мэргэшлээр хайх…"
+            className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+          />
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {[{ id: "all", label: "Бүгд" }, ...locations.map((l) => ({ id: l, label: l }))].map((opt) => (
+            <button
+              key={opt.id}
+              type="button"
+              onClick={() => setLocation(opt.id)}
+              className={cn(
+                "shrink-0 rounded-pill border px-3.5 py-1.5 text-xs font-semibold transition-colors",
+                location === opt.id
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border bg-card text-[#475569] hover:bg-muted"
+              )}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* filter panel */}
-      <aside className="lg:sticky lg:top-20 lg:self-start">
+      <aside className="hidden lg:sticky lg:top-20 lg:block lg:self-start">
         <div className="rounded-card border border-border bg-card p-5 space-y-5">
           <div className="flex items-center gap-2 font-display font-bold text-foreground">
             <SlidersHorizontal className="size-4" /> Шүүлтүүр

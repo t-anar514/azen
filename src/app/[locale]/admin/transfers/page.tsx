@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { TransferRowActions } from "@/components/admin/TransferRowActions"
 import { BOOKING_STATUS_LABELS } from "@/lib/bookings"
+import { formatTransferPrice } from "@/lib/transfers/format"
 import type { BookingRow, DriverRow, PaymentRow } from "@/lib/supabase/types"
 
 function formatDateTime(value: string) {
@@ -68,9 +69,9 @@ export default async function AdminTransfersPage() {
                     <p>{booking.pickup_location} → {booking.dropoff_location}</p>
                     <p>{booking.guest_phone} · {booking.guest_email}</p>
                     <p>
-                      {new Intl.NumberFormat("mn-MN").format(booking.price)} {booking.currency}
+                      {formatTransferPrice(booking.price, booking.currency)}
                       {booking.distance_km != null && ` · ~${booking.distance_km} km`}
-                      {booking.pricing_source === "vehicle_flat" && (
+                      {booking.zone_id == null && (
                         <span className="ml-1 font-semibold text-amber-600">
                           · unlisted destination, double-check price
                         </span>

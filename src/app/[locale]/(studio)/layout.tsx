@@ -1,11 +1,47 @@
-import { requireGuide } from "@/lib/guides/current"
 import { createClient } from "@/lib/supabase/server"
+import { requireStudio } from "@/lib/studio/context"
 import { StudioSidebar, type StudioCounts } from "@/components/studio/StudioSidebar"
 import { StudioTabBar } from "@/components/studio/StudioTabBar"
+import {
+  DriverStudioSidebar,
+  type DriverStudioCounts,
+} from "@/components/studio/driver/DriverStudioSidebar"
+import { DriverStudioTabBar } from "@/components/studio/driver/DriverStudioTabBar"
+import { todayKey } from "@/lib/drivers/scheduleData"
+import { fromDateKey } from "@/lib/drivers/shifts"
 
+/**
+ * One shell, two professions — see `@/lib/studio/context` for why the driver
+ * studio lives here rather than in a parallel route tree.
+ */
 export default async function StudioLayout({ children }: { children: React.ReactNode }) {
-  const { guide } = await requireGuide() // redirects non-guides
+  const context = await requireStudio() // redirects anyone who is neither
   const supabase = await createClient()
+
+  if (context.kind === "driver") {
+    const { driver } = context
+
+    const { count: jobCount } = await supabase
+      .from("bookings")
+      .select("id", { count: "exact", head: true })
+      .eq("driver_id", driver.id)
+      .in("status", ["assigned", "en_route", "arrived"])
+
+    const counts: DriverStudioCounts = {
+      upcomingJobs: jobCount ?? 0,
+      daysLeft: daysUntil(driver.schedule_open_until),
+    }
+
+    return (
+      <div className="min-h-screen bg-background md:flex">
+        <DriverStudioSidebar driver={driver} counts={counts} />
+        <main className="min-w-0 flex-1 pb-24 md:pb-0">{children}</main>
+        <DriverStudioTabBar />
+      </div>
+    )
+  }
+
+  const { guide } = context
 
   // Nav badge counts (Тойм excluded — it has none). All four reads are the
   // guide's own rows, RLS-permitted on the plain session client the same way
@@ -36,4 +72,11 @@ export default async function StudioLayout({ children }: { children: React.React
       <StudioTabBar />
     </div>
   )
+}
+
+/** Whole days from today to `dateKey`; null when nothing has been opened. */
+function daysUntil(dateKey: string | null): number | null {
+  if (!dateKey) return null
+  const ms = fromDateKey(dateKey).getTime() - fromDateKey(todayKey()).getTime()
+  return Math.round(ms / 86_400_000)
 }

@@ -3,6 +3,9 @@ import { Inter, Manrope } from "next/font/google";
 import "../globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { MobileTabBar } from "@/components/layout/MobileTabBar";
+import { HideOnAdmin } from "@/components/layout/HideOnAdmin";
+import { GlobalSearch } from "@/components/layout/GlobalSearch";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -25,11 +28,15 @@ export async function generateMetadata({
   return {
     title: "Azen | Japan Travel Platform",
     description: "From Chaos to Clarity. Comprehensive Japan Travel Guide.",
-    manifest: '/manifest.json',
+    manifest: "/manifest.json",
+    icons: {
+      icon: [{ url: "/azen-logo-icon.png", type: "image/png" }],
+      apple: [{ url: "/apple-touch-icon.png", type: "image/png" }],
+    },
     alternates: {
       canonical: `/${locale}`,
       languages: {
-        mn: '/mn',
+        mn: "/mn",
       },
     },
   };
@@ -68,11 +75,17 @@ export default async function RootLayout({
     <html lang={locale}>
       <body className={`${inter.variable} ${manrope.variable} bg-background font-sans text-foreground`}>
         <NextIntlClientProvider messages={messages}>
-          <Navbar />
+          <HideOnAdmin>
+            <Navbar />
+            <GlobalSearch />
+          </HideOnAdmin>
           <main className="min-h-screen">
             {children}
           </main>
-          <Footer />
+          <HideOnAdmin>
+            <Footer />
+          </HideOnAdmin>
+          <MobileTabBar />
         </NextIntlClientProvider>
       </body>
     </html>

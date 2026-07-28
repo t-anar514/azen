@@ -16,6 +16,18 @@ export interface ItineraryRow {
   updated_at: string
 }
 
+export interface PlannerRealtimeOptions {
+  // Fired on any INSERT/UPDATE/DELETE on the trip's participants or cost
+  // splits (added to the supabase_realtime publication in 0018). The rows are
+  // small, so the consumer just refetches instead of merging event payloads.
+  onBudgetChange?: () => void
+  // When set, this client is announced on the channel's presence keyed by the
+  // user id, and onPresenceSync receives the ids of everyone currently on the
+  // trip (including ourselves). Guests can still listen without tracking.
+  presenceUserId?: string | null
+  onPresenceSync?: (onlineUserIds: string[]) => void
+}
+
 // Live sync for /planner collaboration. Scope is deliberately last-write-wins
 // at the row level (the existing debounced whole-row upsert), propagated
 // within ~1s via Supabase Realtime — not per-item CRDT/OT merging, which is
@@ -23,9 +35,13 @@ export interface ItineraryRow {
 // updates for trips they can already select.
 export function usePlannerRealtime(
   tripId: string | null,
-  onRemoteChange: (row: ItineraryRow) => void
+  onRemoteChange: (row: ItineraryRow) => void,
+  options?: PlannerRealtimeOptions
 ) {
   const [supabase] = useState(() => createClient())
+  const onBudgetChange = options?.onBudgetChange
+  const presenceUserId = options?.presenceUserId ?? null
+  const onPresenceSync = options?.onPresenceSync
 
   useEffect(() => {
     if (!tripId) return
@@ -44,19 +60,46 @@ export function usePlannerRealtime(
         await supabase.realtime.setAuth(data.session.access_token)
       }
       if (cancelled) return
-      channel = supabase
-        .channel(`itinerary:${tripId}`)
-        .on(
+
+      channel = supabase.channel(`itinerary:${tripId}`, {
+        config: presenceUserId ? { presence: { key: presenceUserId } } : {},
+      })
+
+      channel.on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "itineraries", filter: `id=eq.${tripId}` },
+        (payload) => onRemoteChange(payload.new as ItineraryRow)
+      )
+
+      if (onBudgetChange) {
+        channel.on(
           "postgres_changes",
-          { event: "UPDATE", schema: "public", table: "itineraries", filter: `id=eq.${tripId}` },
-          (payload) => onRemoteChange(payload.new as ItineraryRow)
+          { event: "*", schema: "public", table: "trip_participants", filter: `trip_id=eq.${tripId}` },
+          () => onBudgetChange()
         )
-        .subscribe()
+        channel.on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "item_cost_splits", filter: `trip_id=eq.${tripId}` },
+          () => onBudgetChange()
+        )
+      }
+
+      if (onPresenceSync) {
+        channel.on("presence", { event: "sync" }, () => {
+          if (channel) onPresenceSync(Object.keys(channel.presenceState()))
+        })
+      }
+
+      channel.subscribe(async (status) => {
+        if (status === "SUBSCRIBED" && presenceUserId && channel) {
+          await channel.track({ online_at: new Date().toISOString() })
+        }
+      })
     })()
 
     return () => {
       cancelled = true
       if (channel) supabase.removeChannel(channel)
     }
-  }, [tripId, supabase, onRemoteChange])
+  }, [tripId, supabase, onRemoteChange, onBudgetChange, presenceUserId, onPresenceSync])
 }

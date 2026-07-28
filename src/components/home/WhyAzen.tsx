@@ -9,14 +9,14 @@ const CARDS = [
     icon: UserRoundCheck,
     iconBg: "bg-tint-sky",
     iconColor: "text-primary",
-    title: "Нутгийн хөтөч",
+    title: "Хөтөч",
     body: "Мэргэжлийн хөтөч бус, нутгийн иргэдтэй холбогдож жинхэнэ соёлтой танилц.",
   },
   {
     icon: ShieldAlert,
     iconBg: "bg-tint-saffron",
     iconColor: "text-saffron-600",
-    title: "Жуулчны урхинаас сэрэмжлүүл",
+    title: "Улиг болсон газраас зайлсхийх",
     body: "Хэт үнэтэй газраас сэрэмжлүүлж, илүү дээр хувилбар санал болгоно.",
   },
   {

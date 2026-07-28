@@ -1,6 +1,7 @@
 import "server-only"
 
-import { encodeForm, type FormValue } from "./wireEncode"
+import { encodeBody, type BodyValue } from "./wireEncode"
+import { isTestKey, selectOperators } from "./operators"
 
 /**
  * Wire REST client.
@@ -36,26 +37,23 @@ function apiKey(): string {
 
 /** Test keys route to the built-in `sandbox` operator and never move money. */
 export function isTestMode(): boolean {
-  const key = process.env.WIRE_API_KEY ?? process.env.WIRE_SECRET_KEY ?? ""
-  return key.startsWith("sk_test_")
+  return isTestKey(process.env.WIRE_API_KEY ?? process.env.WIRE_SECRET_KEY)
 }
 
 /**
- * Which operators a buyer may pay with. Test mode is always `sandbox`; live
- * mode reads the operators actually activated on the account, which cannot be
- * guessed here because activation is a per-account dashboard step.
+ * Which operators a buyer may pay with, or `undefined` to leave the choice to
+ * Wire. See `selectOperators` — it carries the reasoning and the tests.
  */
-export function resolveOperators(): string[] {
-  if (isTestMode()) return ["sandbox"]
-  return (process.env.WIRE_OPERATORS ?? "")
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean)
+export function resolveOperators(): string[] | undefined {
+  return selectOperators(
+    process.env.WIRE_API_KEY ?? process.env.WIRE_SECRET_KEY,
+    process.env.WIRE_OPERATORS
+  )
 }
 
 async function wirePost<T>(
   path: string,
-  params: Record<string, FormValue>,
+  params: Record<string, BodyValue>,
   idempotencyKey: string
 ): Promise<T> {
   let res: Response
@@ -64,12 +62,14 @@ async function wirePost<T>(
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey()}`,
-        "Content-Type": "application/x-www-form-urlencoded",
+        // JSON, not form encoding — the API rejects the latter outright with
+        // 400 invalid_json. See wireEncode.
+        "Content-Type": "application/json",
         // Required on every mutating POST. Replaying a key returns the original
         // result instead of creating a second charge.
         "Idempotency-Key": idempotencyKey,
       },
-      body: encodeForm(params),
+      body: encodeBody(params),
       cache: "no-store",
     })
   } catch (cause) {

@@ -1,15 +1,14 @@
 "use client"
 
 import * as React from "react"
-import NextImage from "next/image"
-const Image = NextImage as any
 import { Link, usePathname } from "@/i18n/routing"
 import { ChevronDown, Menu } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { GlobalSearch } from "./GlobalSearch"
+import { AzenLogo } from "@/components/brand/AzenLogo"
 import { AccountMenu } from "./AccountMenu"
+import { NotificationBell } from "./NotificationBell"
 import { BLOG_ITEM, GUIDE_MENU, PLAN_MENU, type NavItem } from "./NavMenus"
 
 /* Restructured IA: the nine flat links collapse into two menus that name the
@@ -63,10 +62,8 @@ export function Navbar() {
       <div className="w-full flex h-14 items-center justify-between px-4 md:px-8 gap-4">
 
         {/* ── Logo ── */}
-        <Link href="/" className="shrink-0 flex items-center">
-          <div className="relative h-8 w-14 md:h-10 md:w-20">
-            <Image src="/logo.png" alt="Azen" fill className="object-contain" />
-          </div>
+        <Link href="/" className="shrink-0 flex items-center" aria-label="Azen">
+          <AzenLogo variant="default" className="h-11 md:h-12" priority />
         </Link>
 
         {/* ── Desktop nav: two menus + Блог ── */}
@@ -116,22 +113,17 @@ export function Navbar() {
           </Link>
         </nav>
 
-        {/* ── Right cluster: search | currency | account | CTA ── */}
+        {/* ── Right cluster: currency | account | CTA ── */}
         <div className="hidden md:flex items-center gap-2">
-          <GlobalSearch locale="mn" />
           <span className="text-xs font-semibold text-muted-foreground tabular-nums">₮ MNT</span>
           <div className="h-5 w-px bg-border" />
+          <NotificationBell />
           <AccountMenu />
-
-          {/* Outlined pill — solid saffron stays reserved for Book/Request/Confirm */}
-          <Button asChild variant="outline" size="sm" className="rounded-full px-5 font-semibold">
-            <Link href="/transfer">Хүргэх/Тосох</Link>
-          </Button>
         </div>
 
-        {/* ── Mobile: search + hamburger ── */}
+        {/* ── Mobile: notifications + hamburger ── */}
         <div className="flex items-center gap-1 md:hidden">
-          <GlobalSearch locale="mn" className="md:hidden" />
+          <NotificationBell />
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
@@ -166,10 +158,6 @@ export function Navbar() {
                   <BLOG_ITEM.icon className="size-4 shrink-0 text-primary/70" />
                   {BLOG_ITEM.label}
                 </Link>
-
-                <Button asChild variant="outline" className="rounded-full h-12 font-semibold">
-                  <Link href="/transfer">Хүргэх/Тосох</Link>
-                </Button>
 
                 <div className="border-t border-border pt-2">
                   <AccountMenu variant="mobile" />

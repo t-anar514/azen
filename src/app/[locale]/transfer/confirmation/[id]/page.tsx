@@ -1,7 +1,8 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { getBookingForViewer, getDriverContactInfo } from "@/lib/bookings"
+import { getBookingForViewer, getRevealedDriverInfo } from "@/lib/bookings"
 import { BookingStatusCard } from "@/components/transfer/BookingStatusCard"
+import { DriverLockedCard } from "@/components/transfer/DriverLockedCard"
 import { AddToPlannerButton } from "@/components/planner/AddToPlannerButton"
 
 interface PageProps {
@@ -13,19 +14,26 @@ export default async function TransferConfirmationPage({ params }: PageProps) {
   const booking = await getBookingForViewer(id)
   if (!booking) notFound()
 
-  const driver = booking.driver_id ? await getDriverContactInfo(booking.driver_id) : null
+  const { driver, revealAt } = await getRevealedDriverInfo(booking)
 
   return (
     <div className="min-h-screen bg-background pt-16">
-      <div className="mx-auto max-w-2xl px-4 pb-4 text-center">
-        <p className="font-semibold text-primary">Захиалга хүлээн авлаа!</p>
-        <p className="mt-1 text-sm text-gray-600">
-          Бид төлбөрийг баталгаажуулж, жолооч томилно. Энэ хуудасны холбоосыг хадгалж, аяллын явцыг
-          хянаарай.
+      <div className="mx-auto max-w-6xl px-4 pb-4 text-center">
+        <p className="font-semibold text-primary">Баталгаажлаа!</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Таны ээлжид машин захиалагдлаа. Хүлээх шаардлагагүй — жолооч аль хэдийн энэ цагийг
+          нээсэн. Энэ хуудасны холбоосыг хадгалж, аяллын явцыг хянаарай.
         </p>
       </div>
       <BookingStatusCard booking={booking} driver={driver} />
-      <div className="mx-auto max-w-2xl space-y-4 px-4 pb-16 text-center">
+      <div className="mx-auto max-w-6xl space-y-4 px-4 pb-16 text-center">
+        {/* A driver exists but is not shown yet — say so, rather than leaving a
+            gap the traveler reads as "nobody is coming". */}
+        {!driver && revealAt && (
+          <div className="mx-auto max-w-md text-left">
+            <DriverLockedCard revealAt={revealAt.toISOString()} />
+          </div>
+        )}
         <AddToPlannerButton
           title={`Трансфер: ${booking.pickup_location} → ${booking.dropoff_location}`}
           date={booking.pickup_datetime.slice(0, 10)}

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
+import { AdminMobileNav } from "@/components/admin/AdminMobileNav"
 
 // Defense-in-depth: middleware.ts already redirects non-admins away from
 // /admin/*, but this layout re-checks directly against the database in case
@@ -27,9 +28,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const initial = name.charAt(0).toUpperCase()
 
   return (
-    <div className="mx-auto flex max-w-content flex-col gap-8 px-4 py-10 md:flex-row">
-      <AdminSidebar userInitial={initial} userName={name} />
-      <div className="flex-1 min-w-0">{children}</div>
-    </div>
+    <>
+      <AdminMobileNav userInitial={initial} userName={name} />
+      <div className="flex min-h-screen flex-col md:flex-row">
+        <AdminSidebar userInitial={initial} userName={name} />
+        <main className="min-w-0 flex-1 px-4 pb-24 pt-5 md:px-8 md:py-10">
+          <div className="mx-auto max-w-content">{children}</div>
+        </main>
+      </div>
+    </>
   )
 }

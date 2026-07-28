@@ -1,8 +1,7 @@
 import { Link } from "@/i18n/routing"
 import { useTranslations } from "next-intl"
 import { Instagram, Facebook } from "lucide-react"
-import NextImage from "next/image"
-const Image = NextImage as any
+import { AzenLogo } from "@/components/brand/AzenLogo"
 
 export function Footer() {
   const t  = useTranslations("Footer")
@@ -14,10 +13,8 @@ export function Footer() {
 
         {/* Brand */}
         <div className="col-span-2 md:col-span-1 flex flex-col gap-4">
-          <Link href="/" className="flex items-center gap-2 w-fit">
-            <div className="relative h-12 w-12 overflow-hidden rounded-xl">
-              <Image src="/logobg.png" alt="Azen Logo" fill className="object-cover" />
-            </div>
+          <Link href="/" className="w-fit" aria-label="Azen">
+            <AzenLogo variant="dark" className="h-14 md:h-16" />
           </Link>
           <p className="text-sm leading-relaxed max-w-xs text-white/60">
             {t("tagline")}
@@ -27,7 +24,7 @@ export function Footer() {
                className="flex size-[34px] items-center justify-center rounded-full bg-white/[.08] text-white hover:bg-white/15 transition-colors">
               <Instagram className="h-4 w-4" />
             </a>
-            <a href="https://www.facebook.com/profile.php?id=61585063457607/" target="_blank" rel="noopener noreferrer"
+            <a href="https://www.facebook.com/profile.php?id=61585063457607" target="_blank" rel="noopener noreferrer"
                className="flex size-[34px] items-center justify-center rounded-full bg-white/[.08] text-white hover:bg-white/15 transition-colors">
               <Facebook className="h-4 w-4" />
             </a>

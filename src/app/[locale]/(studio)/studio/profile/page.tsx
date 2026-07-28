@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 
 import { getCurrentGuide } from "@/lib/guides/current"
+import { guideFallbackPath } from "@/lib/studio/context"
 import { ProfileEditForm } from "@/components/studio/ProfileEditForm"
 
 /**
@@ -10,7 +11,7 @@ import { ProfileEditForm } from "@/components/studio/ProfileEditForm"
  */
 export default async function StudioProfilePage() {
   const ctx = await getCurrentGuide()
-  if (!ctx) redirect("/guides/apply")
+  if (!ctx) redirect(await guideFallbackPath())
   const { guide } = ctx
 
   return (

@@ -4,17 +4,24 @@
     "description": "Premium Japan travel platform and Mongolian-Japanese learning hub.",
     "start_url": "/mn",
     "display": "standalone",
-    "background_color": "#fefdf4",
-    "theme_color": "#1c315e",
+    "background_color": "#F4F7FB",
+    "theme_color": "#1A4E8A",
     "icons": [
         {
-            "src": "/logo.png",
-            "sizes": "192x192",
-            "type": "image/png"
+            "src": "/azen-logo-icon.png",
+            "sizes": "116x116",
+            "type": "image/png",
+            "purpose": "any"
         },
         {
-            "src": "/logo.png",
-            "sizes": "512x512",
+            "src": "/azen-logo-icon.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/apple-touch-icon.png",
+            "sizes": "180x180",
             "type": "image/png"
         }
     ]

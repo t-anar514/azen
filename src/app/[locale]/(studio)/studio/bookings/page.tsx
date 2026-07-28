@@ -2,29 +2,33 @@ import { redirect } from "next/navigation"
 
 import { createClient } from "@/lib/supabase/server"
 import { getCurrentGuide } from "@/lib/guides/current"
+import { guideFallbackPath } from "@/lib/studio/context"
 import { Badge } from "@/components/ui/badge"
-import { RequestCard, formatTripDate } from "@/components/studio/RequestCard"
+import { formatTripDate } from "@/components/studio/UpcomingTripCard"
 import { CompleteBookingButton } from "@/components/studio/CompleteBookingButton"
+import { CancelBookingButton } from "@/components/studio/CancelBookingButton"
 import { initials } from "@/lib/utils"
 import type { GuideBookingRow, GuideBookingStatus } from "@/lib/supabase/types"
 
 const STATUS_PILL: Record<GuideBookingStatus, { label: string; variant: "confirmed" | "paid" | "canceled" | "pending" }> = {
-  pending: { label: "Хүлээгдэж буй", variant: "pending" },
+  awaiting_payment: { label: "Төлбөр хүлээгдэж буй", variant: "pending" },
   confirmed: { label: "Баталгаажсан", variant: "confirmed" },
   completed: { label: "Дууссан", variant: "paid" },
+  expired: { label: "Хугацаа дууссан", variant: "canceled" },
+  pending: { label: "Хүлээгдэж буй", variant: "pending" },
   declined: { label: "Татгалзсан", variant: "canceled" },
   cancelled: { label: "Цуцалсан", variant: "pending" },
 }
 
 /**
  * `/studio/bookings` (Захиалга) — the full guide_bookings ledger grouped by
- * lifecycle: pending requests (accept/decline), confirmed upcoming trips
- * (mark completed → feeds Орлого), then closed rows (completed/declined/
- * cancelled) as read-only history.
+ * lifecycle: in-flight payment holds, legacy requests still awaiting
+ * accept/decline, confirmed upcoming trips (mark completed → feeds Орлого),
+ * then closed rows as read-only history.
  */
 export default async function StudioBookingsPage() {
   const ctx = await getCurrentGuide()
-  if (!ctx) redirect("/guides/apply")
+  if (!ctx) redirect(await guideFallbackPath())
   const { guide } = ctx
   const supabase = await createClient()
 
@@ -45,9 +49,17 @@ export default async function StudioBookingsPage() {
   )
   const nameById = Object.fromEntries(bookings.map((b, i) => [b.id, names[i]]))
 
-  const pending = bookings.filter((b) => b.status === "pending")
+  // Travelers pay up front, so a new booking arrives already `confirmed` — it
+  // is never the guide's to accept. `awaiting_payment` is the ≤15min hold while
+  // the traveler is in checkout: not actionable, but it is why the date shows
+  // as taken on their calendar, so it is listed rather than hidden. `pending`
+  // and `declined` only ever match rows predating the pay-upfront flow, and are
+  // shown as history so nothing silently disappears from the ledger.
+  const holds = bookings.filter((b) => b.status === "awaiting_payment")
   const confirmed = bookings.filter((b) => b.status === "confirmed")
-  const closed = bookings.filter((b) => ["completed", "declined", "cancelled"].includes(b.status))
+  const closed = bookings.filter((b) =>
+    ["completed", "declined", "cancelled", "expired", "pending"].includes(b.status)
+  )
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-8 md:px-8">
@@ -67,11 +79,11 @@ export default async function StudioBookingsPage() {
         </div>
       ) : (
         <div className="space-y-8">
-          {pending.length > 0 && (
-            <Section title="Шинэ хүсэлт" count={pending.length}>
-              <div className="flex flex-col gap-3.5">
-                {pending.map((b) => (
-                  <RequestCard key={b.id} booking={b} travelerName={nameById[b.id]} />
+          {holds.length > 0 && (
+            <Section title="Төлбөр хүлээгдэж буй" count={holds.length}>
+              <div className="flex flex-col gap-2.5">
+                {holds.map((b) => (
+                  <BookingRow key={b.id} booking={b} travelerName={nameById[b.id]} />
                 ))}
               </div>
             </Section>
@@ -81,7 +93,17 @@ export default async function StudioBookingsPage() {
             <Section title="Баталгаажсан аялал" count={confirmed.length}>
               <div className="flex flex-col gap-2.5">
                 {confirmed.map((b) => (
-                  <BookingRow key={b.id} booking={b} travelerName={nameById[b.id]} action={<CompleteBookingButton id={b.id} />} />
+                  <BookingRow
+                    key={b.id}
+                    booking={b}
+                    travelerName={nameById[b.id]}
+                    action={
+                      <div className="flex shrink-0 items-center gap-1">
+                        <CancelBookingButton id={b.id} />
+                        <CompleteBookingButton id={b.id} />
+                      </div>
+                    }
+                  />
                 ))}
               </div>
             </Section>

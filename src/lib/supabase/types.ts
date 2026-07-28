@@ -3,6 +3,8 @@
 // connect to yet — once Supabase keys are added, consider regenerating these
 // with the Supabase CLI for full accuracy.)
 
+import type { ShiftSlot } from "@/lib/drivers/shifts"
+
 export type UserRole = "user" | "guide" | "admin" | "driver"
 
 export interface ProfileRow {
@@ -232,8 +234,13 @@ export interface GuideRow {
   updated_at: string
 }
 
+// Mirrors the guide_booking_status enum. `awaiting_payment` and `expired` came
+// with the pay-upfront flow (0023): create_booking_hold writes the first, and a
+// hold that is never paid decays into the second. `pending` predates that flow —
+// nothing writes it any more, but old rows still carry it.
 export type GuideBookingStatus =
-  | "pending" | "confirmed" | "completed" | "declined" | "cancelled"
+  | "awaiting_payment" | "confirmed" | "completed" | "expired"
+  | "pending" | "declined" | "cancelled"
 
 export interface GuideBookingRow {
   id: string
@@ -245,6 +252,12 @@ export interface GuideBookingRow {
   amount: number
   status: GuideBookingStatus
   note: string | null
+  /** Meeting time (migration 0021); end time is start_time + hours. */
+  start_time: string | null
+  /** Traveler-selected interest tags shown to the guide (migration 0021). */
+  interests: string[]
+  /** Short traveler-facing reference, e.g. "AZ-6D41KM" (migration 0021). */
+  code: string | null
   created_at: string
   updated_at: string
 }
@@ -328,9 +341,55 @@ export interface DriverRow {
   license_document_url: string | null
   vehicle_document_url: string | null
   verification_status: DriverVerificationStatus
+  /** @deprecated Superseded by driver_shifts in 0025 — nothing reads this. */
   is_available: boolean
+  // Scheduling preferences, added in 0025_driver_shifts.sql.
+  min_notice_hours: number
+  max_jobs_per_day: number
+  /** Last date this driver has opened shifts through; null = never opened. */
+  schedule_open_until: string | null
+  /** "Давтах" — top the horizon back up instead of asking every month. */
+  schedule_auto_extend: boolean
   created_at: string
   updated_at: string
+}
+
+// ── driver scheduling (0025_driver_shifts.sql) ───────────────────────────────
+// Domain rules for these live in src/lib/drivers/shifts.ts, including the one
+// that matters most: no row means closed.
+
+export interface DriverShiftTemplateRow {
+  driver_id: string
+  /** ISO weekday, 1 = Monday … 7 = Sunday. */
+  weekday: number
+  slot: ShiftSlot
+  capacity: number
+  created_at: string
+}
+
+export interface DriverShiftRow {
+  driver_id: string
+  date: string
+  slot: ShiftSlot
+  capacity: number
+  booked_count: number
+  created_at: string
+}
+
+/** A row of `driver_slot_availability()` — deliberately carries no driver id. */
+export interface SlotAvailabilityRow {
+  date: string
+  slot: ShiftSlot
+  vehicles_open: number
+  vehicles_left: number
+}
+
+/** A row of `driver_shift_coverage()` — admin-only, adds the headcount. */
+export interface ShiftCoverageRow {
+  date: string
+  drivers_open: number
+  vehicles_open: number
+  vehicles_booked: number
 }
 
 export interface VehicleOptionRow {
@@ -412,6 +471,13 @@ export interface BookingRow {
   zone_id: string | null
   distance_km: number | null
   pricing_source: PricingSource
+  // Added in 0025_driver_shifts.sql. The traveler picks a date + slot; a driver
+  // is claimed against that inventory once payment lands, and
+  // driver_visible_at pins when their details unlock (pickup − notice).
+  shift_date: string | null
+  shift_slot: ShiftSlot | null
+  driver_assigned_at: string | null
+  driver_visible_at: string | null
   created_at: string
   updated_at: string
 }

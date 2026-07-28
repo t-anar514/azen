@@ -1,84 +1,53 @@
 "use client"
 
 import React from "react"
-import { motion } from "framer-motion"
-import { Volume2, Check } from "lucide-react"
+import { Volume2 } from "lucide-react"
 import type { PhraseRow } from "@/lib/supabase/types"
 import { useTTS } from "@/hooks/use-tts"
-import { useTranslations } from "next-intl"
+
+/** Left-accent + audio-button tint, cycled so each column reads as its own colour. */
+export const CARD_ACCENTS = [
+  { bar: "#1A4E8A", chipBg: "#E4EEFB", chipFg: "#1A4E8A" }, // sky
+  { bar: "#DE8C2E", chipBg: "#FCF2E3", chipFg: "#C9761E" }, // saffron
+  { bar: "#2E8B6F", chipBg: "#E3F1EC", chipFg: "#2E8B6F" }, // success
+] as const
 
 interface PhraseCardProps {
   phrase: PhraseRow
-  onToggleLearned: (isLearned: boolean) => void
-  isLearned: boolean
+  accent?: (typeof CARD_ACCENTS)[number]
 }
 
-export function PhraseCard({ phrase, onToggleLearned, isLearned }: PhraseCardProps) {
-  const tCommon = useTranslations("Learn.phrasebook");
+export function PhraseCard({ phrase, accent = CARD_ACCENTS[0] }: PhraseCardProps) {
   const { speak, isSpeaking } = useTTS()
 
-  const handlePlay = () => {
-    speak(phrase.japanese, phrase.audio_url)
-  }
-
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className={`
-        rounded-card border bg-card shadow-sm transition-colors p-6 flex flex-col gap-4 relative overflow-hidden
-        ${isLearned ? "border-primary bg-tint-sky/40" : "border-border hover:border-primary/50"}
-      `}
+    <div
+      className="relative flex items-start justify-between gap-4 overflow-hidden rounded-thumb border border-border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
+      style={{ borderLeft: `4px solid ${accent.bar}` }}
     >
-      <div className="flex justify-between items-start">
-        <div>
-          <h3 className="font-display text-2xl font-bold text-foreground mb-1">{phrase.japanese}</h3>
-          <p className="text-sm text-muted-foreground uppercase tracking-wide font-medium">{phrase.romaji}</p>
-        </div>
-        <button
-          onClick={handlePlay}
-          className={`
-            p-4 md:p-3 rounded-full transition-all relative shrink-0
-            ${isSpeaking ? "bg-primary text-white" : "bg-muted text-muted-foreground hover:bg-primary hover:text-white"}
-          `}
-          aria-label="Play audio"
-        >
-          <Volume2 className="w-6 h-6 md:w-5 md:h-5 text-current" />
-          {isSpeaking && (
-            <span className="absolute inset-0 rounded-full border-2 border-primary animate-ping opacity-75" />
-          )}
-        </button>
+      <div className="min-w-0">
+        <h3 className="font-display text-2xl font-bold leading-tight text-foreground md:text-3xl">
+          {phrase.japanese}
+        </h3>
+        <p className="mt-1.5 text-sm italic text-muted-foreground">{phrase.romaji}</p>
+        <p className="mt-2 text-base font-medium text-foreground">{phrase.english}</p>
       </div>
 
-      <div className="flex-1">
-        <p className="text-lg text-foreground font-medium mb-2">{phrase.english}</p>
-
-        {phrase.context && (
-          <div className="inline-flex items-center gap-2 rounded-pill bg-tint-saffron px-3 py-1 text-xs font-bold text-saffron-600">
-            <span>Azen Tip</span>
-            <span className="font-normal border-l border-saffron-600/30 pl-2 ml-1">{phrase.context}</span>
-          </div>
+      <button
+        type="button"
+        onClick={() => speak(phrase.japanese, phrase.audio_url)}
+        aria-label={`${phrase.romaji} дуудлага сонсох`}
+        className="relative flex size-9 shrink-0 items-center justify-center rounded-full transition-transform hover:scale-105 active:scale-95"
+        style={{ background: accent.chipBg, color: accent.chipFg }}
+      >
+        <Volume2 className="size-4" />
+        {isSpeaking && (
+          <span
+            className="absolute inset-0 animate-ping rounded-full border-2 opacity-75"
+            style={{ borderColor: accent.chipFg }}
+          />
         )}
-      </div>
-
-       <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
-          <label className="flex items-center gap-3 cursor-pointer group select-none">
-            <div
-              className={`
-                w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors
-                ${isLearned ? "bg-primary border-primary text-white" : "border-border group-hover:border-primary text-transparent"}
-              `}
-              onClick={() => onToggleLearned(!isLearned)}
-            >
-              <Check className="w-4 h-4" />
-            </div>
-            <span className={`text-sm font-medium transition-colors ${isLearned ? "text-primary" : "text-muted-foreground group-hover:text-primary"}`}>
-              {isLearned ? tCommon("learnedState.learned") : tCommon("learnedState.markAsLearned")}
-            </span>
-          </label>
-       </div>
-    </motion.div>
+      </button>
+    </div>
   )
 }

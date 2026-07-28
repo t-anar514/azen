@@ -4,6 +4,7 @@ import { Plus } from "lucide-react"
 
 import { createClient } from "@/lib/supabase/server"
 import { getCurrentGuide } from "@/lib/guides/current"
+import { guideFallbackPath } from "@/lib/studio/context"
 import { loadGuideRecRows } from "@/lib/guides/stats"
 import { RecsTable } from "@/components/studio/RecsTable"
 import { Button } from "@/components/ui/button"
@@ -11,7 +12,7 @@ import { Button } from "@/components/ui/button"
 /** `/studio/recommendations` (Миний зөвлөмж) — the guide's full place list. */
 export default async function StudioRecommendationsPage() {
   const ctx = await getCurrentGuide()
-  if (!ctx) redirect("/guides/apply")
+  if (!ctx) redirect(await guideFallbackPath())
   const { guide } = ctx
   const supabase = await createClient()
 

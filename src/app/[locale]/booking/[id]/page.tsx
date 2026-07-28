@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
+import { RecheckButton } from "@/components/booking/RecheckButton"
 
 /**
  * Booking confirmation page.
@@ -10,10 +11,11 @@ import { createClient } from "@/lib/supabase/server"
  */
 
 export default async function BookingConfirmationPage({
-  params: { id },
+  params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
+  const { id } = await params
   const supabase = await createClient()
   const {
     data: { user },
@@ -82,12 +84,7 @@ export default async function BookingConfirmationPage({
             <p className="mt-2 text-muted-foreground">
               Таны төлбөр баталгаажих хүртэл хүлээнэ үү. Энэ нь ихэнхдээ хэд хэдэн секундэд хийгддэг.
             </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="mt-6 inline-block rounded-thumb bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90"
-            >
-              Шалгах
-            </button>
+            <RecheckButton />
           </>
         )}
       </div>

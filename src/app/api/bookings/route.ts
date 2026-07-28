@@ -2,6 +2,15 @@ import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { generateTripCode } from "@/lib/bookings"
 import { quoteTransferPrice } from "@/lib/transfers/pricing"
+import { loadSlotAvailability } from "@/lib/drivers/scheduleData"
+import {
+  DEFAULT_MIN_NOTICE_HOURS,
+  isPickupBookable,
+  isShiftSlot,
+  isValidDateKey,
+  summariseDays,
+  type ShiftSlot,
+} from "@/lib/drivers/shifts"
 
 // Public endpoint — booking a transfer doesn't require an account (guest
 // checkout, per the brief). If the requester happens to be logged in, the
@@ -45,9 +54,56 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "zone_id must be a string or null" }, { status: 400 })
   }
 
-  // Price is always computed here from the vehicle + zone, never trusted
-  // from the client — otherwise a tampered request could book at any price.
-  const quote = await quoteTransferPrice({ vehicleOptionId: body.vehicle_option_id, zoneId })
+  // ── shift ────────────────────────────────────────────────────────────────
+  // The calendar greying out a full day is a convenience; this is the rule.
+  // Re-checked here because the client's copy of availability is a snapshot
+  // that goes stale the moment somebody else books, and because a request can
+  // simply be crafted.
+  const shiftDate: string | null = body.shift_date ?? null
+  const shiftSlot: ShiftSlot | null = body.shift_slot ?? null
+
+  if (!isValidDateKey(shiftDate) || !isShiftSlot(shiftSlot)) {
+    return NextResponse.json(
+      { error: "shift_date and shift_slot are required" },
+      { status: 400 }
+    )
+  }
+  if (!body.pickup_datetime.startsWith(shiftDate)) {
+    return NextResponse.json(
+      { error: "pickup_datetime must fall on shift_date" },
+      { status: 400 }
+    )
+  }
+  if (!isPickupBookable(body.pickup_datetime, { minNoticeHours: DEFAULT_MIN_NOTICE_HOURS })) {
+    return NextResponse.json(
+      { error: "Авах цаг хэтэрхий ойрхон байна. Өөр ээлж сонгоно уу." },
+      { status: 409 }
+    )
+  }
+
+  const capacity = summariseDays(await loadSlotAvailability(shiftDate, shiftDate))
+    .get(shiftDate)
+    ?.bySlot[shiftSlot]
+  if (!capacity || capacity.left <= 0) {
+    return NextResponse.json(
+      { error: "Энэ ээлж дүүрсэн байна. Өөр цаг сонгоно уу." },
+      { status: 409 }
+    )
+  }
+
+  // For a zone-less typed address the form sends the live routed distance so
+  // the price can still be distance-based. It's clamped in quoteTransferPrice
+  // and the resulting booking is flagged (zone_id = null) for the team to
+  // confirm, so a tampered distance only skews an estimate that gets reviewed.
+  const distanceKm = typeof body.distance_km === "number" ? body.distance_km : null
+
+  // Price is always computed here from the vehicle + zone/distance, never
+  // trusted from the client — otherwise a tampered request could book at any price.
+  const quote = await quoteTransferPrice({
+    vehicleOptionId: body.vehicle_option_id,
+    zoneId,
+    distanceKm,
+  })
 
   if (!quote) {
     return NextResponse.json({ error: "Selected vehicle is not available" }, { status: 400 })
@@ -69,6 +125,8 @@ export async function POST(request: Request) {
         flight_number: body.flight_number,
         flight_direction: body.flight_direction,
         pickup_datetime: body.pickup_datetime,
+        shift_date: shiftDate,
+        shift_slot: shiftSlot,
         pickup_location: body.pickup_location,
         dropoff_location: body.dropoff_location,
         vehicle_option_id: body.vehicle_option_id,

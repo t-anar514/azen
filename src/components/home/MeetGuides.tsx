@@ -4,7 +4,7 @@ import { GuideDirectoryCard } from "@/components/guides/GuideDirectoryCard"
 import type { GuideRow } from "@/lib/supabase/types"
 
 /**
- * "Нутгийн хөтчүүд" (design doc, Screen 01): eyebrow + title + "Бүх хөтөч →",
+ * "Хөтчүүд" (design doc, Screen 01): eyebrow + title + "Бүх хөтөч →",
  * then a row of three guide cards (same compact card as the /guides directory).
  */
 export function MeetGuides({ guides }: { guides: GuideRow[] }) {
@@ -16,7 +16,7 @@ export function MeetGuides({ guides }: { guides: GuideRow[] }) {
         <div>
           <Eyebrow>Хүнээс хүнд</Eyebrow>
           <h2 className="mt-2 font-display text-[34px] font-extrabold tracking-[-0.015em] text-foreground">
-            Нутгийн хөтчүүд
+            Хөтчүүд
           </h2>
         </div>
         <ArrowLink href="/guides">Бүх хөтөч</ArrowLink>

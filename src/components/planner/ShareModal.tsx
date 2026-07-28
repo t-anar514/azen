@@ -22,6 +22,14 @@ interface ShareModalProps {
   // Only the owner can manage collaborators (enforced by RLS either way —
   // this just hides UI that would be rejected).
   isOwner?: boolean
+  // Custom trigger element (e.g. the labeled footer pill); falls back to the
+  // plain icon button. Pass `null` to render no trigger (controlled mode).
+  trigger?: React.ReactNode
+  // Controlled open state — used when the dialog is opened from elsewhere
+  // (e.g. the header participants popover's "invite" button). Omit both for
+  // the default self-triggered behavior.
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
 interface CollaboratorRow {
@@ -31,7 +39,18 @@ interface CollaboratorRow {
   status: "pending" | "accepted"
 }
 
-export function ShareModal({ tripId, isLoggedIn, isOwner = true }: ShareModalProps) {
+export function ShareModal({
+  tripId,
+  isLoggedIn,
+  isOwner = true,
+  trigger,
+  open: controlledOpen,
+  onOpenChange,
+}: ShareModalProps) {
+  const isControlled = controlledOpen !== undefined
+  const [internalOpen, setInternalOpen] = useState(false)
+  const open = isControlled ? controlledOpen : internalOpen
+
   const [isPublic, setIsPublic] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -57,8 +76,16 @@ export function ShareModal({ tripId, isLoggedIn, isOwner = true }: ShareModalPro
       ? `${window.location.origin}/planner/invite/${collaboratorId}`
       : ""
 
-  async function handleOpenChange(open: boolean) {
-    if (!open || !tripId || loaded) return
+  // Orchestrates open state (controlled or internal) plus the one-time data
+  // load when the dialog is first opened.
+  function setOpen(next: boolean) {
+    if (!isControlled) setInternalOpen(next)
+    onOpenChange?.(next)
+    if (next) loadShareData()
+  }
+
+  async function loadShareData() {
+    if (!tripId || loaded) return
     setLoading(true)
     const supabase = createClient()
     const { data } = await supabase
@@ -152,17 +179,22 @@ export function ShareModal({ tripId, isLoggedIn, isOwner = true }: ShareModalPro
   }
 
   return (
-    <Dialog onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full"
-          title="Хуваалцах"
-        >
-          <Share2 className="h-5 w-5" />
-        </Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
+      {/* trigger === null → controlled/no trigger; undefined → default button */}
+      {trigger !== null && (
+        <DialogTrigger asChild>
+          {trigger || (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full"
+              title="Хуваалцах"
+            >
+              <Share2 className="h-5 w-5" />
+            </Button>
+          )}
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
           <DialogTitle>Аяллаа хуваалцах</DialogTitle>

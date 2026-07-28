@@ -6,6 +6,7 @@ import {
   Building2,
   Car,
   CircleDollarSign,
+  Home,
   LayoutDashboard,
   MapPin,
   Newspaper,
@@ -17,8 +18,9 @@ import {
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { AzenLogo } from "@/components/brand/AzenLogo"
 
-const NAV_ITEMS = [
+export const NAV_ITEMS = [
   { href: "/admin", label: "Хянах самбар", icon: LayoutDashboard },
   { href: "/admin/cities", label: "Хотууд", icon: Building2 },
   { href: "/admin/places", label: "Газрууд", icon: MapPin },
@@ -45,12 +47,13 @@ export function AdminSidebar({ userInitial, userName }: AdminSidebarProps) {
   const path = pathname.replace(/^\/[a-z]{2}(?=\/|$)/, "") || "/"
 
   return (
-    <aside className="md:w-60 shrink-0">
+    <aside className="hidden shrink-0 md:block md:w-60">
       <div
-        className="md:sticky md:top-6 flex flex-col gap-1 rounded-card p-4 text-white"
+        className="sticky top-0 flex h-screen flex-col gap-1 p-4 text-white"
         style={{ background: "#0C1826" }}
       >
-        <div className="px-2 pb-3">
+        <div className="flex items-center gap-2 px-2 pb-4 pt-2">
+          <AzenLogo variant="icon" className="h-7" />
           <span className="font-display text-lg font-extrabold tracking-tight text-white">
             Azen <span style={{ color: "#8FC0F0" }}>Admin</span>
           </span>
@@ -80,7 +83,7 @@ export function AdminSidebar({ userInitial, userName }: AdminSidebarProps) {
           })}
         </nav>
 
-        <div className="mt-3 flex items-center gap-3 border-t border-white/10 px-2 pt-4">
+        <div className="mt-auto flex items-center gap-3 border-t border-white/10 px-2 pt-4">
           <span
             className="flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
             style={{ background: "#DE8C2E" }}
@@ -92,6 +95,14 @@ export function AdminSidebar({ userInitial, userName }: AdminSidebarProps) {
             <div className="text-xs text-white/50">Админ</div>
           </div>
         </div>
+
+        <Link
+          href="/"
+          className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-white/60 transition-colors hover:bg-white/[.06] hover:text-white"
+        >
+          <Home className="size-4 shrink-0" />
+          Сайт руу буцах
+        </Link>
       </div>
     </aside>
   )

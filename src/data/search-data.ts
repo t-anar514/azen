@@ -3,7 +3,15 @@ import { HACKS } from "./hacks";
 import { EXPERIENCES } from "./experiences";
 import { phraseCollections } from "./japanese-course";
 
-export type SearchCategory = 'Cities' | 'Hacks' | 'Experiences' | 'Phrases' | 'Places' | 'Posts' | 'Tours';
+export type SearchCategory =
+  | 'Cities'
+  | 'Hacks'
+  | 'Experiences'
+  | 'Phrases'
+  | 'Places'
+  | 'Posts'
+  | 'Tours'
+  | 'Guides'
 
 export interface SearchItem {
   id: string;
@@ -103,7 +111,7 @@ export const getSearchIndex = (locale: string, messages?: any): SearchItem[] => 
   index.push({
     id: 'guides-apply',
     title: 'Хөтөч болох',
-    subtitle: 'Нутгийн хөтөчөөр бүртгүүлэх',
+    subtitle: 'Хөтөчөөр бүртгүүлэх',
     category: 'Tours',
     url: `/${locale}/guides/apply`
   });

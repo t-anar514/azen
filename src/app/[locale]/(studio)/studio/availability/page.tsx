@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 
 import { getCurrentGuide } from "@/lib/guides/current"
+import { guideFallbackPath } from "@/lib/studio/context"
 import { loadAvailability } from "@/lib/guides/availabilityData"
 import { AvailabilityCalendar } from "@/components/studio/AvailabilityCalendar"
 import { MAX_MONTHS_AHEAD, toDateKey } from "@/lib/guides/availability"
@@ -12,7 +13,7 @@ import { MAX_MONTHS_AHEAD, toDateKey } from "@/lib/guides/availability"
  */
 export default async function StudioAvailabilityPage() {
   const ctx = await getCurrentGuide()
-  if (!ctx) redirect("/guides/apply")
+  if (!ctx) redirect(await guideFallbackPath())
 
   const from = toDateKey(new Date())
   const end = new Date()

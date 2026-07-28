@@ -2,12 +2,11 @@
 
 import { useState, useCallback, useEffect, useRef, Suspense } from "react"
 import { Timeline, ItemType } from "@/components/planner/Timeline"
+import { PlannerHeader } from "@/components/planner/PlannerHeader"
 import { InteractiveMap } from "@/components/planner/InteractiveMap"
 import { CostFooter } from "@/components/planner/CostFooter"
 import { SharedItineraryView } from "@/components/planner/SharedItineraryView"
 import { TripSettings } from "@/components/planner/SettingsModal"
-import { Button } from "@/components/ui/button"
-import { List, Map as MapIcon } from "lucide-react"
 import { arrayMove } from "@dnd-kit/sortable"
 import { useTranslations } from "next-intl"
 import { useSearchParams } from "next/navigation"
@@ -60,6 +59,9 @@ function PlannerContent() {
   // the trip is local-only or migration 0009 isn't applied yet.
   const [participants, setParticipants] = useState<TripParticipant[]>([])
   const [splits, setSplits] = useState<Map<string, CostSplit>>(new Map())
+  // Presence: user ids currently on this trip's realtime channel, for the
+  // online dots on the header avatars.
+  const [onlineUserIds, setOnlineUserIds] = useState<string[]>([])
 
   // True while the debounced local save is still pending — remote realtime
   // changes are skipped during this window so they can't clobber what the
@@ -69,9 +71,12 @@ function PlannerContent() {
   // debounced-save effect skips one round instead of echoing it back.
   const applyingRemoteRef = useRef(false)
 
-  // Auto-set compact on mobile
+  // Auto-set compact on mobile. Post-mount on purpose (same as the other
+  // window-dependent initializers below): reading window during render would
+  // desync the SSR markup and trip hydration.
   useEffect(() => {
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsCompact(true)
     }
   }, [])
@@ -300,9 +305,39 @@ function PlannerContent() {
     calculateTotal(remoteItems)
   }, [calculateTotal])
 
-  usePlannerRealtime(tripId, handleRemoteChange)
-
   // BUDGET SPLIT DATA — roster + per-item cost assignments for cloud trips.
+  // Extracted as a callback because it doubles as the realtime refetch: any
+  // participants/splits event on the trip (another editor adding someone, an
+  // invite being accepted, a split reassigned) re-runs this.
+  const loadBudgetData = useCallback(async () => {
+    if (!tripId) return
+    const { data: parts, error: partsError } = await supabase
+      .from('trip_participants')
+      .select('id, display_name, color, user_id')
+      .eq('trip_id', tripId)
+      .order('created_at', { ascending: true })
+    // Table missing (migration 0009 not applied) or unreadable → leave the
+    // splitting UI hidden rather than surfacing a broken form.
+    if (partsError || !parts) return
+    setParticipants(parts.map((p) => ({
+      id: p.id,
+      displayName: p.display_name,
+      color: p.color ?? undefined,
+      userId: p.user_id ?? null,
+    })))
+
+    const { data: splitRows } = await supabase
+      .from('item_cost_splits')
+      .select('item_id, paid_by, split_between')
+      .eq('trip_id', tripId)
+    if (splitRows) {
+      setSplits(new Map(splitRows.map((s) => [
+        s.item_id,
+        { itemId: s.item_id, paidBy: s.paid_by, splitBetween: s.split_between ?? [] },
+      ])))
+    }
+  }, [tripId, supabase])
+
   useEffect(() => {
     if (!tripId) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -310,30 +345,16 @@ function PlannerContent() {
       setSplits(new Map())
       return
     }
-    async function loadBudgetData() {
-      const { data: parts, error: partsError } = await supabase
-        .from('trip_participants')
-        .select('id, display_name, color')
-        .eq('trip_id', tripId)
-        .order('created_at', { ascending: true })
-      // Table missing (migration 0009 not applied) or unreadable → leave the
-      // splitting UI hidden rather than surfacing a broken form.
-      if (partsError || !parts) return
-      setParticipants(parts.map((p) => ({ id: p.id, displayName: p.display_name, color: p.color ?? undefined })))
-
-      const { data: splitRows } = await supabase
-        .from('item_cost_splits')
-        .select('item_id, paid_by, split_between')
-        .eq('trip_id', tripId)
-      if (splitRows) {
-        setSplits(new Map(splitRows.map((s) => [
-          s.item_id,
-          { itemId: s.item_id, paidBy: s.paid_by, splitBetween: s.split_between ?? [] },
-        ])))
-      }
-    }
     loadBudgetData()
-  }, [tripId, supabase])
+  }, [tripId, loadBudgetData])
+
+  // LIVE SYNC channel: itinerary row updates, budget-table changes, and
+  // presence (who's on the trip right now).
+  usePlannerRealtime(tripId, handleRemoteChange, {
+    onBudgetChange: loadBudgetData,
+    presenceUserId: userId,
+    onPresenceSync: setOnlineUserIds,
+  })
 
   const addParticipant = async (name: string) => {
     if (!tripId || !name.trim()) return
@@ -423,19 +444,22 @@ function PlannerContent() {
   }
 
   const handleExport = () => {
-    const headers = ["ID", "Title", "Date", "Type", "Location", "Cost (JPY)"]
+    const headers = ["ID", "Title", "Date", "Type", "Location", "Cost (JPY)", "Notes"]
     const rows = items.map(i => [
       i.id,
       i.title,
       i.date,
       i.type,
       i.location,
-      i.cost.toString()
+      i.cost.toString(),
+      i.notes ?? ""
     ])
 
     const csvContent = [
       headers.join(","),
-      ...rows.map(r => r.map(cell => `"${cell}"`).join(","))
+      // Quote every cell and double any embedded quote — notes are free text,
+      // so they can legitimately contain commas, quotes and newlines.
+      ...rows.map(r => r.map(cell => `"${cell.replace(/"/g, '""')}"`).join(","))
     ].join("\n")
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
@@ -551,16 +575,59 @@ function PlannerContent() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] overflow-hidden relative">
+    <div className="flex flex-col h-[calc(100vh-56px)] overflow-hidden relative">
+        {/* Top band: trip title, dates, collaborators, settings (Screen 03) */}
+        <PlannerHeader
+            title={itineraryTitle}
+            onTitleChange={setItineraryTitle}
+            settings={settings}
+            onSettingsUpdate={handleSettingsUpdate}
+            onExport={handleExport}
+            syncStatus={syncStatus}
+            participants={tripId ? participants : undefined}
+            onAddParticipant={tripId ? addParticipant : undefined}
+            onRemoveParticipant={tripId ? removeParticipant : undefined}
+            onlineUserIds={onlineUserIds}
+            tripId={tripId}
+            isLoggedIn={!!userId}
+            isOwner={!tripId || role === 'owner'}
+        />
+
+        {/* Mobile timeline/map toggle (design doc, Screen 13) */}
+        <div className="px-5 py-3 md:hidden">
+          <div className="flex rounded-pill bg-muted p-1">
+            <button
+              type="button"
+              onClick={() => setViewMode('list')}
+              className={`flex-1 rounded-pill py-2 text-[13px] transition-colors ${
+                viewMode === 'list'
+                  ? 'bg-card font-bold text-primary shadow-sm'
+                  : 'font-semibold text-muted-foreground'
+              }`}
+            >
+             Хуваарь
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('map')}
+              className={`flex-1 rounded-pill py-2 text-[13px] transition-colors ${
+                viewMode === 'map'
+                  ? 'bg-card font-bold text-primary shadow-sm'
+                  : 'font-semibold text-muted-foreground'
+              }`}
+            >
+              Газрын зураг
+            </button>
+          </div>
+        </div>
+
         <div className="flex flex-1 overflow-hidden">
             {/* Left: Timeline (Scrollable) */}
             <div className={`
-              ${viewMode === 'list' ? 'flex' : 'hidden'} 
+              ${viewMode === 'list' ? 'flex' : 'hidden'}
               md:flex w-full md:w-1/2 lg:w-5/12 overflow-y-auto bg-muted/10 h-full scrollbar-hide
             `}>
-                <Timeline 
-                    title={itineraryTitle}
-                    onTitleChange={setItineraryTitle}
+                <Timeline
                     items={items}
                     onAdd={addItem}
                     onUpdate={updateItem}
@@ -577,13 +644,9 @@ function PlannerContent() {
                     newItemId={newItemId}
                     isManualAdd={isManualAdd}
                     isCompact={isCompact}
-                    onToggleCompact={() => setIsCompact(!isCompact)}
-                    syncStatus={syncStatus}
                     currency={settings.defaultCurrency}
                     rates={rates}
                     participants={tripId ? participants : undefined}
-                    onAddParticipant={tripId ? addParticipant : undefined}
-                    onRemoveParticipant={tripId ? removeParticipant : undefined}
                     splits={splits}
                     onSplitChange={tripId ? updateSplit : undefined}
                 />
@@ -604,23 +667,10 @@ function PlannerContent() {
             </div>
         </div>
 
-        {/* Mobile View Toggle FAB */}
-        <div className="fixed bottom-24 right-6 z-50 md:hidden">
-            <Button
-                onClick={() => setViewMode(viewMode === 'list' ? 'map' : 'list')}
-                className="rounded-full w-14 h-14 shadow-2xl bg-primary hover:bg-primary/90 text-white border-2 border-white/20"
-                size="icon"
-            >
-                {viewMode === 'list' ? <MapIcon className="w-6 h-6" /> : <List className="w-6 h-6" />}
-            </Button>
-        </div>
-        
         <CostFooter
           total={totalCost}
           onSave={saveItinerary}
           settings={settings}
-          onSettingsUpdate={handleSettingsUpdate}
-          onExport={handleExport}
           tripId={tripId}
           isLoggedIn={!!userId}
           isOwner={!tripId || role === 'owner'}

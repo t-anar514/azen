@@ -27,11 +27,22 @@ export async function getZonesForAirport(airportCode: string): Promise<TransferZ
   return data ?? []
 }
 
-// Prices are shown in whole units of the currency (MNT has no minor unit in
-// practice here) — round to the nearest 500 so formula output doesn't come
-// back as an oddly specific number like "43,270".
+// Prices are shown in whole units of the currency (JPY has no minor unit) —
+// round to the nearest 500 so formula output doesn't come back as an oddly
+// specific number like "12,024".
 function roundToStep(value: number, step: number): number {
   return Math.round(value / step) * step
+}
+
+// A client-supplied routed distance (used only for one-off typed addresses that
+// aren't a curated zone yet) is never fully trusted: clamp it to a sane airport-
+// transfer range so a tampered request can't manufacture an absurd estimate. The
+// resulting price is still an estimate the team confirms — see quoteTransferPrice.
+function normalizeCustomDistance(value: number | null | undefined): number | null {
+  if (value == null || typeof value !== "number" || !Number.isFinite(value)) return null
+  if (value <= 0) return null
+  const clamped = Math.min(Math.max(value, 1), 2000)
+  return Math.round(clamped * 10) / 10
 }
 
 /**
@@ -41,20 +52,26 @@ function roundToStep(value: number, step: number): number {
  *    (zone, vehicle) pair. Always wins when present.
  * 2. formula — the zone is known (so we have a distance estimate) but no
  *    curated override exists yet: base_fare + price_per_km * distance_km.
- * 3. vehicle_flat — no zone at all (a one-off address the guest typed in
- *    that isn't in the curated list yet). Falls back to the vehicle's flat
- *    starting price, same as the pre-0006 behavior.
+ * 3a. formula (custom) — no curated zone, but the booking form resolved a
+ *     live driving distance for the address the guest typed. Price it on the
+ *     same per-km formula so pricing stays distance-based everywhere; flagged
+ *     as an estimate the team confirms (the booking keeps zone_id = null).
+ * 3b. vehicle_flat — no zone and no distance at all. Falls back to the
+ *     vehicle's flat starting price, same as the pre-0006 behavior.
  *
  * Never trust a price sent from the client — this is always the source of
  * truth, called server-side from /api/transfer/quote (for the live UI
- * preview) and again from /api/bookings (for the actual charge).
+ * preview) and again from /api/bookings (for the actual charge). `distanceKm`
+ * is only consulted when no zone matches, and is clamped before use.
  */
 export async function quoteTransferPrice({
   vehicleOptionId,
   zoneId,
+  distanceKm,
 }: {
   vehicleOptionId: string
   zoneId: string | null
+  distanceKm?: number | null
 }): Promise<PriceQuote | null> {
   const supabase = await createClient()
 
@@ -105,8 +122,21 @@ export async function quoteTransferPrice({
     }
   }
 
-  // No zone_id, or the zone lookup missed (inactive/deleted) — unlisted
-  // destination, fall back to the vehicle's flat starting price.
+  // No curated zone. If the form resolved a live driving distance for the
+  // typed address, price it on the same per-km formula so the estimate is
+  // genuinely distance-based; otherwise fall back to the flat starting price.
+  const customDistance = normalizeCustomDistance(distanceKm)
+  if (customDistance != null) {
+    const formulaPrice = vehicle.base_fare + vehicle.price_per_km * customDistance
+    return {
+      price: roundToStep(formulaPrice, 500),
+      currency: vehicle.currency,
+      distanceKm: customDistance,
+      source: "formula",
+      zoneLabel: null,
+    }
+  }
+
   return {
     price: vehicle.price,
     currency: vehicle.currency,

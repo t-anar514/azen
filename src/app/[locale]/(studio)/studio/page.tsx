@@ -13,12 +13,12 @@ import {
 
 import { createClient } from "@/lib/supabase/server"
 import { getCurrentGuide } from "@/lib/guides/current"
+import { guideFallbackPath } from "@/lib/studio/context"
 import { loadGuideStats, loadGuideRecRows } from "@/lib/guides/stats"
 import { profileCompleteness } from "@/lib/guides/completeness"
 import { KpiTile } from "@/components/studio/KpiTile"
 import { RecsTable, TILE_GRADIENTS } from "@/components/studio/RecsTable"
-import { RequestCard, formatTripDate } from "@/components/studio/RequestCard"
-import { AcceptDeclineButtons } from "@/components/studio/AcceptDeclineButtons"
+import { UpcomingTripCard, formatTripDate } from "@/components/studio/UpcomingTripCard"
 import { CompletenessCard } from "@/components/studio/CompletenessCard"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -27,26 +27,30 @@ import type { GuideBookingRow } from "@/lib/supabase/types"
 
 export default async function StudioDashboard() {
   const ctx = await getCurrentGuide()
-  if (!ctx) redirect("/guides/apply")
+  if (!ctx) redirect(await guideFallbackPath())
   const { guide } = ctx
   const supabase = await createClient()
 
   const [stats, recRows, { data: requestRows }, { data: cityRows }] = await Promise.all([
     loadGuideStats(supabase, guide.id),
     loadGuideRecRows(supabase, guide.id),
+    // Paid-and-confirmed trips still ahead of the guide. Nothing is ever
+    // `pending` under pay-upfront, so this panel shows what is coming rather
+    // than what needs a decision.
     supabase.from("guide_bookings")
-      .select("*").eq("guide_id", guide.id).eq("status", "pending")
-      .order("created_at", { ascending: false })
+      .select("*").eq("guide_id", guide.id).eq("status", "confirmed")
+      .gte("trip_date", new Date().toISOString().slice(0, 10))
+      .order("trip_date", { ascending: true })
       .returns<GuideBookingRow[]>(),
     supabase.from("cities").select("id,name"),
   ])
-  const requests = requestRows ?? []
+  const upcoming = requestRows ?? []
 
   // Traveler names: a guide session can't read travelers' profiles rows
   // directly (RLS own-row-only), so resolve display names via the
   // SECURITY DEFINER RPC from migration 0018, batched in parallel.
   const travelerNames = await Promise.all(
-    requests.map((r) =>
+    upcoming.map((r) =>
       supabase
         .rpc("participant_display_name", { p_user_id: r.traveler_id })
         .then(({ data }) => (data as string | null)?.trim() || "Аялагч")
@@ -148,15 +152,15 @@ export default async function StudioDashboard() {
           <div className="space-y-5">
             <section className="rounded-card border border-border bg-card p-5">
               <div className="mb-3.5 flex items-center justify-between">
-                <h2 className="font-display text-base font-bold">Ирсэн хүсэлт</h2>
-                {requests.length > 0 && <Badge variant="rating">{requests.length} шинэ</Badge>}
+                <h2 className="font-display text-base font-bold">Удахгүй болох аялал</h2>
+                {upcoming.length > 0 && <Badge variant="confirmed">{upcoming.length}</Badge>}
               </div>
-              {requests.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Одоогоор хүсэлт алга.</p>
+              {upcoming.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Удахгүй болох аялал алга.</p>
               ) : (
                 <div className="flex flex-col gap-3.5">
-                  {requests.map((r, i) => (
-                    <RequestCard key={r.id} booking={r} travelerName={travelerNames[i]} />
+                  {upcoming.map((r, i) => (
+                    <UpcomingTripCard key={r.id} booking={r} travelerName={travelerNames[i]} />
                   ))}
                 </div>
               )}
@@ -204,13 +208,13 @@ export default async function StudioDashboard() {
           <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
         </Link>
 
-        {requests.length > 0 && (
+        {upcoming.length > 0 && (
           <div className="rounded-thumb border border-[#F1DEBE] bg-saffron-50 p-3.5">
             <div className="mb-2.5 flex items-center gap-2">
-              <span className="font-display text-sm font-bold text-foreground">Шинэ хүсэлт</span>
-              {/* solid saffron + white — distinct from the desktop panel's light-tint "N шинэ" pill */}
+              <span className="font-display text-sm font-bold text-foreground">Дараагийн аялал</span>
+              {/* solid saffron + white — distinct from the desktop panel's light-tint count pill */}
               <span className="rounded-pill bg-saffron px-2 py-0.5 text-[10px] font-bold text-white">
-                {requests.length}
+                {upcoming.length}
               </span>
             </div>
             <div className="flex items-center gap-2.5">
@@ -220,17 +224,21 @@ export default async function StudioDashboard() {
               <div className="min-w-0 flex-1">
                 <div className="text-[12.5px] text-foreground">
                   <b>{travelerNames[0]}</b>
-                  {requests[0].city ? ` · ${requests[0].city}` : ""}
+                  {upcoming[0].city ? ` · ${upcoming[0].city}` : ""}
                 </div>
                 <div className="text-[11px] font-medium text-saffron-600">
-                  {formatTripDate(requests[0].trip_date)} · {requests[0].hours} цаг · ¥
-                  {requests[0].amount.toLocaleString("mn-MN")}
+                  {formatTripDate(upcoming[0].trip_date)} · {upcoming[0].hours} цаг · ¥
+                  {upcoming[0].amount.toLocaleString("mn-MN")}
                 </div>
               </div>
             </div>
-            <div className="mt-2.5">
-              <AcceptDeclineButtons id={requests[0].id} fullWidth />
-            </div>
+            <Link
+              href="/studio/bookings"
+              className="mt-2.5 flex items-center justify-center gap-1 rounded-pill border border-[#F1DEBE] bg-card px-3 py-1.5 text-[12px] font-semibold text-foreground"
+            >
+              Бүх захиалга
+              <ChevronRight className="size-3.5" />
+            </Link>
           </div>
         )}
 

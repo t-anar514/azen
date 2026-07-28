@@ -16,7 +16,9 @@ const STATUS_COPY: Record<DriverVerificationStatus, { title: string; body: strin
   },
   approved: {
     title: "Баталгаажсан!",
-    body: "Та одоо жолоочийн самбараас захиалгуудыг харах боломжтой.",
+    // The first thing an approved driver must do is open shifts — until they
+    // do, they are invisible to travelers no matter how approved they are.
+    body: "Одоо хуваариа нээнэ үү. Ээлж нээх хүртэл таны машин аялагчдад харагдахгүй.",
   },
   rejected: {
     title: "Хүсэлт татгалзагдсан",
@@ -49,10 +51,10 @@ export default async function DriverApplyPage() {
               <p className="text-sm text-gray-600">{copy.body}</p>
               {existing.verification_status === "approved" && (
                 <Link
-                  href="/driver"
-                  className="inline-block rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white"
+                  href="/studio/schedule"
+                  className="inline-block rounded-full bg-saffron px-5 py-2 text-sm font-semibold text-white"
                 >
-                  Самбар руу очих
+                  Хуваарь тавих →
                 </Link>
               )}
             </CardContent>

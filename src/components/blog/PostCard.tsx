@@ -4,6 +4,7 @@ import NextImage from "next/image"
 
 import { PillBadge } from "@/components/ui/pill-badge"
 import { SaveHeart } from "@/components/saves/SaveHeart"
+import { postGradient } from "@/lib/blog/gradient"
 import type { PostRow } from "@/lib/supabase/types"
 
 const Image = NextImage as any
@@ -26,18 +27,17 @@ export function PostCard({ post, categoryLabel }: PostCardProps) {
       href={{ pathname: "/blog/[slug]", params: { slug: post.slug } }}
       className="group flex flex-col overflow-hidden rounded-card border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
     >
-      <div className="relative aspect-[3/2] bg-muted overflow-hidden">
-        {post.cover_image ? (
+      <div
+        className="relative aspect-[3/2] overflow-hidden bg-muted"
+        style={post.cover_image ? undefined : { background: postGradient(post.slug) }}
+      >
+        {post.cover_image && (
           <Image
             src={post.cover_image}
             alt={post.title}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center text-4xl font-display font-bold text-primary/20">
-            {post.title[0]}
-          </div>
         )}
         <div className="absolute right-3 top-3">
           <SaveHeart itemType="post" itemId={post.id} />

@@ -134,6 +134,14 @@ export function SharedItineraryView({ title, items, currency = "JPY", rates = FA
                         <p className="text-xs text-muted-foreground truncate flex items-center gap-1">
                           <MapPin className="h-3 w-3 shrink-0" /> {item.location}
                         </p>
+                        {/* The planner's per-activity note — the tips are half
+                            the point of sharing an itinerary, so they travel
+                            with it into the read-only view. */}
+                        {item.notes && (
+                          <p className="mt-1.5 whitespace-pre-line rounded-lg bg-muted/50 px-2 py-1.5 text-[11px] leading-relaxed text-muted-foreground">
+                            {item.notes}
+                          </p>
+                        )}
                       </div>
                       {item.cost > 0 && (
                         <p className="text-xs font-mono font-bold text-primary shrink-0">

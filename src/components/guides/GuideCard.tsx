@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { BookingModal } from "./BookingModal"
+import { BookGuideDialog } from "./BookGuideDialog"
 import { MessageModal } from "./MessageModal"
 import {
   Dialog,
@@ -102,9 +102,8 @@ export function GuideCard({ guide }: GuideProps) {
         </div>
 
         <div className="mt-4 flex gap-3">
-             <BookingModal
-                guideId={guide.id}
-                guideName={guide.name}
+             <BookGuideDialog
+                guide={guide}
                 trigger={<Button className="flex-1">{t("bookNow")}</Button>}
              />
              <MessageModal

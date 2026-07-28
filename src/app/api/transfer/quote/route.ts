@@ -12,9 +12,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "vehicle_option_id is required" }, { status: 400 })
   }
 
+  // Optional live routed distance for a typed (zone-less) address — only used
+  // by quoteTransferPrice when no zone matches, and clamped there.
+  const distanceKm = typeof body.distance_km === "number" ? body.distance_km : null
+
   const quote = await quoteTransferPrice({
     vehicleOptionId: body.vehicle_option_id,
     zoneId: body.zone_id ?? null,
+    distanceKm,
   })
 
   if (!quote) {

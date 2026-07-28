@@ -1,28 +1,32 @@
 /**
  * Request encoding for Wire's REST API.
  *
- * Every curl example in Wire's docs uses `-d key=value`, which is
- * `application/x-www-form-urlencoded` — not JSON — so that is what is sent.
+ * **JSON.** Every curl example in Wire's docs uses `-d key=value`, which reads
+ * as `application/x-www-form-urlencoded` — and that is what this module used to
+ * send. The live API rejects it:
  *
- * The array convention is the genuinely uncertain part: Wire documents
- * `allowed_operators` as a list but never shows it over raw HTTP, only through
- * the SDKs. `key[]=a&key[]=b` is the convention its API otherwise mirrors.
- * Isolated here, with tests, so a sandbox call proving otherwise is a small
- * change in one place.
+ *     POST /v1/payment_intents   (application/x-www-form-urlencoded)
+ *     → 400 {"error":{"type":"invalid_request_error","code":"invalid_json",
+ *            "message":"request body is not valid JSON"}}
+ *
+ * The same request with a JSON body and `Content-Type: application/json`
+ * returns 200. Verified against api.wire.mn on 2026-07-25, which also settles
+ * the `allowed_operators` question the form encoder had to guess at: it is a
+ * plain JSON array, no `key[]` convention involved.
+ *
+ * Kept as its own module, with tests, so the body format stays one small change
+ * away if Wire's API shifts again.
  */
 
-export type FormValue = string | number | boolean | string[] | undefined | null
+export type BodyValue = string | number | boolean | string[] | undefined | null
 
-export function encodeForm(params: Record<string, FormValue>): string {
-  const search = new URLSearchParams()
+export function encodeBody(params: Record<string, BodyValue>): string {
+  const body: Record<string, Exclude<BodyValue, undefined | null>> = {}
   for (const [key, value] of Object.entries(params)) {
-    // Omit rather than sending "undefined"/"null" as literal strings.
+    // Omit rather than sending an explicit null the API may treat as "clear
+    // this field", or the literal string "undefined".
     if (value === undefined || value === null) continue
-    if (Array.isArray(value)) {
-      for (const item of value) search.append(`${key}[]`, item)
-    } else {
-      search.append(key, String(value))
-    }
+    body[key] = value
   }
-  return search.toString()
+  return JSON.stringify(body)
 }

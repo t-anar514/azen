@@ -1,39 +1,56 @@
 import { describe, expect, it } from "vitest"
 
-import { encodeForm } from "./wireEncode"
+import { encodeBody } from "./wireEncode"
 
-describe("encodeForm", () => {
-  it("encodes scalars", () => {
-    expect(encodeForm({ amount: 50_000, currency: "MNT" })).toBe(
-      "amount=50000&currency=MNT"
-    )
+const parse = (s: string) => JSON.parse(s) as Record<string, unknown>
+
+describe("encodeBody", () => {
+  it("sends JSON, not form encoding", () => {
+    // Verified against the live API: a form-urlencoded body is rejected with
+    // 400 invalid_json / "request body is not valid JSON". Wire's curl examples
+    // use -d key=value, which reads as form encoding but is not what the API
+    // accepts.
+    expect(parse(encodeBody({ amount: 50_000, currency: "MNT" }))).toEqual({
+      amount: 50_000,
+      currency: "MNT",
+    })
   })
 
-  it("repeats bracketed keys for arrays", () => {
-    expect(encodeForm({ allowed_operators: ["sandbox", "golomt"] })).toBe(
-      "allowed_operators%5B%5D=sandbox&allowed_operators%5B%5D=golomt"
-    )
+  it("keeps numbers as numbers rather than stringifying them", () => {
+    expect(parse(encodeBody({ amount: 387_181 })).amount).toBe(387_181)
+  })
+
+  it("encodes arrays as JSON arrays", () => {
+    expect(parse(encodeBody({ allowed_operators: ["sandbox", "golomt"] }))).toEqual({
+      allowed_operators: ["sandbox", "golomt"],
+    })
   })
 
   // Sending the string "undefined" as a description would put it on the
-  // buyer's payment record.
-  it("omits undefined and null instead of stringifying them", () => {
-    expect(encodeForm({ amount: 1, description: undefined, note: null })).toBe(
-      "amount=1"
-    )
+  // buyer's payment record; sending an explicit null risks the API rejecting
+  // or overwriting a field we meant to leave alone.
+  it("omits undefined and null instead of sending them", () => {
+    expect(parse(encodeBody({ amount: 1, description: undefined, note: null }))).toEqual({
+      amount: 1,
+    })
   })
 
   it("keeps an empty string, which is not the same as absent", () => {
-    expect(encodeForm({ description: "" })).toBe("description=")
+    expect(parse(encodeBody({ description: "" }))).toEqual({ description: "" })
   })
 
-  it("escapes values that would otherwise break the encoding", () => {
-    expect(encodeForm({ description: "Order #1001 & co" })).toBe(
-      "description=Order+%231001+%26+co"
-    )
+  it("keeps an empty array, which is not the same as absent", () => {
+    expect(parse(encodeBody({ allowed_operators: [] }))).toEqual({
+      allowed_operators: [],
+    })
   })
 
-  it("encodes an empty array as nothing", () => {
-    expect(encodeForm({ allowed_operators: [] })).toBe("")
+  it("escapes characters that would otherwise break the payload", () => {
+    const body = encodeBody({ description: 'Azen · "Anar" \\ 日本 & co' })
+    expect(parse(body).description).toBe('Azen · "Anar" \\ 日本 & co')
+  })
+
+  it("produces a body the API parses as an object", () => {
+    expect(encodeBody({ amount: 1 }).startsWith("{")).toBe(true)
   })
 })

@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog"
 import { useMounted } from "@/hooks/useMounted"
 import { initials } from "@/lib/utils"
-import { BookingModal } from "./BookingModal"
+import { BookGuideDialog } from "./BookGuideDialog"
 import { MessageModal } from "./MessageModal"
 import type { GuideRow } from "@/lib/supabase/types"
 
@@ -26,10 +26,21 @@ export function GuideDirectoryCard({ guide }: { guide: GuideRow }) {
   const mounted = useMounted()
   const isYouTube =
     guide.video_url?.includes("youtube.com") || guide.video_url?.includes("youtu.be")
+  const profileHref = guide.slug
+    ? ({ pathname: "/guides/[slug]", params: { slug: guide.slug } } as const)
+    : null
 
   return (
-    <div className="flex flex-col gap-4 rounded-card border border-border bg-card p-5 shadow-sm transition-shadow hover:shadow-md">
-      <div className="flex items-start gap-4">
+    <div className="relative flex flex-col gap-4 rounded-card border border-border bg-card p-5 shadow-sm transition-shadow hover:shadow-md">
+      {profileHref && (
+        <Link
+          href={profileHref}
+          aria-label={`${guide.name} — профайл үзэх`}
+          className="absolute inset-0 z-0 rounded-card"
+        />
+      )}
+
+      <div className="relative z-[1] flex items-start gap-4 pointer-events-none">
         {/* avatar / video */}
         <div className="relative size-14 shrink-0">
           {guide.image ? (
@@ -50,7 +61,7 @@ export function GuideDirectoryCard({ guide }: { guide: GuideRow }) {
                   <button
                     type="button"
                     aria-label="Танилцуулга видео"
-                    className="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-primary text-white shadow"
+                    className="pointer-events-auto absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-primary text-white shadow"
                   >
                     <PlayCircle className="size-4" />
                   </button>
@@ -81,16 +92,9 @@ export function GuideDirectoryCard({ guide }: { guide: GuideRow }) {
         {/* name + meta */}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
-            {guide.slug ? (
-              <Link
-                href={{ pathname: "/guides/[slug]", params: { slug: guide.slug } }}
-                className="truncate font-display text-lg font-bold text-foreground hover:text-primary hover:underline"
-              >
-                {guide.name}
-              </Link>
-            ) : (
-              <h3 className="truncate font-display text-lg font-bold text-foreground">{guide.name}</h3>
-            )}
+            <h3 className="truncate font-display text-lg font-bold text-foreground">
+              {guide.name}
+            </h3>
             {guide.is_verified && <CheckCircle2 className="size-4 shrink-0 text-success" />}
           </div>
           <div className="mt-0.5 flex items-center gap-1 text-sm text-muted-foreground">
@@ -111,13 +115,13 @@ export function GuideDirectoryCard({ guide }: { guide: GuideRow }) {
       </div>
 
       {guide.bio && (
-        <p className="line-clamp-2 text-sm italic text-muted-foreground">
+        <p className="pointer-events-none relative z-[1] line-clamp-2 text-sm italic text-muted-foreground">
           &laquo;{guide.bio}&raquo;
         </p>
       )}
 
       {guide.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
+        <div className="pointer-events-none relative z-[1] flex flex-wrap gap-1.5">
           {guide.tags.slice(0, 4).map((tag, i) => (
             <PillBadge key={tag} variant={TAG_TINTS[i % TAG_TINTS.length]}>
               {tag}
@@ -126,12 +130,11 @@ export function GuideDirectoryCard({ guide }: { guide: GuideRow }) {
         </div>
       )}
 
-      <div className="mt-auto flex gap-3 pt-1">
+      <div className="relative z-[1] mt-auto flex gap-3 pt-1">
         {mounted ? (
           <>
-            <BookingModal
-              guideId={guide.id}
-              guideName={guide.name}
+            <BookGuideDialog
+              guide={guide}
               trigger={
                 <Button variant="reserve" className="flex-1 rounded-pill">
                   Захиалах

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation"
 
 import { createClient } from "@/lib/supabase/server"
 import { getCurrentGuide } from "@/lib/guides/current"
+import { guideFallbackPath } from "@/lib/studio/context"
 import { Badge } from "@/components/ui/badge"
 import { MarkReadButton } from "@/components/account/MarkReadButton"
 import { initials } from "@/lib/utils"
@@ -15,7 +16,7 @@ import type { MessageRow } from "@/lib/supabase/types"
  */
 export default async function StudioMessagesPage() {
   const ctx = await getCurrentGuide()
-  if (!ctx) redirect("/guides/apply")
+  if (!ctx) redirect(await guideFallbackPath())
   const { guide } = ctx
   const supabase = await createClient()
 

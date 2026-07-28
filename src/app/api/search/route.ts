@@ -18,18 +18,24 @@ const CATEGORY_LABEL: Record<PlaceRow["category"], string> = {
 export async function GET() {
   const supabase = await createClient()
 
-  const [{ data: places }, { data: cities }, { data: posts }] = await Promise.all([
-    supabase
-      .from("places")
-      .select("id, name, slug, city_id, neighborhood, category, short_desc")
-      .eq("published", true)
-      .order("order_index"),
-    supabase.from("cities").select("id, slug"),
-    supabase
-      .from("posts")
-      .select("id, slug, title, excerpt, category")
-      .eq("published", true),
-  ])
+  const [{ data: places }, { data: cities }, { data: posts }, { data: guides }] =
+    await Promise.all([
+      supabase
+        .from("places")
+        .select("id, name, slug, city_id, neighborhood, category, short_desc")
+        .eq("published", true)
+        .order("order_index"),
+      supabase.from("cities").select("id, slug"),
+      supabase
+        .from("posts")
+        .select("id, slug, title, excerpt, category")
+        .eq("published", true),
+      supabase
+        .from("guides")
+        .select("id, name, slug, location, tags, bio")
+        .eq("is_active", true)
+        .order("name"),
+    ])
 
   const citySlug: Record<string, string> = Object.fromEntries(
     (cities ?? []).map((c: { id: string; slug: string | null }) => [c.id, c.slug ?? c.id])
@@ -53,5 +59,17 @@ export async function GET() {
     url: `/blog/${p.slug}`,
   }))
 
-  return NextResponse.json({ items: [...placeItems, ...postItems] })
+  const guideItems = (guides ?? [])
+    .filter((g: any) => g.slug)
+    .map((g: any) => ({
+      id: `guide-${g.id}`,
+      title: g.name as string,
+      subtitle: [g.location, ...(Array.isArray(g.tags) ? g.tags.slice(0, 2) : [])]
+        .filter(Boolean)
+        .join(" · "),
+      category: "Guides" as const,
+      url: `/guides/${g.slug}`,
+    }))
+
+  return NextResponse.json({ items: [...placeItems, ...postItems, ...guideItems] })
 }

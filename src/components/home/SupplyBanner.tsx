@@ -16,7 +16,7 @@ export function SupplyBanner() {
             <UserPlus className="size-[22px] text-primary" strokeWidth={1.9} />
           </div>
           <h3 className="mb-1.5 font-display text-[22px] font-extrabold text-foreground">
-            Нутгийн хөтөч болох
+            Хөтөч болох
           </h3>
           <p className="mb-5 flex-1 text-sm leading-[1.55] text-muted-foreground">
             Өөрийн хотоо мэддэг үү? Аялагчдад санал болгож, орлого олоорой.
