@@ -10,6 +10,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
+import { SITE_URL } from '@/lib/siteUrl';
 
 const inter = Inter({ subsets: ["latin", "cyrillic"], variable: "--font-inter" });
 const manrope = Manrope({ subsets: ["latin", "cyrillic"], variable: "--font-display" });
@@ -26,6 +27,9 @@ export async function generateMetadata({
   const {locale} = await params;
   
   return {
+    // Resolves the relative `alternates` below (and any per-page OG images)
+    // against the real origin instead of localhost.
+    metadataBase: new URL(SITE_URL),
     title: "Azen | Japan Travel Platform",
     description: "From Chaos to Clarity. Comprehensive Japan Travel Guide.",
     manifest: "/manifest.json",
