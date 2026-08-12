@@ -1,12 +1,20 @@
 import { ArrowRight } from "lucide-react"
 
 import { Link } from "@/i18n/routing"
+import { SAMPLE_ITINERARIES } from "@/data/templates"
+
+/** The itinerary this banner advertises. Its data is the source of truth for
+ *  the duration and price shown below, so the two can never drift apart. */
+const FEATURED_ID = "golden-route"
 
 /**
  * "Намрийн 14 хоног аялал" banner (design doc, Screen 01): dark-blue gradient
  * card, an illustrated Fuji tile on the right, saffron CTA into the planner.
  */
 export function FeaturedItinerary() {
+  const trip = SAMPLE_ITINERARIES.find((t) => t.id === FEATURED_ID)
+  if (!trip) return null
+
   return (
     <section className="mx-auto max-w-content px-4 md:px-8 pb-16 pt-5">
       <div
@@ -20,7 +28,7 @@ export function FeaturedItinerary() {
 
         <div className="relative max-w-[560px] flex-1 text-white">
           <span className="inline-flex items-center gap-[7px] rounded-full bg-white/[.14] px-[13px] py-1.5 text-xs font-semibold">
-            ✦ Онцлох хөтөлбөр · 14 хоног
+            ✦ Онцлох хөтөлбөр · {trip.duration} хоног
           </span>
           <h2 className="mt-4 font-display text-[36px] font-extrabold leading-[1.1] tracking-[-0.015em]">
             Намрийн 14 хоног аялал
@@ -31,7 +39,7 @@ export function FeaturedItinerary() {
           </p>
           <div className="mt-6 flex items-center gap-[22px]">
             <Link
-              href="/planner"
+              href={{ pathname: "/planner", query: { template: FEATURED_ID } }}
               className="inline-flex items-center gap-[9px] rounded-full px-[26px] py-[13px] text-[15px] font-bold text-white shadow-[0_10px_24px_-8px_rgba(222,140,46,.7)]"
               style={{ background: "#DE8C2E" }}
             >
@@ -41,7 +49,9 @@ export function FeaturedItinerary() {
               <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-white/60">
                 Зардал ойролцоогоор
               </div>
-              <div className="font-display text-2xl font-extrabold">¥285,000</div>
+              <div className="font-display text-2xl font-extrabold">
+                ¥{trip.basePrice.toLocaleString()}
+              </div>
             </div>
           </div>
         </div>
