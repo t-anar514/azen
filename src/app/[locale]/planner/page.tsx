@@ -11,6 +11,8 @@ import { arrayMove } from "@dnd-kit/sortable"
 import { useTranslations } from "next-intl"
 import { useSearchParams } from "next/navigation"
 import { SAMPLE_ITINERARIES } from "@/data/templates"
+import { nextAutumnStart, toIsoDate, materializeTemplateDates } from "@/lib/planner/templateDates"
+import { addDays } from "date-fns"
 import { createClient } from "@/lib/supabase/client"
 import { useExchangeRates } from "@/hooks/useExchangeRates"
 import { usePlannerRealtime, ItineraryRow } from "@/hooks/usePlannerRealtime"
@@ -120,18 +122,26 @@ function PlannerContent() {
     if (templateId) {
       const template = SAMPLE_ITINERARIES.find(t => t.id === templateId)
       if (template) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setItems(template.activities)
-        setItineraryTitle(t(`item.templates.${templateId}.title`, { fallback: templateId }))
-        calculateTotal(template.activities)
-        
-        // Update dates based on template if possible (mocking 14 days for golden route etc)
-        const start = new Date().toISOString().split('T')[0]
-        const end = new Date(Date.now() + (template.duration || 7) * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-        setSettings(prev => ({ ...prev, startDate: start, endDate: end }))
+        // Templates carry relative dayOffsets; materialise them against the
+        // same start date we write into settings, so the timeline and the
+        // trip's own date range can never disagree.
+        const start = nextAutumnStart(new Date())
+        const materialized = materializeTemplateDates(template.activities, start)
 
-        if (template.activities.length > 0) {
-            setNewItemId(template.activities[0].id)
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setItems(materialized)
+        setItineraryTitle(t(`item.templates.${templateId}.title`, { fallback: templateId }))
+        calculateTotal(materialized)
+
+        // duration counts days inclusive, so the last day is start + (duration - 1).
+        setSettings(prev => ({
+          ...prev,
+          startDate: toIsoDate(start),
+          endDate: toIsoDate(addDays(start, template.duration - 1)),
+        }))
+
+        if (materialized.length > 0) {
+            setNewItemId(materialized[0].id)
         }
         return
       }
